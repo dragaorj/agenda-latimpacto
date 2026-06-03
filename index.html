@@ -197,7 +197,7 @@ body[data-mode="edit"] .btile:hover .btile-edit{display:flex;}
 .btn{font-family:var(--font);font-size:13px;font-weight:500;padding:5px 12px;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--text2);cursor:pointer;white-space:nowrap;transition:all .15s;letter-spacing:-.01em;}
 .btn:hover{background:var(--bg);color:var(--text);}
 .btn.on,.btn-p{background:var(--blue);color:#fff;border-color:var(--blue);}
-.btn.on:hover,.btn-p:hover{background:var(--blue-dk);}
+.btn.on:hover,.btn-p:hover{background:var(--blue-dk);color:#fff;border-color:var(--blue-dk);}
 .btn-d{background:#dc2626;color:#fff;border-color:#dc2626;}
 .btn-d:hover{background:#b91c1c;}
 .btn-gcal{background:var(--surface);color:var(--blue);border-color:var(--border);display:inline-flex;align-items:center;gap:4px;}
@@ -448,6 +448,18 @@ body[data-mode="edit"] .btile:hover .btile-edit{display:flex;}
 .pub-spk-ini{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font);font-size:28px;font-weight:500;color:#fff;margin-bottom:11px;flex-shrink:0;}
 .pub-spk-name{font-family:var(--font);font-size:15px;font-weight:600;margin-bottom:3px;color:var(--text);}
 .pub-spk-role{font-size:13px;color:var(--blue);margin-bottom:2px;}
+/* Anéis por categoria: Palestrante (roxo claro) / Curador (laranja) */
+:root{--ring-speaker:#b388e0;--ring-curator:#F5A26C;}
+[data-theme="dark"]{--ring-speaker:#b18fd9;--ring-curator:#F5A26C;}
+.spk-ph,.pub-spk-ph{border-color:var(--ring-speaker)!important;}
+.spk-ini,.pub-spk-ini{border:3px solid var(--ring-speaker);box-sizing:border-box;}
+.cat-curator .spk-ph,.cat-curator .pub-spk-ph{border-color:var(--ring-curator)!important;}
+.cat-curator .spk-ini,.cat-curator .pub-spk-ini{border-color:var(--ring-curator);}
+.spk-section-title{grid-column:1/-1;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text2);margin:10px 2px 2px;display:flex;align-items:center;gap:8px;}
+.spk-section-title .dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.cat-badge{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:2px 8px;border-radius:20px;margin-top:5px;}
+.cat-badge.cur{background:color-mix(in srgb,var(--ring-curator) 18%,transparent);color:var(--orange-dk);}
+[data-theme="dark"] .cat-badge.cur{color:var(--ring-curator);}
 .pub-spk-co{font-size:13px;color:var(--text2);margin-bottom:7px;}
 .pub-spk-bio{font-size:13px;color:var(--text2);line-height:1.45;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
 .pub-spk-empty{grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--text2);}
@@ -1388,17 +1400,17 @@ var I18N={
        searchPh:'Buscar palestra ou palestrante…', searchSpkPh:'Buscar palestrante…', allHubs:'TODOS OS HUBS',
        talks:'palestras', rooms:'salas', speakers:'Palestrantes', filters:'Filtros', clearF:'Limpar',
        roomsPhys:'Salas Físicas', hubsThemes:'Hubs / Temas', descLabel:'Descrição', noResults:'Nenhuma palestra encontrada.',
-       tabHighlights:'Destaques', navHome:'Início', navManage:'Gerenciar', navEditHl:'Editar Destaques', navTheme:'Tema', navLogin:'Entrar', navAccount:'Minha conta', hlCountdown:'Contagem regressiva', hlDays:'dias', hlHours:'horas', hlToGo:'para o evento', hlLive:'Acontecendo agora', hlNumbers:'O evento em números', hlSpeakers:'Vozes do palco', hlSeeAll:'Ver todos', hlOpening:'Abertura', hlNext:'Em destaque', hlEditTitle:'Editar Destaques', hlHero:'Capa (hero)', hlCoverImg:'Imagem da capa', hlChooseImg:'Escolher imagem', hlRemoveImg:'Remover', hlImgHint:'JPG/PNG · convertida p/ WebP < 100 KB', hlTitleLbl:'Título', hlSubtitleLbl:'Subtítulo', hlAutoLbl:'Blocos automáticos', hlManualLbl:'Blocos personalizados', hlAddCard:'Adicionar bloco', hlLinkTalk:'Vincular a uma palestra (opcional)', hlNoLink:'— Nenhuma —', hlAccent:'Cor do filete', hlSave:'Salvar', hlCancel:'Cancelar', hlShowCountdown:'Contagem regressiva', hlShowStats:'Números do evento', hlShowOpening:'Abertura do evento', hlShowSpeakers:'Vozes do palco', hlEmptyManual:'Nenhum bloco personalizado ainda.' },
+       tabHighlights:'Destaques', navHome:'Início', spkSpeakers:'Palestrantes', spkCurators:'Curadores', catLabel:'Categoria', catSpeaker:'Palestrante', catCurator:'Curador', navManage:'Gerenciar', navEditHl:'Editar Destaques', navTheme:'Tema', navLogin:'Entrar', navAccount:'Minha conta', hlCountdown:'Contagem regressiva', hlDays:'dias', hlHours:'horas', hlToGo:'para o evento', hlLive:'Acontecendo agora', hlNumbers:'O evento em números', hlSpeakers:'Vozes do palco', hlSeeAll:'Ver todos', hlOpening:'Abertura', hlNext:'Em destaque', hlEditTitle:'Editar Destaques', hlHero:'Capa (hero)', hlCoverImg:'Imagem da capa', hlChooseImg:'Escolher imagem', hlRemoveImg:'Remover', hlImgHint:'JPG/PNG · convertida p/ WebP < 100 KB', hlTitleLbl:'Título', hlSubtitleLbl:'Subtítulo', hlAutoLbl:'Blocos automáticos', hlManualLbl:'Blocos personalizados', hlAddCard:'Adicionar bloco', hlLinkTalk:'Vincular a uma palestra (opcional)', hlNoLink:'— Nenhuma —', hlAccent:'Cor do filete', hlSave:'Salvar', hlCancel:'Cancelar', hlShowCountdown:'Contagem regressiva', hlShowStats:'Números do evento', hlShowOpening:'Abertura do evento', hlShowSpeakers:'Vozes do palco', hlEmptyManual:'Nenhum bloco personalizado ainda.' },
   en:{ appTitle:'Agenda', tabAgenda:'Agenda', tabSpk:'Speakers', viewGrid:'Grid', viewCards:'Cards', viewList:'List',
        searchPh:'Search a session or speaker…', searchSpkPh:'Search speaker…', allHubs:'ALL HUBS',
        talks:'sessions', rooms:'rooms', speakers:'Speakers', filters:'Filters', clearF:'Clear',
        roomsPhys:'Rooms', hubsThemes:'Hubs / Themes', descLabel:'Description', noResults:'No sessions found.',
-       tabHighlights:'Highlights', navHome:'Home', navManage:'Manage', navEditHl:'Edit Highlights', navTheme:'Theme', navLogin:'Sign in', navAccount:'My account', hlCountdown:'Countdown', hlDays:'days', hlHours:'hours', hlToGo:'to the event', hlLive:'Happening now', hlNumbers:'The event in numbers', hlSpeakers:'Voices on stage', hlSeeAll:'See all', hlOpening:'Opening', hlNext:'Featured', hlEditTitle:'Edit Highlights', hlHero:'Hero', hlCoverImg:'Cover image', hlChooseImg:'Choose image', hlRemoveImg:'Remove', hlImgHint:'JPG/PNG · converted to WebP < 100 KB', hlTitleLbl:'Title', hlSubtitleLbl:'Subtitle', hlAutoLbl:'Automatic blocks', hlManualLbl:'Custom blocks', hlAddCard:'Add block', hlLinkTalk:'Link to a session (optional)', hlNoLink:'— None —', hlAccent:'Accent color', hlSave:'Save', hlCancel:'Cancel', hlShowCountdown:'Countdown', hlShowStats:'Event numbers', hlShowOpening:'Event opening', hlShowSpeakers:'Voices on stage', hlEmptyManual:'No custom blocks yet.' },
+       tabHighlights:'Highlights', navHome:'Home', spkSpeakers:'Speakers', spkCurators:'Curators', catLabel:'Category', catSpeaker:'Speaker', catCurator:'Curator', navManage:'Manage', navEditHl:'Edit Highlights', navTheme:'Theme', navLogin:'Sign in', navAccount:'My account', hlCountdown:'Countdown', hlDays:'days', hlHours:'hours', hlToGo:'to the event', hlLive:'Happening now', hlNumbers:'The event in numbers', hlSpeakers:'Voices on stage', hlSeeAll:'See all', hlOpening:'Opening', hlNext:'Featured', hlEditTitle:'Edit Highlights', hlHero:'Hero', hlCoverImg:'Cover image', hlChooseImg:'Choose image', hlRemoveImg:'Remove', hlImgHint:'JPG/PNG · converted to WebP < 100 KB', hlTitleLbl:'Title', hlSubtitleLbl:'Subtitle', hlAutoLbl:'Automatic blocks', hlManualLbl:'Custom blocks', hlAddCard:'Add block', hlLinkTalk:'Link to a session (optional)', hlNoLink:'— None —', hlAccent:'Accent color', hlSave:'Save', hlCancel:'Cancel', hlShowCountdown:'Countdown', hlShowStats:'Event numbers', hlShowOpening:'Event opening', hlShowSpeakers:'Voices on stage', hlEmptyManual:'No custom blocks yet.' },
   es:{ appTitle:'Agenda', tabAgenda:'Agenda', tabSpk:'Ponentes', viewGrid:'Cuadrícula', viewCards:'Tarjetas', viewList:'Lista',
        searchPh:'Buscar sesión o ponente…', searchSpkPh:'Buscar ponente…', allHubs:'TODOS LOS HUBS',
        talks:'sesiones', rooms:'salas', speakers:'Ponentes', filters:'Filtros', clearF:'Limpiar',
        roomsPhys:'Salas', hubsThemes:'Hubs / Temas', descLabel:'Descripción', noResults:'No se encontraron sesiones.',
-       tabHighlights:'Destacados', navHome:'Inicio', navManage:'Gestionar', navEditHl:'Editar Destacados', navTheme:'Tema', navLogin:'Entrar', navAccount:'Mi cuenta', hlCountdown:'Cuenta regresiva', hlDays:'días', hlHours:'horas', hlToGo:'para el evento', hlLive:'Sucediendo ahora', hlNumbers:'El evento en números', hlSpeakers:'Voces del escenario', hlSeeAll:'Ver todos', hlOpening:'Apertura', hlNext:'Destacado', hlEditTitle:'Editar Destacados', hlHero:'Portada', hlCoverImg:'Imagen de portada', hlChooseImg:'Elegir imagen', hlRemoveImg:'Quitar', hlImgHint:'JPG/PNG · convertida a WebP < 100 KB', hlTitleLbl:'Título', hlSubtitleLbl:'Subtítulo', hlAutoLbl:'Bloques automáticos', hlManualLbl:'Bloques personalizados', hlAddCard:'Agregar bloque', hlLinkTalk:'Vincular a una sesión (opcional)', hlNoLink:'— Ninguna —', hlAccent:'Color de acento', hlSave:'Guardar', hlCancel:'Cancelar', hlShowCountdown:'Cuenta regresiva', hlShowStats:'Números del evento', hlShowOpening:'Apertura del evento', hlShowSpeakers:'Voces del escenario', hlEmptyManual:'Aún no hay bloques personalizados.' }
+       tabHighlights:'Destacados', navHome:'Inicio', spkSpeakers:'Ponentes', spkCurators:'Curadores', catLabel:'Categoría', catSpeaker:'Ponente', catCurator:'Curador', navManage:'Gestionar', navEditHl:'Editar Destacados', navTheme:'Tema', navLogin:'Entrar', navAccount:'Mi cuenta', hlCountdown:'Cuenta regresiva', hlDays:'días', hlHours:'horas', hlToGo:'para el evento', hlLive:'Sucediendo ahora', hlNumbers:'El evento en números', hlSpeakers:'Voces del escenario', hlSeeAll:'Ver todos', hlOpening:'Apertura', hlNext:'Destacado', hlEditTitle:'Editar Destacados', hlHero:'Portada', hlCoverImg:'Imagen de portada', hlChooseImg:'Elegir imagen', hlRemoveImg:'Quitar', hlImgHint:'JPG/PNG · convertida a WebP < 100 KB', hlTitleLbl:'Título', hlSubtitleLbl:'Subtítulo', hlAutoLbl:'Bloques automáticos', hlManualLbl:'Bloques personalizados', hlAddCard:'Agregar bloque', hlLinkTalk:'Vincular a una sesión (opcional)', hlNoLink:'— Ninguna —', hlAccent:'Color de acento', hlSave:'Guardar', hlCancel:'Cancelar', hlShowCountdown:'Cuenta regresiva', hlShowStats:'Números del evento', hlShowOpening:'Apertura del evento', hlShowSpeakers:'Voces del escenario', hlEmptyManual:'Aún no hay bloques personalizados.' }
 };
 function t18(k){ return (I18N[LANG]&&I18N[LANG][k])||I18N.pt[k]||k; }
 function updateLangBtn(){ var b=document.querySelectorAll('#langSwitch .lang-btn'); for(var i=0;i<b.length;i++){ b[i].classList.toggle('on', b[i].getAttribute('data-lang')===LANG); } }
@@ -1483,7 +1495,6 @@ function sortSlots(){ SLOTS.sort(function(a,b){ var ta=a.label.split(':').map(Nu
 var SPEAKERS  = [];
 var SCHEDULES = (function(){ var a=[]; for(var i=0;i<NDAYS;i++) a.push(emptyDay()); return a; })();
 var curDay=0, curView='grid', hiddenR={}, hiddenH={}, searchQ='';
-var curTab='highlights'; // 'highlights' | 'day'
 var editSpkId=null, editTalkId=null, pickedSpks=[], photoData=null, pkQ='';
 var pickedSpk=null;
 
@@ -1655,7 +1666,7 @@ function showPage(p){
   } else if(p==='spk'){
     if(WP_ENABLED){
       document.getElementById('pgAdmin').style.display='block';
-      if(mab){ mab.textContent='+ Novo Palestrante'; mab.onclick=function(){ openSpkForm(null); }; mab.style.display=''; }
+      if(mab){ mab.style.display='none'; }
       renderSpkGrid();
       _animIn(document.getElementById('pgAdmin'));
     } else {
@@ -1669,14 +1680,15 @@ function showPage(p){
 }
 function _animIn(el){ if(!el) return; el.classList.remove('pg-anim'); void el.offsetWidth; el.classList.add('pg-anim'); }
 function _applyAgendaTab(){
-  var hl = (curTab==='highlights');
+  // Modelo de 3 páginas: Agenda mostra sempre a grade dos dias (sem aba Destaques).
+  if(curPage!=='agenda') return;
   var pgH=document.getElementById('pgHighlights'), pgA=document.getElementById('pgAgenda'), dc=document.getElementById('dayControls');
-  if(pgH) pgH.style.display = hl?'block':'none';
-  if(pgA) pgA.style.display = hl?'none':'block';
-  if(dc)  dc.style.display  = hl?'none':'block';
+  if(pgH) pgH.style.display='none';
+  if(pgA) pgA.style.display='block';
+  if(dc)  dc.style.display='block';
   var mab=document.getElementById('btnAddTalk');
-  if(mab){ if(!hl && WP_ENABLED){ mab.textContent='+ Adicionar Palestra'; mab.onclick=openAddTalk; mab.style.display=''; } else { mab.style.display='none'; } }
-  if(hl){ renderBento(); _animIn(pgH); } else { renderMain(); _animIn(pgA); }
+  if(mab){ if(WP_ENABLED){ mab.textContent='+ Adicionar Palestra'; mab.onclick=openAddTalk; mab.style.display=''; } else { mab.style.display='none'; } }
+  renderMain();
 }
 function showHighlights(){ showPage('home'); }
 
@@ -3415,9 +3427,17 @@ function renderPubSpkGrid(q){
 
   g.className='pub-spk-grid'+(_spkView==='list'?' view-list':_spkView==='compact'?' view-compact':_spkView==='wide'?' view-wide':'');
   var h='';
-
+  list=list.slice().sort(function(a,b){ return ((a.category==='curator')?1:0)-((b.category==='curator')?1:0); });
+  var _hasCur=list.some(function(x){return x.category==='curator';});
+  var _lastCat=null;
   for(var i=0;i<list.length;i++){
     var s=list[i];
+    var catCls=(s.category==='curator')?' cat-curator':'';
+    var _tc2=(s.category==='curator')?'curator':'speaker';
+    if(_hasCur && _tc2!==_lastCat){
+      h+='<div class="spk-section-title"><span class="dot" style="background:'+(_tc2==='curator'?'var(--ring-curator)':'var(--ring-speaker)')+'"></span>'+(_tc2==='curator'?t18('spkCurators'):t18('spkSpeakers'))+'</div>';
+      _lastCat=_tc2;
+    }
     var tc=talksFor(s.id);
     var tcBadge=tc?'<span style="margin-left:6px;font-size:11px;font-weight:700;color:var(--blue);background:var(--blue-lt);padding:2px 7px;border-radius:10px;white-space:nowrap;">'+tc+' palestra'+(tc!==1?'s':'')+'</span>':'';
 
@@ -3427,7 +3447,7 @@ function renderPubSpkGrid(q){
       var avSm=s.photo
         ?'<img class="pub-spk-ph photo-clickable" src="'+s.photo+'" alt="'+esc(s.name)+'" style="width:'+sz+'px;height:'+sz+'px;min-width:'+sz+'px;" onclick="event.stopPropagation();openPhotoLb(\''+s.photo+'\',\''+esc(s.name)+'\',\''+esc(s.role||'')+'\',\''+esc(s.company||'')+'\')">'
         :'<div class="pub-spk-ini" style="background:'+avColor(s.name)+';width:'+sz+'px;height:'+sz+'px;min-width:'+sz+'px;font-size:'+(sz===52?17:16)+'px;margin-bottom:0;">'+initials(s.name)+'</div>';
-      h+='<div class="pub-spk-card" onclick="viewSpk(\''+s.id+'\')">'+avSm+
+      h+='<div class="pub-spk-card'+catCls+'" onclick="viewSpk(\''+s.id+'\')">'+avSm+
         '<div class="pub-spk-list-info">'+
           '<div class="pub-spk-name" style="text-align:left;font-size:'+(sz===52?13:14)+'px;">'+esc(s.name)+'</div>'+
           (s.role?'<div class="pub-spk-role" style="text-align:left;font-size:'+(sz===52?12:13)+'px;">'+esc(s.role)+'</div>':'')+
@@ -3439,7 +3459,7 @@ function renderPubSpkGrid(q){
       var avLg=s.photo
         ?'<img class="pub-spk-ph photo-clickable" src="'+s.photo+'" alt="'+esc(s.name)+'" onclick="event.stopPropagation();openPhotoLb(\''+s.photo+'\',\''+esc(s.name)+'\',\''+esc(s.role||'')+'\',\''+esc(s.company||'')+'\')">'
         :'<div class="pub-spk-ini" style="background:'+avColor(s.name)+'">'+initials(s.name)+'</div>';
-      h+='<div class="pub-spk-card" onclick="viewSpk(\''+s.id+'\')">'+avLg+
+      h+='<div class="pub-spk-card'+catCls+'" onclick="viewSpk(\''+s.id+'\')">'+avLg+
         '<div class="pub-spk-name">'+esc(s.name)+'</div>'+
         (s.role?'<div class="pub-spk-role">'+esc(s.role)+'</div>':'')+
         (s.company?'<div class="pub-spk-co">'+esc(s.company)+'</div>':'')+
@@ -3478,9 +3498,18 @@ function renderSpkGrid(){
   var g=document.getElementById('spkGrid');
   if(!SPEAKERS.length){ g.innerHTML='<div class="spk-empty"><div style="font-size:44px;opacity:.3;margin-bottom:11px">🎤</div><div style="font-size:15px;font-weight:500;margin-bottom:7px">Nenhum palestrante cadastrado</div><button class="btn btn-p" onclick="openSpkForm(null)">+ Cadastrar Primeiro Palestrante</button></div>'; return; }
   var h='';
-  for(var i=0;i<SPEAKERS.length;i++){
-    var s=SPEAKERS[i],av=s.photo?'<img class="spk-ph photo-clickable" src="'+s.photo+'" alt="" onclick="event.stopPropagation();openPhotoLb(\''+s.photo+'\',\''+esc(s.name)+'\',\''+esc(s.role||'')+'\',\''+esc(s.company||'')+'\')">'  :'<div class="spk-ini" style="background:'+avColor(s.name)+'">'+initials(s.name)+'</div>';
-    h+='<div class="spk-card" onclick="viewSpk(\''+s.id+'\')"><div class="spk-acts">'+
+  var _arr=SPEAKERS.slice().sort(function(a,b){ return ((a.category==='curator')?1:0)-((b.category==='curator')?1:0); });
+  var _hasCurA=_arr.some(function(x){return x.category==='curator';});
+  var _lastCatA=null;
+  for(var i=0;i<_arr.length;i++){
+    var s=_arr[i],av=s.photo?'<img class="spk-ph photo-clickable" src="'+s.photo+'" alt="" onclick="event.stopPropagation();openPhotoLb(\''+s.photo+'\',\''+esc(s.name)+'\',\''+esc(s.role||'')+'\',\''+esc(s.company||'')+'\')">'  :'<div class="spk-ini" style="background:'+avColor(s.name)+'">'+initials(s.name)+'</div>';
+    var catCls=(s.category==='curator')?' cat-curator':'';
+    var _tc3=(s.category==='curator')?'curator':'speaker';
+    if(_hasCurA && _tc3!==_lastCatA){
+      h+='<div class="spk-section-title"><span class="dot" style="background:'+(_tc3==='curator'?'var(--ring-curator)':'var(--ring-speaker)')+'"></span>'+(_tc3==='curator'?t18('spkCurators'):t18('spkSpeakers'))+'</div>';
+      _lastCatA=_tc3;
+    }
+    h+='<div class="spk-card'+catCls+'" onclick="viewSpk(\''+s.id+'\')"><div class="spk-acts">'+
        '<button class="btn" style="padding:3px 7px;font-size:12px" onclick="event.stopPropagation();openSpkForm(\''+s.id+'\')">✏️</button>'+
        '<button class="btn btn-d" style="padding:3px 7px;font-size:12px" onclick="event.stopPropagation();deleteSpk(\''+s.id+'\')">🗑</button></div>'+
        av+'<div class="spk-name">'+esc(s.name)+'</div><div class="spk-role">'+esc(s.role||'')+'</div><div class="spk-co">'+esc(s.company||'')+'</div>'+(s.bio?'<div class="spk-bio">'+esc(s.bio)+'</div>':'')+'</div>';
@@ -3712,14 +3741,15 @@ function saveSpk(){
   var co=document.getElementById('spkCo').value.trim();
   var bio=document.getElementById('spkBio').value.trim();
   var linkedin=(document.getElementById('spkLinkedin').value||'').trim();
+  var cat=((document.getElementById('spkCat')||{}).value)||'speaker';
   if(editSpkId){
     for(var i=0;i<SPEAKERS.length;i++) if(SPEAKERS[i].id===editSpkId){
-      SPEAKERS[i]={id:editSpkId,name:name,role:role,company:co,bio:bio,photo:photoData,linkedin:linkedin};
+      SPEAKERS[i]={id:editSpkId,name:name,role:role,company:co,bio:bio,photo:photoData,linkedin:linkedin,category:cat};
       break;
     }
     updateTalkSpeakerNames(editSpkId, name);
   } else {
-    SPEAKERS.push({id:makeId('spk'),name:name,role:role,company:co,bio:bio,photo:photoData||null,linkedin:linkedin});
+    SPEAKERS.push({id:makeId('spk'),name:name,role:role,company:co,bio:bio,photo:photoData||null,linkedin:linkedin,category:cat});
   }
   document.getElementById('spkBadge').textContent=SPEAKERS.length;
   var _spkObj = editSpkId ? findSpk(editSpkId) : SPEAKERS[SPEAKERS.length-1];
@@ -3944,8 +3974,9 @@ function _sbReload(){
     _sbApplying=true;
     _applySBData(d);
     renderLegend(); renderDayTabs();
-    if(curPage==='agenda'){ _applyAgendaTab(); }
-    else if(curPage==='spk'){ if(typeof renderPubSpkGrid==='function') renderPubSpkGrid(_pubSpkQ||''); if(WP_ENABLED && typeof renderSpkGrid==='function') renderSpkGrid(); }
+    if(curPage==='agenda'){ _setActiveDay(curDay); renderMain(); }
+    else if(curPage==='home'){ renderBento(); }
+    else if(curPage==='spk'){ if(WP_ENABLED && typeof renderSpkGrid==='function'){ renderSpkGrid(); } else if(typeof renderPubSpkGrid==='function'){ renderPubSpkGrid(_pubSpkQ||''); } }
     var b=document.getElementById('spkBadge'); if(b) b.textContent=SPEAKERS.length;
     _sbApplying=false;
   }).catch(function(){ _sbApplying=false; });
