@@ -198,6 +198,12 @@ body[data-mode="edit"] .btile:hover .btile-edit{display:flex;}
 .btn:hover{background:var(--bg);color:var(--text);}
 .btn.on,.btn-p{background:var(--blue);color:#fff;border-color:var(--blue);}
 .btn.on:hover,.btn-p:hover{background:var(--blue-dk);color:#fff;border-color:var(--blue-dk);}
+.tools-menu{position:absolute;top:calc(100% + 6px);right:0;background:var(--surface);border:1px solid var(--border);border-radius:11px;box-shadow:var(--sh);padding:6px;min-width:196px;z-index:400;display:none;flex-direction:column;gap:1px;}
+.tools-menu.open{display:flex;}
+.tools-menu button{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:none;border:none;color:var(--text);font-family:var(--font);font-size:13px;font-weight:500;padding:9px 11px;border-radius:8px;cursor:pointer;white-space:nowrap;}
+.tools-menu button:hover{background:var(--bg);}
+.tools-menu button.danger{color:#d93025;}
+.tools-menu button.danger:hover{background:rgba(217,48,37,.08);}
 .btn-d{background:#dc2626;color:#fff;border-color:#dc2626;}
 .btn-d:hover{background:#b91c1c;}
 .btn-gcal{background:var(--surface);color:var(--blue);border-color:var(--border);display:inline-flex;align-items:center;gap:4px;}
@@ -449,7 +455,7 @@ body[data-mode="edit"] .btile:hover .btile-edit{display:flex;}
 .pub-spk-name{font-family:var(--font);font-size:15px;font-weight:600;margin-bottom:3px;color:var(--text);}
 .pub-spk-role{font-size:13px;color:var(--blue);margin-bottom:2px;}
 /* Anéis por categoria (cor via --ring definido inline por card) */
-.spk-ph,.spk-ini,.pub-spk-ph,.pub-spk-ini{border-color:var(--ring,var(--border));}
+.spk-ph,.spk-ini,.pub-spk-ph,.pub-spk-ini,img.spk-ph,img.pub-spk-ph{border-color:var(--ring,var(--border))!important;}
 .spk-ini,.pub-spk-ini{border-width:3px;border-style:solid;box-sizing:border-box;}
 .spk-section-title{grid-column:1/-1;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text2);margin:10px 2px 2px;display:flex;align-items:center;gap:8px;}
 .spk-section-title .dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
@@ -1134,11 +1140,16 @@ body[data-cardstyle="tint"] .lcard{
     <span id="saveIndicator" style="font-size:12px;color:#0f9d58;display:none;align-items:center;gap:4px;"></span>
     <!-- Botões só para editores (WP_ENABLED) -->
     <button class="btn btn-p" id="btnAddTalk" onclick="openAddTalk()" style="display:none">+ Adicionar Palestra</button>
-    <button class="btn" id="btnExport" onclick="doExport()" title="Exportar CSV" style="display:none">⬇ CSV</button>
-    <button class="btn" id="btnSlot" onclick="openSlotManager()" title="Gerenciar Horários" style="display:none">⏰</button>
-    <button class="btn" id="btnHubRoom" onclick="openHubRoomManager()" title="Gerenciar Hubs e Salas" style="display:none">🏷️</button>
-    <button class="btn" id="btnBackup" onclick="openBackupModal()" title="Backup e Restauração" style="display:none">💾 Backup</button>
-    <button class="btn" id="btnClear" onclick="clearAllData()" title="Apagar todos os dados" style="color:#d93025;border-color:#d93025;display:none">🗑</button>
+    <div class="tools-dd" id="toolsDd" style="display:none;position:relative;">
+      <button class="btn" id="btnTools" onclick="toggleToolsMenu(event)" title="Ferramentas de edição">🛠 <span class="tools-lbl">Ferramentas</span> ▾</button>
+      <div class="tools-menu" id="toolsMenu">
+        <button onclick="closeToolsMenu();openSlotManager()">⏰ Horários</button>
+        <button onclick="closeToolsMenu();openHubRoomManager()">🏷️ Gerenciar Tags</button>
+        <button onclick="closeToolsMenu();doExport()">⬇ Exportar CSV</button>
+        <button onclick="closeToolsMenu();openBackupModal()">💾 Backup</button>
+        <button class="danger" onclick="closeToolsMenu();clearAllData()">🗑 Apagar tudo</button>
+      </div>
+    </div>
     <div class="lang-switch" id="langSwitch">
       <button class="lang-btn" data-lang="pt" onclick="setLang('pt')">PT</button>
       <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
@@ -1171,7 +1182,6 @@ body[data-cardstyle="tint"] .lcard{
   <div class="ptab on" id="ptHome" onclick="showPage('home')">🏠 <span data-i18n="navHome">Início</span></div>
   <div class="ptab" id="ptAgenda" onclick="showPage('agenda')">📅 <span data-i18n="tabAgenda">Agenda</span></div>
   <div class="ptab" id="ptSpk" onclick="showPage('spk')">🎤 <span data-i18n="tabSpk">Palestrantes</span> <span class="badge" id="spkBadge">0</span></div>
-  <div class="ptab" id="ptAdmin" onclick="showPage('admin')" style="display:none">⚙️ Gerenciar Palestrantes</div>
   <div class="tabs-srch">
     <i>🔍</i>
     <input id="srchInput" type="text" data-i18n-ph="searchPh" placeholder="Buscar palestra ou palestrante…" oninput="onSearch()" onfocus="showSearchDrop('srchDrop')" onblur="hideSearchDropDelayed('srchDrop')" autocomplete="off">
@@ -1606,10 +1616,9 @@ window.addEventListener('latimpacto-log', function(){ if(document.getElementById
 
 function applyMode(){
   var ed = WP_ENABLED;
-  ['btnAddTalk','btnExport','btnSlot','btnHubRoom','btnClear','btnBackup'].forEach(function(id){
-    var el=document.getElementById(id); if(el) el.style.display = ed?'':'none';
+  ['btnAddTalk','toolsDd'].forEach(function(id){
+    var el=document.getElementById(id); if(el) el.style.display = ed?(id==='toolsDd'?'inline-flex':''):'none';
   });
-  var pa=document.getElementById('ptAdmin'); if(pa) pa.style.display = ed?'':'none';
   var kb = document.getElementById('authKeyBtn');
   if(kb){
     kb.className = 'auth-key-btn'+(ed?' logged':'');
@@ -1624,6 +1633,9 @@ function applyMode(){
 // ════════════════════════════════════════
 // PAGE SWITCH
 // ════════════════════════════════════════
+function toggleToolsMenu(e){ if(e){ e.stopPropagation(); } var m=document.getElementById('toolsMenu'); if(m) m.classList.toggle('open'); }
+function closeToolsMenu(){ var m=document.getElementById('toolsMenu'); if(m) m.classList.remove('open'); }
+document.addEventListener('click',function(e){ var dd=document.getElementById('toolsDd'); if(dd && !dd.contains(e.target)) closeToolsMenu(); });
 var curPage = 'home';
 function _syncRail(){
   var map={home:'railHome',agenda:'railAgenda',spk:'railSpk'};
@@ -2029,11 +2041,14 @@ function openHubRoomManager(){
 }
 
 function _renderHubRoomModal(tab){
-  var isHubs = tab === 'hubs';
+  var isHubs=tab==='hubs', isRooms=tab==='rooms', isCats=tab==='cats';
+  if(isCats && !_catDraft) _catDraft=JSON.parse(JSON.stringify(getCategories()));
+  function _ttab(t,lbl,act){ return '<button onclick="_renderHubRoomModal(\''+t+'\')" style="flex:1;padding:8px 6px;background:'+(act?'var(--blue)':'transparent')+';color:'+(act?'#fff':'var(--text)')+';border:none;border-radius:6px 6px 0 0;cursor:pointer;font-weight:600;font-size:13px;white-space:nowrap;">'+lbl+'</button>'; }
   var tabBar =
     '<div style="display:flex;gap:0;margin-bottom:14px;border-bottom:2px solid var(--border);">'+
-      '<button onclick="_renderHubRoomModal(\'hubs\')" style="flex:1;padding:8px;background:'+(isHubs?'var(--blue)':'transparent')+';color:'+(isHubs?'#fff':'var(--text)')+';border:none;border-radius:6px 6px 0 0;cursor:pointer;font-weight:600;font-size:13px;">🏷️ Hubs ('+HUBS.length+')</button>'+
-      '<button onclick="_renderHubRoomModal(\'rooms\')" style="flex:1;padding:8px;background:'+(!isHubs?'var(--blue)':'transparent')+';color:'+(!isHubs?'#fff':'var(--text)')+';border:none;border-radius:6px 6px 0 0;cursor:pointer;font-weight:600;font-size:13px;">🚪 Salas ('+ROOMS.length+')</button>'+
+      _ttab('hubs','🏷️ Hubs ('+HUBS.length+')',isHubs)+
+      _ttab('rooms','🚪 Salas ('+ROOMS.length+')',isRooms)+
+      _ttab('cats','👥 Categorias ('+getCategories().length+')',isCats)+
     '</div>';
 
   var listHTML = '';
@@ -2048,7 +2063,7 @@ function _renderHubRoomModal(tab){
           '<button class="btn btn-d" style="font-size:11px;padding:3px 8px" onclick="deleteHub('+i+')">🗑</button>'+
         '</div>';
     }
-  } else {
+  } else if(isRooms){
     for(var i=0;i<ROOMS.length;i++){
       var rm = ROOMS[i];
       listHTML +=
@@ -2060,7 +2075,7 @@ function _renderHubRoomModal(tab){
     }
   }
 
-  var addForm = isHubs
+  var addForm = isCats ? '' : isHubs
     ? '<div style="background:var(--bg);border-radius:8px;padding:12px;border:1px solid var(--border);margin-top:10px;">'+
         '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:8px;">ADICIONAR HUB</div>'+
         '<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">'+
@@ -2075,14 +2090,11 @@ function _renderHubRoomModal(tab){
           '<button class="btn btn-p" onclick="addRoom()">+ Adicionar</button>'+
         '</div></div>';
 
-  openModal(
-    '🏷️ Gerenciar Hubs e Salas',
-    tabBar +
-    '<div style="max-height:280px;overflow-y:auto;">'+listHTML+'</div>'+
-    addForm,
-    '<button class="btn" onclick="closeModal()">Fechar</button>',
-    false
-  );
+  var bodyInner = isCats ? _catEditorHTML() : ('<div style="max-height:300px;overflow-y:auto;">'+listHTML+'</div>'+addForm);
+  var ftr = isCats
+    ? '<button class="btn" onclick="closeModal()">Fechar</button><button class="btn btn-p" onclick="catMgrSave()">Salvar categorias</button>'
+    : '<button class="btn" onclick="closeModal()">Fechar</button>';
+  openModal('🏷️ Gerenciar Tags', tabBar + bodyInner, ftr, false);
 }
 
 // ── HUB CRUD ────────────────────────────
@@ -3563,25 +3575,19 @@ function openSpkForm(id){
 function _catSelectField(s){
   var cur=(s&&s.category)?s.category:'speaker';
   var opts=getCategories().map(function(c){ return '<option value="'+esc(c.id)+'"'+(c.id===cur?' selected':'')+'>'+esc(c.name)+'</option>'; }).join('');
-  return '<div class="fg"><label class="fl" style="display:flex;justify-content:space-between;align-items:center;gap:8px;">'+t18('catLabel')+
-    '<button type="button" style="font-size:12px;color:var(--blue);background:none;border:none;cursor:pointer;padding:0;font-weight:600;" onclick="openCategoryManager()">⚙ '+t18('manageCats')+'</button>'+
-    '</label><select id="spkCat" class="fi">'+opts+'</select></div>';
+  return '<div class="fg"><label class="fl">'+t18('catLabel')+'</label><select id="spkCat" class="fi">'+opts+'</select></div>';
 }
 var _catDraft=null;
 var CAT_PALETTE=['#b388e0','#8135b7','#611780','#F5A26C','#d97e44','#3f8f63','#2f8f80','#3f7fa6','#4a63b0','#a8467f','#b07d2e','#b4453f','#727272'];
-function openCategoryManager(){
-  if(!WP_ENABLED) return;
-  _catDraft=JSON.parse(JSON.stringify(getCategories()));
-  _renderCatManager();
-}
+function openCategoryManager(){ if(!WP_ENABLED) return; _catDraft=null; _renderHubRoomModal('cats'); }
 function _catMgrCapture(){
   if(!_catDraft) return;
   for(var i=0;i<_catDraft.length;i++){ var e=document.getElementById('catName'+i); if(e) _catDraft[i].name=e.value; }
 }
-function catMgrPick(i,col){ _catMgrCapture(); if(_catDraft[i]) _catDraft[i].color=col; _renderCatManager(); }
-function catMgrAdd(){ _catMgrCapture(); _catDraft.push({id:'cat-'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),name:'',color:CAT_PALETTE[_catDraft.length%CAT_PALETTE.length]}); _renderCatManager(); }
-function catMgrDel(i){ _catMgrCapture(); _catDraft.splice(i,1); _renderCatManager(); }
-function _renderCatManager(){
+function catMgrPick(i,col){ _catMgrCapture(); if(_catDraft[i]) _catDraft[i].color=col; _renderHubRoomModal('cats'); }
+function catMgrAdd(){ _catMgrCapture(); _catDraft.push({id:'cat-'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),name:'',color:CAT_PALETTE[_catDraft.length%CAT_PALETTE.length]}); _renderHubRoomModal('cats'); }
+function catMgrDel(i){ _catMgrCapture(); _catDraft.splice(i,1); _renderHubRoomModal('cats'); }
+function _catEditorHTML(){
   var b='<div style="display:flex;flex-direction:column;gap:12px;">';
   for(var i=0;i<_catDraft.length;i++){ var c=_catDraft[i];
     var sw='';
@@ -3598,20 +3604,18 @@ function _renderCatManager(){
      '</div>';
   }
   b+='</div><button class="btn" type="button" onclick="catMgrAdd()" style="margin-top:12px;">+ '+t18('addCat')+'</button>';
-  var ftr='<button class="btn" onclick="_catMgrReturn()">'+t18('hlCancel')+'</button><button class="btn btn-p" onclick="catMgrSave()">'+t18('catSave')+'</button>';
-  openModal(t18('catMgrTitle'), b, ftr, false);
+  return b;
 }
-function _catMgrReturn(){ if(typeof editSpkId!=='undefined' && editSpkId!==undefined && editSpkId!==null){ openSpkForm(editSpkId); } else { closeModal(); } }
 function catMgrSave(){
   _catMgrCapture();
   var clean=_catDraft.filter(function(c){ return (c.name||'').trim(); });
   if(!clean.length){ alert(t18('catEmpty')); return; }
   clean.forEach(function(c){ if(!c.id) c.id='cat-'+Date.now().toString(36)+Math.random().toString(36).slice(2,5); c.name=c.name.trim(); });
-  SPK_CATEGORIES=clean;
+  SPK_CATEGORIES=clean; _catDraft=JSON.parse(JSON.stringify(clean));
   if(window.SB&&SB.enabled){ SB.saveConfig({rooms:ROOMS,hubs:HUBS,hubColors:HUB_COLORS,slots:SLOTS,days:DAYS,highlights:HIGHLIGHTS,categories:SPK_CATEGORIES}); } else { saveData(); }
   logAction('Editou as categorias de participantes','');
   renderSpkGrid(); renderPubSpkGrid(_pubSpkQ||'');
-  _catMgrReturn();
+  _renderHubRoomModal('cats');
 }
 
 // ────────────────────────────────────────
@@ -4055,12 +4059,13 @@ function _sbReload(){
 function loadData(callback){
   if(window.SB && SB.enabled){
     SB.loadAll().then(function(d){
-      var hasData = d && ((d.talks&&d.talks.length) || (d.speakers&&d.speakers.length) || (d.config&&((d.config.rooms&&d.config.rooms.length)||d.config.highlights)));
-      if(hasData){ _applySBData(d); } else { _loadSeed(); }
+      // Supabase é a única fonte: banco vazio = app vazio (NUNCA recarrega exemplos).
+      _applySBData(d||{config:{}});
       if(!HIGHLIGHTS) HIGHLIGHTS=_defaultHighlights();
+      getCategories();
       _sbSubscribe();
       if(callback) callback();
-    }).catch(function(e){ try{console.warn('[SB] load falhou; usando local',e);}catch(_){} _loadSavedOrSeed(); if(callback) callback(); });
+    }).catch(function(e){ try{console.warn('[SB] load falhou',e);}catch(_){} SPEAKERS=[]; SCHEDULES=(function(){var a=[];for(var i=0;i<NDAYS;i++)a.push(emptyDay());return a;})(); if(!HIGHLIGHTS) HIGHLIGHTS=_defaultHighlights(); getCategories(); _sbSubscribe(); if(callback) callback(); });
     return;
   }
   _loadSavedOrSeed(); if(callback) callback();
@@ -4581,9 +4586,9 @@ function toggleDark(){
 function initDarkMode(){
   try{
     var saved = localStorage.getItem('agenda_darkmode');
-    // Se não tem preferência salva, respeita o sistema
+    // Sem preferência salva → modo CLARO por padrão.
     if(saved === null){
-      _darkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      _darkMode = false;
     } else {
       _darkMode = saved === '1';
     }
