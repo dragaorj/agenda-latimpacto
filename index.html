@@ -448,18 +448,11 @@ body[data-mode="edit"] .btile:hover .btile-edit{display:flex;}
 .pub-spk-ini{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font);font-size:28px;font-weight:500;color:#fff;margin-bottom:11px;flex-shrink:0;}
 .pub-spk-name{font-family:var(--font);font-size:15px;font-weight:600;margin-bottom:3px;color:var(--text);}
 .pub-spk-role{font-size:13px;color:var(--blue);margin-bottom:2px;}
-/* Anéis por categoria: Palestrante (roxo claro) / Curador (laranja) */
-:root{--ring-speaker:#b388e0;--ring-curator:#F5A26C;}
-[data-theme="dark"]{--ring-speaker:#b18fd9;--ring-curator:#F5A26C;}
-.spk-ph,.pub-spk-ph{border-color:var(--ring-speaker)!important;}
-.spk-ini,.pub-spk-ini{border:3px solid var(--ring-speaker);box-sizing:border-box;}
-.cat-curator .spk-ph,.cat-curator .pub-spk-ph{border-color:var(--ring-curator)!important;}
-.cat-curator .spk-ini,.cat-curator .pub-spk-ini{border-color:var(--ring-curator);}
+/* Anéis por categoria (cor via --ring definido inline por card) */
+.spk-ph,.spk-ini,.pub-spk-ph,.pub-spk-ini{border-color:var(--ring,var(--border));}
+.spk-ini,.pub-spk-ini{border-width:3px;border-style:solid;box-sizing:border-box;}
 .spk-section-title{grid-column:1/-1;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text2);margin:10px 2px 2px;display:flex;align-items:center;gap:8px;}
 .spk-section-title .dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
-.cat-badge{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:2px 8px;border-radius:20px;margin-top:5px;}
-.cat-badge.cur{background:color-mix(in srgb,var(--ring-curator) 18%,transparent);color:var(--orange-dk);}
-[data-theme="dark"] .cat-badge.cur{color:var(--ring-curator);}
 .pub-spk-co{font-size:13px;color:var(--text2);margin-bottom:7px;}
 .pub-spk-bio{font-size:13px;color:var(--text2);line-height:1.45;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
 .pub-spk-empty{grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--text2);}
@@ -1292,8 +1285,8 @@ body[data-cardstyle="tint"] .lcard{
   <div id="pgAdmin" style="display:none;">
     <div style="padding:22px 20px;">
       <div class="spk-hdr">
-        <h2>Palestrantes Cadastrados</h2>
-        <button class="btn btn-p" onclick="openSpkForm(null)">+ Novo Palestrante</button>
+        <h2>Participantes Cadastrados</h2>
+        <button class="btn btn-p" onclick="openSpkForm(null)">+ Novo Participante</button>
       </div>
       <div class="spk-grid" id="spkGrid"></div>
     </div>
@@ -1396,21 +1389,21 @@ var LANG='pt';
 try{ var _sl=localStorage.getItem('latimpacto_lang'); if(_sl&&['pt','en','es'].indexOf(_sl)>-1) LANG=_sl; }catch(e){}
 function L(v){ if(v&&typeof v==='object'&&!Array.isArray(v)) return v[LANG]||v.pt||v.en||v.es||''; return (v==null?'':v); }
 var I18N={
-  pt:{ appTitle:'Agenda', tabAgenda:'Agenda', tabSpk:'Palestrantes', viewGrid:'Grade', viewCards:'Cards', viewList:'Lista',
-       searchPh:'Buscar palestra ou palestrante…', searchSpkPh:'Buscar palestrante…', allHubs:'TODOS OS HUBS',
-       talks:'palestras', rooms:'salas', speakers:'Palestrantes', filters:'Filtros', clearF:'Limpar',
+  pt:{ appTitle:'Agenda', tabAgenda:'Agenda', tabSpk:'Participantes', viewGrid:'Grade', viewCards:'Cards', viewList:'Lista',
+       searchPh:'Buscar palestra ou palestrante…', searchSpkPh:'Buscar participante…', allHubs:'TODOS OS HUBS',
+       talks:'palestras', rooms:'salas', speakers:'Participantes', filters:'Filtros', clearF:'Limpar',
        roomsPhys:'Salas Físicas', hubsThemes:'Hubs / Temas', descLabel:'Descrição', noResults:'Nenhuma palestra encontrada.',
-       tabHighlights:'Destaques', navHome:'Início', spkSpeakers:'Palestrantes', spkCurators:'Curadores', catLabel:'Categoria', catSpeaker:'Palestrante', catCurator:'Curador', navManage:'Gerenciar', navEditHl:'Editar Destaques', navTheme:'Tema', navLogin:'Entrar', navAccount:'Minha conta', hlCountdown:'Contagem regressiva', hlDays:'dias', hlHours:'horas', hlToGo:'para o evento', hlLive:'Acontecendo agora', hlNumbers:'O evento em números', hlSpeakers:'Vozes do palco', hlSeeAll:'Ver todos', hlOpening:'Abertura', hlNext:'Em destaque', hlEditTitle:'Editar Destaques', hlHero:'Capa (hero)', hlCoverImg:'Imagem da capa', hlChooseImg:'Escolher imagem', hlRemoveImg:'Remover', hlImgHint:'JPG/PNG · convertida p/ WebP < 100 KB', hlTitleLbl:'Título', hlSubtitleLbl:'Subtítulo', hlAutoLbl:'Blocos automáticos', hlManualLbl:'Blocos personalizados', hlAddCard:'Adicionar bloco', hlLinkTalk:'Vincular a uma palestra (opcional)', hlNoLink:'— Nenhuma —', hlAccent:'Cor do filete', hlSave:'Salvar', hlCancel:'Cancelar', hlShowCountdown:'Contagem regressiva', hlShowStats:'Números do evento', hlShowOpening:'Abertura do evento', hlShowSpeakers:'Vozes do palco', hlEmptyManual:'Nenhum bloco personalizado ainda.' },
-  en:{ appTitle:'Agenda', tabAgenda:'Agenda', tabSpk:'Speakers', viewGrid:'Grid', viewCards:'Cards', viewList:'List',
-       searchPh:'Search a session or speaker…', searchSpkPh:'Search speaker…', allHubs:'ALL HUBS',
-       talks:'sessions', rooms:'rooms', speakers:'Speakers', filters:'Filters', clearF:'Clear',
+       tabHighlights:'Destaques', navHome:'Início', spkSpeakers:'Palestrantes', spkCurators:'Curadores', catLabel:'Categoria', catSpeaker:'Palestrante', catCurator:'Curador', manageCats:'Gerenciar categorias', catMgrTitle:'Categorias de participantes', addCat:'Adicionar categoria', catNamePh:'Nome da categoria', catColorLbl:'Cor', catSave:'Salvar categorias', catEmpty:'Defina ao menos uma categoria.', navManage:'Gerenciar', navEditHl:'Editar Destaques', navTheme:'Tema', navLogin:'Entrar', navAccount:'Minha conta', hlCountdown:'Contagem regressiva', hlDays:'dias', hlHours:'horas', hlToGo:'para o evento', hlLive:'Acontecendo agora', hlNumbers:'O evento em números', hlSpeakers:'Vozes do palco', hlSeeAll:'Ver todos', hlOpening:'Abertura', hlNext:'Em destaque', hlEditTitle:'Editar Destaques', hlHero:'Capa (hero)', hlCoverImg:'Imagem da capa', hlChooseImg:'Escolher imagem', hlRemoveImg:'Remover', hlImgHint:'JPG/PNG · convertida p/ WebP < 100 KB', hlTitleLbl:'Título', hlSubtitleLbl:'Subtítulo', hlAutoLbl:'Blocos automáticos', hlManualLbl:'Blocos personalizados', hlAddCard:'Adicionar bloco', hlLinkTalk:'Vincular a uma palestra (opcional)', hlNoLink:'— Nenhuma —', hlAccent:'Cor do filete', hlSave:'Salvar', hlCancel:'Cancelar', hlShowCountdown:'Contagem regressiva', hlShowStats:'Números do evento', hlShowOpening:'Abertura do evento', hlShowSpeakers:'Vozes do palco', hlEmptyManual:'Nenhum bloco personalizado ainda.' },
+  en:{ appTitle:'Agenda', tabAgenda:'Agenda', tabSpk:'Participants', viewGrid:'Grid', viewCards:'Cards', viewList:'List',
+       searchPh:'Search a session or speaker…', searchSpkPh:'Search participant…', allHubs:'ALL HUBS',
+       talks:'sessions', rooms:'rooms', speakers:'Participants', filters:'Filters', clearF:'Clear',
        roomsPhys:'Rooms', hubsThemes:'Hubs / Themes', descLabel:'Description', noResults:'No sessions found.',
-       tabHighlights:'Highlights', navHome:'Home', spkSpeakers:'Speakers', spkCurators:'Curators', catLabel:'Category', catSpeaker:'Speaker', catCurator:'Curator', navManage:'Manage', navEditHl:'Edit Highlights', navTheme:'Theme', navLogin:'Sign in', navAccount:'My account', hlCountdown:'Countdown', hlDays:'days', hlHours:'hours', hlToGo:'to the event', hlLive:'Happening now', hlNumbers:'The event in numbers', hlSpeakers:'Voices on stage', hlSeeAll:'See all', hlOpening:'Opening', hlNext:'Featured', hlEditTitle:'Edit Highlights', hlHero:'Hero', hlCoverImg:'Cover image', hlChooseImg:'Choose image', hlRemoveImg:'Remove', hlImgHint:'JPG/PNG · converted to WebP < 100 KB', hlTitleLbl:'Title', hlSubtitleLbl:'Subtitle', hlAutoLbl:'Automatic blocks', hlManualLbl:'Custom blocks', hlAddCard:'Add block', hlLinkTalk:'Link to a session (optional)', hlNoLink:'— None —', hlAccent:'Accent color', hlSave:'Save', hlCancel:'Cancel', hlShowCountdown:'Countdown', hlShowStats:'Event numbers', hlShowOpening:'Event opening', hlShowSpeakers:'Voices on stage', hlEmptyManual:'No custom blocks yet.' },
-  es:{ appTitle:'Agenda', tabAgenda:'Agenda', tabSpk:'Ponentes', viewGrid:'Cuadrícula', viewCards:'Tarjetas', viewList:'Lista',
-       searchPh:'Buscar sesión o ponente…', searchSpkPh:'Buscar ponente…', allHubs:'TODOS LOS HUBS',
-       talks:'sesiones', rooms:'salas', speakers:'Ponentes', filters:'Filtros', clearF:'Limpiar',
+       tabHighlights:'Highlights', navHome:'Home', spkSpeakers:'Speakers', spkCurators:'Curators', catLabel:'Category', catSpeaker:'Speaker', catCurator:'Curator', manageCats:'Manage categories', catMgrTitle:'Participant categories', addCat:'Add category', catNamePh:'Category name', catColorLbl:'Color', catSave:'Save categories', catEmpty:'Define at least one category.', navManage:'Manage', navEditHl:'Edit Highlights', navTheme:'Theme', navLogin:'Sign in', navAccount:'My account', hlCountdown:'Countdown', hlDays:'days', hlHours:'hours', hlToGo:'to the event', hlLive:'Happening now', hlNumbers:'The event in numbers', hlSpeakers:'Voices on stage', hlSeeAll:'See all', hlOpening:'Opening', hlNext:'Featured', hlEditTitle:'Edit Highlights', hlHero:'Hero', hlCoverImg:'Cover image', hlChooseImg:'Choose image', hlRemoveImg:'Remove', hlImgHint:'JPG/PNG · converted to WebP < 100 KB', hlTitleLbl:'Title', hlSubtitleLbl:'Subtitle', hlAutoLbl:'Automatic blocks', hlManualLbl:'Custom blocks', hlAddCard:'Add block', hlLinkTalk:'Link to a session (optional)', hlNoLink:'— None —', hlAccent:'Accent color', hlSave:'Save', hlCancel:'Cancel', hlShowCountdown:'Countdown', hlShowStats:'Event numbers', hlShowOpening:'Event opening', hlShowSpeakers:'Voices on stage', hlEmptyManual:'No custom blocks yet.' },
+  es:{ appTitle:'Agenda', tabAgenda:'Agenda', tabSpk:'Participantes', viewGrid:'Cuadrícula', viewCards:'Tarjetas', viewList:'Lista',
+       searchPh:'Buscar sesión o ponente…', searchSpkPh:'Buscar participante…', allHubs:'TODOS LOS HUBS',
+       talks:'sesiones', rooms:'salas', speakers:'Participantes', filters:'Filtros', clearF:'Limpiar',
        roomsPhys:'Salas', hubsThemes:'Hubs / Temas', descLabel:'Descripción', noResults:'No se encontraron sesiones.',
-       tabHighlights:'Destacados', navHome:'Inicio', spkSpeakers:'Ponentes', spkCurators:'Curadores', catLabel:'Categoría', catSpeaker:'Ponente', catCurator:'Curador', navManage:'Gestionar', navEditHl:'Editar Destacados', navTheme:'Tema', navLogin:'Entrar', navAccount:'Mi cuenta', hlCountdown:'Cuenta regresiva', hlDays:'días', hlHours:'horas', hlToGo:'para el evento', hlLive:'Sucediendo ahora', hlNumbers:'El evento en números', hlSpeakers:'Voces del escenario', hlSeeAll:'Ver todos', hlOpening:'Apertura', hlNext:'Destacado', hlEditTitle:'Editar Destacados', hlHero:'Portada', hlCoverImg:'Imagen de portada', hlChooseImg:'Elegir imagen', hlRemoveImg:'Quitar', hlImgHint:'JPG/PNG · convertida a WebP < 100 KB', hlTitleLbl:'Título', hlSubtitleLbl:'Subtítulo', hlAutoLbl:'Bloques automáticos', hlManualLbl:'Bloques personalizados', hlAddCard:'Agregar bloque', hlLinkTalk:'Vincular a una sesión (opcional)', hlNoLink:'— Ninguna —', hlAccent:'Color de acento', hlSave:'Guardar', hlCancel:'Cancelar', hlShowCountdown:'Cuenta regresiva', hlShowStats:'Números del evento', hlShowOpening:'Apertura del evento', hlShowSpeakers:'Voces del escenario', hlEmptyManual:'Aún no hay bloques personalizados.' }
+       tabHighlights:'Destacados', navHome:'Inicio', spkSpeakers:'Ponentes', spkCurators:'Curadores', catLabel:'Categoría', catSpeaker:'Ponente', catCurator:'Curador', manageCats:'Gestionar categorías', catMgrTitle:'Categorías de participantes', addCat:'Agregar categoría', catNamePh:'Nombre de la categoría', catColorLbl:'Color', catSave:'Guardar categorías', catEmpty:'Define al menos una categoría.', navManage:'Gestionar', navEditHl:'Editar Destacados', navTheme:'Tema', navLogin:'Entrar', navAccount:'Mi cuenta', hlCountdown:'Cuenta regresiva', hlDays:'días', hlHours:'horas', hlToGo:'para el evento', hlLive:'Sucediendo ahora', hlNumbers:'El evento en números', hlSpeakers:'Voces del escenario', hlSeeAll:'Ver todos', hlOpening:'Apertura', hlNext:'Destacado', hlEditTitle:'Editar Destacados', hlHero:'Portada', hlCoverImg:'Imagen de portada', hlChooseImg:'Elegir imagen', hlRemoveImg:'Quitar', hlImgHint:'JPG/PNG · convertida a WebP < 100 KB', hlTitleLbl:'Título', hlSubtitleLbl:'Subtítulo', hlAutoLbl:'Bloques automáticos', hlManualLbl:'Bloques personalizados', hlAddCard:'Agregar bloque', hlLinkTalk:'Vincular a una sesión (opcional)', hlNoLink:'— Ninguna —', hlAccent:'Color de acento', hlSave:'Guardar', hlCancel:'Cancelar', hlShowCountdown:'Cuenta regresiva', hlShowStats:'Números del evento', hlShowOpening:'Apertura del evento', hlShowSpeakers:'Voces del escenario', hlEmptyManual:'Aún no hay bloques personalizados.' }
 };
 function t18(k){ return (I18N[LANG]&&I18N[LANG][k])||I18N.pt[k]||k; }
 function updateLangBtn(){ var b=document.querySelectorAll('#langSwitch .lang-btn'); for(var i=0;i<b.length;i++){ b[i].classList.toggle('on', b[i].getAttribute('data-lang')===LANG); } }
@@ -1513,6 +1506,20 @@ var PROFILES_KEY = 'latimpacto_profiles_v1';
 var LOGS_KEY = 'latimpacto_logs_v1';
 var SESSION_KEY = 'latimpacto_session_v1';
 var HIGHLIGHTS = null; // preenchido no load (default ou salvo)
+// Categorias de participantes (editáveis: nome + cor). Persistidas na config.
+var SPK_CATEGORIES = null;
+function _defaultCategories(){
+  return [
+    {id:'speaker',   name:'Palestrantes',   color:'#b388e0'},
+    {id:'curator',   name:'Curadores',      color:'#F5A26C'},
+    {id:'guest',     name:'Convidados',     color:'#3f8f63'},
+    {id:'presenter', name:'Apresentadores', color:'#3f7fa6'}
+  ];
+}
+function getCategories(){ if(!Array.isArray(SPK_CATEGORIES)||!SPK_CATEGORIES.length) SPK_CATEGORIES=_defaultCategories(); return SPK_CATEGORIES; }
+function catById(id){ var c=getCategories(); for(var i=0;i<c.length;i++) if(c[i].id===id) return c[i]; return c[0]; }
+function catColor(s){ return catById(s&&s.category?s.category:'speaker').color; }
+function catName(id){ return catById(id).name; }
 function _defaultHighlights(){
   return {
     hero:{ image:'', title:{pt:'Impact Minds: Connecting Us',en:'Impact Minds: Connecting Us',es:'Impact Minds: Connecting Us'},
@@ -3393,7 +3400,7 @@ function renderPubSpkGrid(q){
            (s.company||'').toLowerCase().indexOf(q)>-1;
   }):SPEAKERS;
   var cnt=document.getElementById('pubSpkCount');
-  if(cnt) cnt.textContent=list.length+' palestrante'+(list.length!==1?'s':'');
+  if(cnt) cnt.textContent=list.length+' participante'+(list.length!==1?'s':'');
   var g=document.getElementById('pubSpkGrid'); if(!g) return;
 
   // Sincroniza botões de view (caso venha do _rerender)
@@ -3405,7 +3412,7 @@ function renderPubSpkGrid(q){
 
   if(!list.length){
     g.className='pub-spk-grid';
-    g.innerHTML='<div class="pub-spk-empty"><div style="font-size:44px;opacity:.3;margin-bottom:11px">🎤</div><div style="font-size:15px;font-weight:500">'+(q?'Nenhum resultado para "'+esc(q)+'"':'Nenhum palestrante cadastrado ainda.')+'</div></div>';
+    g.innerHTML='<div class="pub-spk-empty"><div style="font-size:44px;opacity:.3;margin-bottom:11px">🎤</div><div style="font-size:15px;font-weight:500">'+(q?'Nenhum resultado para "'+esc(q)+'"':'Nenhum participante cadastrado ainda.')+'</div></div>';
     return;
   }
 
@@ -3427,16 +3434,17 @@ function renderPubSpkGrid(q){
 
   g.className='pub-spk-grid'+(_spkView==='list'?' view-list':_spkView==='compact'?' view-compact':_spkView==='wide'?' view-wide':'');
   var h='';
-  list=list.slice().sort(function(a,b){ return ((a.category==='curator')?1:0)-((b.category==='curator')?1:0); });
-  var _hasCur=list.some(function(x){return x.category==='curator';});
+  var _cats=getCategories(); var _ord={}; _cats.forEach(function(c,ix){ _ord[c.id]=ix; });
+  list=list.slice().sort(function(a,b){ return (_ord[a.category]==null?99:_ord[a.category])-(_ord[b.category]==null?99:_ord[b.category]); });
+  var _multi=(function(){ var st={}; list.forEach(function(x){ st[x.category||'speaker']=1; }); return Object.keys(st).length>1; })();
   var _lastCat=null;
   for(var i=0;i<list.length;i++){
     var s=list[i];
-    var catCls=(s.category==='curator')?' cat-curator':'';
-    var _tc2=(s.category==='curator')?'curator':'speaker';
-    if(_hasCur && _tc2!==_lastCat){
-      h+='<div class="spk-section-title"><span class="dot" style="background:'+(_tc2==='curator'?'var(--ring-curator)':'var(--ring-speaker)')+'"></span>'+(_tc2==='curator'?t18('spkCurators'):t18('spkSpeakers'))+'</div>';
-      _lastCat=_tc2;
+    var _cid=s.category||'speaker';
+    var _ccol=catColor(s);
+    if(_multi && _cid!==_lastCat){
+      h+='<div class="spk-section-title"><span class="dot" style="background:'+_ccol+'"></span>'+esc(catName(_cid))+'</div>';
+      _lastCat=_cid;
     }
     var tc=talksFor(s.id);
     var tcBadge=tc?'<span style="margin-left:6px;font-size:11px;font-weight:700;color:var(--blue);background:var(--blue-lt);padding:2px 7px;border-radius:10px;white-space:nowrap;">'+tc+' palestra'+(tc!==1?'s':'')+'</span>':'';
@@ -3447,7 +3455,7 @@ function renderPubSpkGrid(q){
       var avSm=s.photo
         ?'<img class="pub-spk-ph photo-clickable" src="'+s.photo+'" alt="'+esc(s.name)+'" style="width:'+sz+'px;height:'+sz+'px;min-width:'+sz+'px;" onclick="event.stopPropagation();openPhotoLb(\''+s.photo+'\',\''+esc(s.name)+'\',\''+esc(s.role||'')+'\',\''+esc(s.company||'')+'\')">'
         :'<div class="pub-spk-ini" style="background:'+avColor(s.name)+';width:'+sz+'px;height:'+sz+'px;min-width:'+sz+'px;font-size:'+(sz===52?17:16)+'px;margin-bottom:0;">'+initials(s.name)+'</div>';
-      h+='<div class="pub-spk-card'+catCls+'" onclick="viewSpk(\''+s.id+'\')">'+avSm+
+      h+='<div class="pub-spk-card" style="--ring:'+_ccol+'" onclick="viewSpk(\''+s.id+'\')">'+avSm+
         '<div class="pub-spk-list-info">'+
           '<div class="pub-spk-name" style="text-align:left;font-size:'+(sz===52?13:14)+'px;">'+esc(s.name)+'</div>'+
           (s.role?'<div class="pub-spk-role" style="text-align:left;font-size:'+(sz===52?12:13)+'px;">'+esc(s.role)+'</div>':'')+
@@ -3459,7 +3467,7 @@ function renderPubSpkGrid(q){
       var avLg=s.photo
         ?'<img class="pub-spk-ph photo-clickable" src="'+s.photo+'" alt="'+esc(s.name)+'" onclick="event.stopPropagation();openPhotoLb(\''+s.photo+'\',\''+esc(s.name)+'\',\''+esc(s.role||'')+'\',\''+esc(s.company||'')+'\')">'
         :'<div class="pub-spk-ini" style="background:'+avColor(s.name)+'">'+initials(s.name)+'</div>';
-      h+='<div class="pub-spk-card'+catCls+'" onclick="viewSpk(\''+s.id+'\')">'+avLg+
+      h+='<div class="pub-spk-card" style="--ring:'+_ccol+'" onclick="viewSpk(\''+s.id+'\')">'+avLg+
         '<div class="pub-spk-name">'+esc(s.name)+'</div>'+
         (s.role?'<div class="pub-spk-role">'+esc(s.role)+'</div>':'')+
         (s.company?'<div class="pub-spk-co">'+esc(s.company)+'</div>':'')+
@@ -3496,20 +3504,22 @@ function viewSpk(id){
 function renderSpkGrid(){
   document.getElementById('spkBadge').textContent=SPEAKERS.length;
   var g=document.getElementById('spkGrid');
-  if(!SPEAKERS.length){ g.innerHTML='<div class="spk-empty"><div style="font-size:44px;opacity:.3;margin-bottom:11px">🎤</div><div style="font-size:15px;font-weight:500;margin-bottom:7px">Nenhum palestrante cadastrado</div><button class="btn btn-p" onclick="openSpkForm(null)">+ Cadastrar Primeiro Palestrante</button></div>'; return; }
+  if(!SPEAKERS.length){ g.innerHTML='<div class="spk-empty"><div style="font-size:44px;opacity:.3;margin-bottom:11px">🎤</div><div style="font-size:15px;font-weight:500;margin-bottom:7px">Nenhum participante cadastrado</div><button class="btn btn-p" onclick="openSpkForm(null)">+ Cadastrar Primeiro Participante</button></div>'; return; }
   var h='';
-  var _arr=SPEAKERS.slice().sort(function(a,b){ return ((a.category==='curator')?1:0)-((b.category==='curator')?1:0); });
-  var _hasCurA=_arr.some(function(x){return x.category==='curator';});
+  var _catsA=getCategories(); var _ordA={}; _catsA.forEach(function(c,ix){ _ordA[c.id]=ix; });
+  var _arr=SPEAKERS.slice().sort(function(a,b){ return (_ordA[a.category]==null?99:_ordA[a.category])-(_ordA[b.category]==null?99:_ordA[b.category]); });
+  var _multiA=(function(){ var st={}; _arr.forEach(function(x){ st[x.category||'speaker']=1; }); return Object.keys(st).length>1; })();
   var _lastCatA=null;
   for(var i=0;i<_arr.length;i++){
-    var s=_arr[i],av=s.photo?'<img class="spk-ph photo-clickable" src="'+s.photo+'" alt="" onclick="event.stopPropagation();openPhotoLb(\''+s.photo+'\',\''+esc(s.name)+'\',\''+esc(s.role||'')+'\',\''+esc(s.company||'')+'\')">'  :'<div class="spk-ini" style="background:'+avColor(s.name)+'">'+initials(s.name)+'</div>';
-    var catCls=(s.category==='curator')?' cat-curator':'';
-    var _tc3=(s.category==='curator')?'curator':'speaker';
-    if(_hasCurA && _tc3!==_lastCatA){
-      h+='<div class="spk-section-title"><span class="dot" style="background:'+(_tc3==='curator'?'var(--ring-curator)':'var(--ring-speaker)')+'"></span>'+(_tc3==='curator'?t18('spkCurators'):t18('spkSpeakers'))+'</div>';
-      _lastCatA=_tc3;
+    var s=_arr[i];
+    var _ccolA=catColor(s);
+    var av=s.photo?'<img class="spk-ph photo-clickable" src="'+s.photo+'" alt="" onclick="event.stopPropagation();openPhotoLb(\''+s.photo+'\',\''+esc(s.name)+'\',\''+esc(s.role||'')+'\',\''+esc(s.company||'')+'\')">'  :'<div class="spk-ini" style="background:'+avColor(s.name)+'">'+initials(s.name)+'</div>';
+    var _cidA=s.category||'speaker';
+    if(_multiA && _cidA!==_lastCatA){
+      h+='<div class="spk-section-title"><span class="dot" style="background:'+_ccolA+'"></span>'+esc(catName(_cidA))+'</div>';
+      _lastCatA=_cidA;
     }
-    h+='<div class="spk-card'+catCls+'" onclick="viewSpk(\''+s.id+'\')"><div class="spk-acts">'+
+    h+='<div class="spk-card" style="--ring:'+_ccolA+'" onclick="viewSpk(\''+s.id+'\')"><div class="spk-acts">'+
        '<button class="btn" style="padding:3px 7px;font-size:12px" onclick="event.stopPropagation();openSpkForm(\''+s.id+'\')">✏️</button>'+
        '<button class="btn btn-d" style="padding:3px 7px;font-size:12px" onclick="event.stopPropagation();deleteSpk(\''+s.id+'\')">🗑</button></div>'+
        av+'<div class="spk-name">'+esc(s.name)+'</div><div class="spk-role">'+esc(s.role||'')+'</div><div class="spk-co">'+esc(s.company||'')+'</div>'+(s.bio?'<div class="spk-bio">'+esc(s.bio)+'</div>':'')+'</div>';
@@ -3530,7 +3540,7 @@ function openSpkForm(id){
   editSpkId=id||null; photoData=null; cropState=null;
   var s=id?findSpk(id):null; if(s&&s.photo) photoData=s.photo;
   var phEl=photoData?'<img class="phprev" id="phprev" src="'+photoData+'" alt="" style="width:68px;height:68px;border-radius:50%;object-fit:cover;object-position:center;border:2px solid var(--border);">':'<div class="phhold" id="phprev">👤</div>';
-  openModal(id?'Editar Palestrante':'Novo Palestrante',
+  openModal(id?'Editar Participante':'Novo Participante',
     '<div class="pharea"><div id="phWrap">'+phEl+'</div>'+
     '<div class="phbtn"><label for="phInput" style="cursor:pointer;font-size:13px;color:var(--blue);font-weight:500;padding:6px 13px;border:1px solid var(--blue);border-radius:4px;transition:background .15s;display:inline-flex;align-items:center;gap:6px;">'+
       '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>'+
@@ -3542,8 +3552,66 @@ function openSpkForm(id){
     '<div class="fg"><label class="fl">Empresa / Organização</label><input id="spkCo" class="fi" placeholder="Ex: Empresa XYZ" value="'+(s?esc(s.company||''):'')+'"></div>'+
     '<div class="fg"><label class="fl">Cargo / Título</label><input id="spkRole" class="fi" placeholder="Ex: CEO, Diretora…" value="'+(s?esc(s.role||''):'')+'"></div>'+
     '<div class="fg"><label class="fl">Bio</label><textarea id="spkBio" class="fi" rows="4" placeholder="Breve apresentação do palestrante…">'+(s?esc(s.bio||''):'')+'</textarea></div>'+
+    _catSelectField(s)+
     '<div class="fg"><label class="fl" style="display:flex;align-items:center;gap:6px;"><img src="https://impactamais.com/wp-content/uploads/2026/04/linkedin-svgrepo-com.svg" width="14" height="14" style="flex-shrink:0;">LinkedIn</label><input id="spkLinkedin" class="fi" placeholder="linkedin.com/in/seuperfil" value="'+(s?esc(s.linkedin||''):'')+'"></div>',
-    '<button class="btn" onclick="closeModal()">Cancelar</button><button class="btn btn-p" onclick="saveSpk()">Salvar Palestrante</button>',false);
+    '<button class="btn" onclick="closeModal()">Cancelar</button><button class="btn btn-p" onclick="saveSpk()">Salvar Participante</button>',false);
+}
+
+// ────────────────────────────────────────
+// CATEGORIAS DE PARTICIPANTES
+// ────────────────────────────────────────
+function _catSelectField(s){
+  var cur=(s&&s.category)?s.category:'speaker';
+  var opts=getCategories().map(function(c){ return '<option value="'+esc(c.id)+'"'+(c.id===cur?' selected':'')+'>'+esc(c.name)+'</option>'; }).join('');
+  return '<div class="fg"><label class="fl" style="display:flex;justify-content:space-between;align-items:center;gap:8px;">'+t18('catLabel')+
+    '<button type="button" style="font-size:12px;color:var(--blue);background:none;border:none;cursor:pointer;padding:0;font-weight:600;" onclick="openCategoryManager()">⚙ '+t18('manageCats')+'</button>'+
+    '</label><select id="spkCat" class="fi">'+opts+'</select></div>';
+}
+var _catDraft=null;
+var CAT_PALETTE=['#b388e0','#8135b7','#611780','#F5A26C','#d97e44','#3f8f63','#2f8f80','#3f7fa6','#4a63b0','#a8467f','#b07d2e','#b4453f','#727272'];
+function openCategoryManager(){
+  if(!WP_ENABLED) return;
+  _catDraft=JSON.parse(JSON.stringify(getCategories()));
+  _renderCatManager();
+}
+function _catMgrCapture(){
+  if(!_catDraft) return;
+  for(var i=0;i<_catDraft.length;i++){ var e=document.getElementById('catName'+i); if(e) _catDraft[i].name=e.value; }
+}
+function catMgrPick(i,col){ _catMgrCapture(); if(_catDraft[i]) _catDraft[i].color=col; _renderCatManager(); }
+function catMgrAdd(){ _catMgrCapture(); _catDraft.push({id:'cat-'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),name:'',color:CAT_PALETTE[_catDraft.length%CAT_PALETTE.length]}); _renderCatManager(); }
+function catMgrDel(i){ _catMgrCapture(); _catDraft.splice(i,1); _renderCatManager(); }
+function _renderCatManager(){
+  var b='<div style="display:flex;flex-direction:column;gap:12px;">';
+  for(var i=0;i<_catDraft.length;i++){ var c=_catDraft[i];
+    var sw='';
+    for(var p=0;p<CAT_PALETTE.length;p++){ var col=CAT_PALETTE[p], on=(col.toLowerCase()===String(c.color).toLowerCase());
+      sw+='<button type="button" onclick="catMgrPick('+i+',\''+col+'\')" style="width:22px;height:22px;border-radius:6px;background:'+col+';cursor:pointer;border:2px solid '+(on?'var(--text)':'transparent')+';outline:1px solid var(--border);"></button>';
+    }
+    b+='<div style="border:1px solid var(--border);border-radius:11px;padding:12px;display:flex;flex-direction:column;gap:9px;">'+
+       '<div style="display:flex;align-items:center;gap:10px;">'+
+         '<span style="width:26px;height:26px;border-radius:50%;flex-shrink:0;border:3px solid '+c.color+';box-sizing:border-box;"></span>'+
+         '<input id="catName'+i+'" class="fi" style="flex:1;" value="'+esc(c.name)+'" placeholder="'+t18('catNamePh')+'">'+
+         '<button class="btn btn-d" type="button" onclick="catMgrDel('+i+')" style="font-size:12px;padding:4px 9px;flex-shrink:0;">🗑</button>'+
+       '</div>'+
+       '<div style="display:flex;gap:6px;flex-wrap:wrap;">'+sw+'</div>'+
+     '</div>';
+  }
+  b+='</div><button class="btn" type="button" onclick="catMgrAdd()" style="margin-top:12px;">+ '+t18('addCat')+'</button>';
+  var ftr='<button class="btn" onclick="_catMgrReturn()">'+t18('hlCancel')+'</button><button class="btn btn-p" onclick="catMgrSave()">'+t18('catSave')+'</button>';
+  openModal(t18('catMgrTitle'), b, ftr, false);
+}
+function _catMgrReturn(){ if(typeof editSpkId!=='undefined' && editSpkId!==undefined && editSpkId!==null){ openSpkForm(editSpkId); } else { closeModal(); } }
+function catMgrSave(){
+  _catMgrCapture();
+  var clean=_catDraft.filter(function(c){ return (c.name||'').trim(); });
+  if(!clean.length){ alert(t18('catEmpty')); return; }
+  clean.forEach(function(c){ if(!c.id) c.id='cat-'+Date.now().toString(36)+Math.random().toString(36).slice(2,5); c.name=c.name.trim(); });
+  SPK_CATEGORIES=clean;
+  if(window.SB&&SB.enabled){ SB.saveConfig({rooms:ROOMS,hubs:HUBS,hubColors:HUB_COLORS,slots:SLOTS,days:DAYS,highlights:HIGHLIGHTS,categories:SPK_CATEGORIES}); } else { saveData(); }
+  logAction('Editou as categorias de participantes','');
+  renderSpkGrid(); renderPubSpkGrid(_pubSpkQ||'');
+  _catMgrReturn();
 }
 
 // ────────────────────────────────────────
@@ -3717,7 +3785,7 @@ function openSpkFormWithPhoto(id, photo){
   editSpkId=id||null; photoData=photo;
   var s=id?findSpk(id):null;
   var phEl='<img class="phprev" id="phprev" src="'+photoData+'" alt="" style="width:68px;height:68px;border-radius:50%;object-fit:cover;object-position:center;border:2px solid var(--border);">';
-  openModal(id?'Editar Palestrante':'Novo Palestrante',
+  openModal(id?'Editar Participante':'Novo Participante',
     '<div class="pharea"><div id="phWrap">'+phEl+'</div>'+
     '<div class="phbtn"><label for="phInput" style="cursor:pointer;font-size:13px;color:var(--blue);font-weight:500;padding:6px 13px;border:1px solid var(--blue);border-radius:4px;transition:background .15s;display:inline-flex;align-items:center;gap:6px;">'+
       '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>'+
@@ -3729,8 +3797,9 @@ function openSpkFormWithPhoto(id, photo){
     '<div class="fg"><label class="fl">Empresa / Organização</label><input id="spkCo" class="fi" placeholder="Ex: Empresa XYZ" value="'+(s?esc(s.company||''):'')+'"></div>'+
     '<div class="fg"><label class="fl">Cargo / Título</label><input id="spkRole" class="fi" placeholder="Ex: CEO, Diretora…" value="'+(s?esc(s.role||''):'')+'"></div>'+
     '<div class="fg"><label class="fl">Bio</label><textarea id="spkBio" class="fi" rows="4" placeholder="Breve apresentação do palestrante…">'+(s?esc(s.bio||''):'')+'</textarea></div>'+
+    _catSelectField(s)+
     '<div class="fg"><label class="fl" style="display:flex;align-items:center;gap:6px;"><img src="https://impactamais.com/wp-content/uploads/2026/04/linkedin-svgrepo-com.svg" width="14" height="14" style="flex-shrink:0;">LinkedIn</label><input id="spkLinkedin" class="fi" placeholder="linkedin.com/in/seuperfil" value="'+(s?esc(s.linkedin||''):'')+'"></div>',
-    '<button class="btn" onclick="closeModal()">Cancelar</button><button class="btn btn-p" onclick="saveSpk()">Salvar Palestrante</button>',false);
+    '<button class="btn" onclick="closeModal()">Cancelar</button><button class="btn btn-p" onclick="saveSpk()">Salvar Participante</button>',false);
 }
 
 function clearPhoto(){ photoData=null; document.getElementById('phWrap').innerHTML='<div class="phhold" id="phprev">👤</div>'; }
@@ -3850,6 +3919,7 @@ function _applyServerData(d){
   if(Array.isArray(d.hubColors)) HUB_COLORS = d.hubColors;
   if(Array.isArray(d.rooms))     ROOMS      = d.rooms;
   if(d.highlights && typeof d.highlights==='object') HIGHLIGHTS = d.highlights;
+  if(Array.isArray(d.categories) && d.categories.length) SPK_CATEGORIES = d.categories;
 }
 
 function SEED_DATA(){
@@ -3962,6 +4032,7 @@ function _applySBData(d){
   if(c.slots&&c.slots.length) SLOTS=c.slots;
   if(c.days&&c.days.length){ DAYS=c.days; NDAYS=DAYS.length; rebuildDayMeta(); }
   HIGHLIGHTS = (c.highlights && c.highlights.hero) ? c.highlights : (HIGHLIGHTS || _defaultHighlights());
+  if(Array.isArray(c.categories) && c.categories.length) SPK_CATEGORIES=c.categories;
 }
 var _sbCh=null, _sbReloadT=null, _sbApplying=false;
 function _sbSubscribe(){
@@ -4001,11 +4072,11 @@ var _saveQueue = Promise.resolve();
 function saveData(){
   if(!WP_ENABLED) return;
   if(window.SB && SB.enabled){
-    try{ SB.saveConfig({rooms:ROOMS,hubs:HUBS,hubColors:HUB_COLORS,slots:SLOTS,days:DAYS,highlights:HIGHLIGHTS}); }catch(e){}
+    try{ SB.saveConfig({rooms:ROOMS,hubs:HUBS,hubColors:HUB_COLORS,slots:SLOTS,days:DAYS,highlights:HIGHLIGHTS,categories:getCategories()}); }catch(e){}
     return;
   }
   try{
-    var snap = {speakers:SPEAKERS,schedules:SCHEDULES,slots:SLOTS,hubs:HUBS,hubColors:HUB_COLORS,rooms:ROOMS,highlights:HIGHLIGHTS,_savedBy:(AUTH?profileName(AUTH):''),_ts:Date.now()};
+    var snap = {speakers:SPEAKERS,schedules:SCHEDULES,slots:SLOTS,hubs:HUBS,hubColors:HUB_COLORS,rooms:ROOMS,highlights:HIGHLIGHTS,categories:getCategories(),_savedBy:(AUTH?profileName(AUTH):''),_ts:Date.now()};
     _writeJSON(DATA_KEY, snap);
   }catch(e){ console.error('[Agenda] save erro', e); }
 }
