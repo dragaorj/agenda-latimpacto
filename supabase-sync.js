@@ -36,7 +36,7 @@
   }
   function rowToSpeaker(r){
     return { id:r.id, name:r.name, role:r.role, company:r.company,
-      bio:r.bio, photo:r.photo, linkedin:r.linkedin, sort:r.sort };
+      bio:r.bio, photo:r.photo, linkedin:r.linkedin, sort:r.sort, category:r.category||'speaker' };
   }
 
   var SB = {
@@ -72,7 +72,8 @@
           talks: tk,
           config: {
             rooms: cfgRow.rooms||[], hubs: cfgRow.hubs||[], hubColors: cfgRow.hub_colors||[],
-            slots: cfgRow.slots||[], days: cfgRow.days||[], highlights: cfgRow.highlights||null
+            slots: cfgRow.slots||[], days: cfgRow.days||[], highlights: cfgRow.highlights||null,
+            categories: cfgRow.categories||[]
           }
         };
       });
