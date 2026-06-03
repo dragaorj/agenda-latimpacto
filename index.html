@@ -198,7 +198,7 @@ body[data-mode="edit"] .btile:hover .btile-edit{display:flex;}
 .btn:hover{background:var(--bg);color:var(--text);}
 .btn.on,.btn-p{background:var(--blue);color:#fff;border-color:var(--blue);}
 .btn.on:hover,.btn-p:hover{background:var(--blue-dk);color:#fff;border-color:var(--blue-dk);}
-.tools-menu{position:absolute;top:calc(100% + 6px);right:0;background:var(--surface);border:1px solid var(--border);border-radius:11px;box-shadow:var(--sh);padding:6px;min-width:196px;z-index:400;display:none;flex-direction:column;gap:1px;}
+.tools-menu{position:fixed;background:var(--surface);border:1px solid var(--border);border-radius:11px;box-shadow:var(--sh);padding:6px;min-width:200px;z-index:9999;display:none;flex-direction:column;gap:1px;}
 .tools-menu.open{display:flex;}
 .tools-menu button{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:none;border:none;color:var(--text);font-family:var(--font);font-size:13px;font-weight:500;padding:9px 11px;border-radius:8px;cursor:pointer;white-space:nowrap;}
 .tools-menu button:hover{background:var(--bg);}
@@ -1520,10 +1520,10 @@ var HIGHLIGHTS = null; // preenchido no load (default ou salvo)
 var SPK_CATEGORIES = null;
 function _defaultCategories(){
   return [
-    {id:'speaker',   name:'Palestrantes',   color:'#b388e0'},
+    {id:'presenter', name:'Apresentadores', color:'#3f7fa6'},
     {id:'curator',   name:'Curadores',      color:'#F5A26C'},
-    {id:'guest',     name:'Convidados',     color:'#3f8f63'},
-    {id:'presenter', name:'Apresentadores', color:'#3f7fa6'}
+    {id:'speaker',   name:'Palestrantes',   color:'#b388e0'},
+    {id:'guest',     name:'Convidados',     color:'#3f8f63'}
   ];
 }
 function getCategories(){ if(!Array.isArray(SPK_CATEGORIES)||!SPK_CATEGORIES.length) SPK_CATEGORIES=_defaultCategories(); return SPK_CATEGORIES; }
@@ -1633,7 +1633,7 @@ function applyMode(){
 // ════════════════════════════════════════
 // PAGE SWITCH
 // ════════════════════════════════════════
-function toggleToolsMenu(e){ if(e){ e.stopPropagation(); } var m=document.getElementById('toolsMenu'); if(m) m.classList.toggle('open'); }
+function toggleToolsMenu(e){ if(e){ e.stopPropagation(); } var m=document.getElementById('toolsMenu'), b=document.getElementById('btnTools'); if(!m||!b) return; if(m.classList.contains('open')){ m.classList.remove('open'); return; } var r=b.getBoundingClientRect(); m.style.top=(r.bottom+6)+'px'; var w=m.offsetWidth||200; var left=r.right-w; if(left<8) left=8; m.style.left=left+'px'; m.classList.add('open'); }
 function closeToolsMenu(){ var m=document.getElementById('toolsMenu'); if(m) m.classList.remove('open'); }
 document.addEventListener('click',function(e){ var dd=document.getElementById('toolsDd'); if(dd && !dd.contains(e.target)) closeToolsMenu(); });
 var curPage = 'home';
@@ -1816,9 +1816,9 @@ function renderBento(){
     var pool=SPEAKERS.slice().sort(function(a,b){ return (b.photo?1:0)-(a.photo?1:0); }).slice(0,6);
     var row='';
     for(var s=0;s<pool.length;s++){ var sp=pool[s];
-      var av = sp.photo ? '<img src="'+sp.photo+'">' : '<div class="ava" style="background:'+avColor(sp.name)+'">'+initials(sp.name)+'</div>';
-      var avWrap = sp.photo ? '<div class="ava">'+av+'</div>' : av;
-      row+='<div class="one">'+avWrap+'<div class="nm">'+esc(sp.name)+'</div></div>';
+      var _ring=catColor(sp);
+      var inner = sp.photo ? '<img src="'+sp.photo+'">' : '<span style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:'+avColor(sp.name)+';">'+initials(sp.name)+'</span>';
+      row+='<div class="one"><div class="ava" style="border:3px solid '+_ring+';box-sizing:border-box;">'+inner+'</div><div class="nm">'+esc(sp.name)+'</div></div>';
     }
     html+='<div class="btile b-spk"><div class="btile-h" style="justify-content:space-between;">'+
       '<span>'+t18('hlSpeakers')+'</span>'+
