@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Palestrantes — Impacta Mais 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --or:#f26522;--or2:#e55a10;
+  --bg:#f4f4f5;--surface:#fff;
+  --border:#e4e4e7;--text:#18181b;--text2:#71717a;
+  --font:'DM Sans',sans-serif;
+}
+html,body{background:#fff;width:100%;overflow:visible;}
+body{font-family:var(--font);color:var(--text);font-size:14px;}
+
+/* ── Base ── */
+.spk-grid{display:grid;padding:12px 16px;}
+.spk-card{
+  background:var(--surface);border-radius:10px;overflow:hidden;
+  display:flex;cursor:pointer;
+  transition:box-shadow .2s,transform .15s;
+  box-shadow:0 1px 4px rgba(0,0,0,.1);position:relative;
+}
+.spk-card:hover{box-shadow:0 6px 20px rgba(0,0,0,.15);transform:translateY(-2px);}
+.spk-card-top{display:flex;align-items:center;flex-shrink:0;}
+.spk-card-bot{display:flex;flex-direction:column;}
+.spk-ph{border-radius:50%;background-size:cover;background-position:center top;background-repeat:no-repeat;background-color:#bbb;flex-shrink:0;}
+.spk-ini{border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;}
+.spk-name{font-weight:800;color:var(--text);text-transform:uppercase;line-height:1.2;letter-spacing:.02em;margin-bottom:4px;}
+.spk-role{font-weight:400;color:var(--text2);letter-spacing:.01em;margin-bottom:1px;}
+.spk-co{font-weight:700;color:var(--text);letter-spacing:.01em;}
+.spk-bio{display:none;}
+.spk-li-icon{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:6px;background:#e8f2fb;border:1.5px solid #0077b5;text-decoration:none;flex-shrink:0;margin-top:8px;}
+.spk-li-icon:hover{background:#c8e0f4;}
+
+/* ════ WIDE (tabela) ════ */
+.spk-grid.v-wide{grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:8px;padding:12px 16px;}
+.spk-grid.v-wide .spk-card{
+  flex-direction:row;align-items:center;
+  border-radius:10px;border-left:5px solid var(--or);
+  padding:0;box-shadow:0 1px 4px rgba(0,0,0,.08);
+}
+.spk-grid.v-wide .spk-card-top{
+  background:transparent;
+  padding:10px 10px 10px 12px;flex-shrink:0;
+}
+.spk-grid.v-wide .spk-card-bot{
+  padding:10px 40px 10px 10px;flex:1;
+}
+.spk-grid.v-wide .spk-ph{width:52px;height:52px;min-width:52px;border-radius:50%;}
+.spk-grid.v-wide .spk-ini{width:52px;height:52px;min-width:52px;font-size:17px;border-radius:50%;color:#fff;background:var(--or);}
+.spk-grid.v-wide .spk-name{font-size:13px;margin-bottom:2px;}
+.spk-grid.v-wide .spk-role{font-size:11px;}
+.spk-grid.v-wide .spk-co{font-size:11px;}
+.spk-grid.v-wide .spk-li-icon{bottom:auto;top:50%;transform:translateY(-50%);right:10px;}
+
+/* ════ MODAL ════ */
+.ov{
+  display:none;
+  position:absolute;
+  top:0;left:0;right:0;
+  /* height = altura total do documento, definido via JS */
+  background:rgba(255,255,255,.18);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  z-index:999;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+}
+.ov.on{display:block;}
+/* wrapper que centraliza o modal no viewport visível */
+.ov-inner{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:16px 12px;
+  /* posição e altura definidas via JS para cobrir o viewport */
+  position:sticky;
+  top:0;
+  box-sizing:border-box;
+}
+.mdl{
+  background:var(--surface);border-radius:16px;width:100%;max-width:420px;
+  display:flex;flex-direction:column;
+  box-shadow:0 20px 60px rgba(0,0,0,.25);
+  overflow:hidden;
+  flex-shrink:0;
+}
+
+.mdl-hdr{
+  background:linear-gradient(to bottom, var(--or) 0%, #f7925a 40%, #fcd3b8 75%, #fff 100%);
+  padding:28px 20px 30px;
+  display:flex;flex-direction:column;align-items:center;
+  position:relative;flex-shrink:0;
+}
+.mdl-x{position:absolute;top:12px;right:12px;width:28px;height:28px;border:none;background:rgba(255,255,255,.25);border-radius:50%;font-size:16px;cursor:pointer;color:#fff;display:flex;align-items:center;justify-content:center;}
+.mdl-x:hover{background:rgba(255,255,255,.4);}
+
+.sd-photo{
+  width:150px;height:150px;border-radius:50%;
+  background-size:cover;background-position:center top;background-repeat:no-repeat;
+  background-color:#bbb;flex-shrink:0;
+  margin-bottom:0;
+}
+.sd-ini{width:150px;height:150px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:52px;font-weight:700;color:var(--or);background:#fff;margin-bottom:0;}
+
+/* rodapé branco do modal */
+.mdl-body{padding:0;overflow-y:auto;flex:1;background:#fff;min-height:0;}
+.mdl-info{padding:18px 20px 4px;background:#fff;}
+.sd-name{font-size:22px;font-weight:800;color:var(--text);text-transform:uppercase;line-height:1.15;margin-bottom:10px;}
+.sd-role{font-size:12px;font-weight:400;color:var(--text2);text-transform:uppercase;letter-spacing:.03em;margin-bottom:1px;}
+.sd-co{font-size:12px;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:.03em;}
+.sd-li{
+  display:inline-flex;align-items:center;gap:6px;
+  margin-top:10px;font-size:12px;font-weight:600;
+  color:#0077b5;text-decoration:none;
+  padding:5px 14px;
+  border:2px solid #0077b5;border-radius:8px;background:#e8f2fb;
+}
+.sd-li:hover{background:#c8e0f4;}
+.sd-bio{font-size:14px;color:var(--text2);line-height:1.7;padding:14px 20px 20px;white-space:pre-line;}
+
+.mdl-ftr{padding:10px 20px 14px;display:flex;justify-content:flex-end;border-top:1px solid var(--border);flex-shrink:0;}
+.btn{font-family:var(--font);font-size:13px;font-weight:500;padding:7px 18px;border-radius:8px;border:1px solid var(--border);background:var(--surface);cursor:pointer;color:var(--text);}
+
+/* LIGHTBOX */
+.photo-lb-ov{
+  position:absolute;left:0;right:0;top:0;
+  background:rgba(255,255,255,.18);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  z-index:9999;display:none;
+  cursor:zoom-out;opacity:0;transition:opacity .22s;pointer-events:none;
+  overflow-y:auto;-webkit-overflow-scrolling:touch;
+}
+.photo-lb-ov.on{opacity:1;pointer-events:auto;}
+/* inner sticky — mesma lógica do .ov-inner do modal */
+.photo-lb-inner{
+  display:flex;align-items:center;justify-content:center;
+  position:sticky;top:0;box-sizing:border-box;
+  padding:16px 12px;
+}
+.photo-lb-wrap{display:flex;flex-direction:column;align-items:center;pointer-events:none;}
+.photo-lb-img{width:min(80vw,380px);height:min(80vw,380px);border-radius:50%;object-fit:cover;object-position:center;box-shadow:0 8px 40px rgba(0,0,0,.5);transform:scale(.85);transition:transform .25s cubic-bezier(.34,1.56,.64,1);}
+.photo-lb-ov.on .photo-lb-img{transform:scale(1);}
+.photo-lb-name{color:var(--text);font-family:var(--font);font-size:17px;font-weight:700;margin-top:16px;text-align:center;}
+.photo-lb-role{color:var(--text2);font-size:13px;margin-top:3px;text-align:center;}
+.photo-lb-co{color:var(--text2);font-size:12px;margin-top:2px;text-align:center;}
+.state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 16px;gap:12px;color:var(--text2);}
+.state-icon{font-size:40px;opacity:.25;}
+.state-msg{font-size:14px;font-weight:500;}
+.spinner{width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--or);border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+</style>
+</head>
+<body>
+
+
+
+<!-- Grid -->
+<div id="grid" class="spk-grid">
+  <div class="state"><div class="spinner"></div><div class="state-msg">Carregando palestrantes…</div></div>
+</div>
+
+<!-- Modal perfil -->
+<div class="ov" id="ov" onclick="if(event.target===this||event.target.classList.contains('ov-inner'))closeModal()">
+  <div class="ov-inner" id="ovInner">
+    <div class="mdl">
+      <div class="mdl-hdr" id="mHdr">
+        <button class="mdl-x" onclick="closeModal()">×</button>
+      </div>
+      <div class="mdl-body" id="mBody"></div>
+      <div class="mdl-ftr"><button class="btn" onclick="closeModal()">Fechar</button></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Config ────────────────────────────────────────────────
+var API = 'https://impactamais.com';
+var POLL_INTERVAL = 30000; // atualiza a cada 30s
+
+// ── Estado ────────────────────────────────────────────────
+var SPEAKERS = [];
+var curView = 'wide';
+var AVC = ['#1a73e8','#0f9d58','#f4511e','#8430ce','#f9ab00','#24c1e0','#e52592','#e67e22','#27ae60','#8e44ad'];
+
+// ── Helpers ───────────────────────────────────────────────
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function initials(n){ return (n||'?').split(' ').filter(Boolean).slice(0,2).map(function(w){return w[0].toUpperCase();}).join(''); }
+function avColor(n){ var h=0,s=n||''; for(var i=0;i<s.length;i++) h=(h*31+s.charCodeAt(i))%AVC.length; return AVC[Math.abs(h)]; }
+
+// ── API ───────────────────────────────────────────────────
+function fetchData(){
+  fetch(API+'/wp-json/agenda/v1/load?_t='+Date.now(), {cache:'no-store'})
+    .then(function(r){ return r.json(); })
+    .then(function(res){
+      if(!res.success || !res.data || !Array.isArray(res.data.speakers)) return;
+      SPEAKERS = res.data.speakers;
+      render();
+    })
+    .catch(function(){});
+}
+
+// Carrega imediatamente e depois a cada 30s
+fetchData();
+setInterval(fetchData, POLL_INTERVAL);
+
+// ── View & Search ─────────────────────────────────────────
+var _searchTimer = null;
+
+// ── Render ────────────────────────────────────────────────
+function render(){
+  var list = SPEAKERS;
+
+  // Classe do grid
+  var g = document.getElementById('grid');
+  g.className = 'spk-grid' +
+    (curView==='wide'   ?' v-wide':
+     curView==='list'   ?' v-list':
+     curView==='compact'?' v-compact':'');
+
+  if(!list.length){
+    g.innerHTML = '<div class="state"><div class="state-icon">🎤</div>'+
+      '<div class="state-msg">Nenhum palestrante encontrado.</div></div>';
+    return;
+  }
+
+  var h = '';
+  for(var i=0;i<list.length;i++){
+    var s = list[i];
+    var sid = esc(s.id);
+    var ph = s.photo
+      ? '<div class="spk-ph" style="background-image:url(\''+esc(s.photo)+'\');cursor:zoom-in;" onclick="event.stopPropagation();openPhotoLb(\''+sid+'\')"></div>'
+      : '<div class="spk-ini" style="background:'+avColor(s.name)+'">'+initials(s.name)+'</div>';
+    var liUrl = s.linkedin ? (s.linkedin.indexOf('://')>-1?s.linkedin:'https://'+s.linkedin) : '';
+    h += '<div class="spk-card" onclick="openProfile(\''+sid+'\')">'+
+      '<div class="spk-card-top">'+ph+'</div>'+
+      '<div class="spk-card-bot">'+
+        '<div class="spk-name">'+esc(s.name)+'</div>'+
+        (s.role?'<div class="spk-role">'+esc(s.role)+'</div>':'')+
+        (s.company?'<div class="spk-co">'+esc(s.company)+'</div>':'')+
+      '</div>'+
+    '</div>';
+  }
+  g.innerHTML = h;
+
+  // ── Animação GSAP ─────────────────────────────────────────
+  var cards = g.querySelectorAll('.spk-card');
+  if(cards.length && typeof gsap !== 'undefined'){
+    gsap.fromTo(cards,
+      { opacity: 0, y: 10 },
+      {
+        opacity: 1, y: 0,
+        duration: 0.35,
+        ease: 'power2.out',
+        stagger: { amount: Math.min(0.5, cards.length * 0.025), from: 'start' },
+        clearProps: 'transform,opacity'
+      }
+    );
+  }
+}
+
+// ── Perfil modal ──────────────────────────────────────────
+function openProfile(id){
+  var s = null;
+  for(var i=0;i<SPEAKERS.length;i++) if(SPEAKERS[i].id===id){ s=SPEAKERS[i]; break; }
+  if(!s) return;
+
+  var liUrl = s.linkedin ? (s.linkedin.indexOf('://')>-1?s.linkedin:'https://'+s.linkedin) : '';
+
+  var phHtml = s.photo
+    ? '<div class="sd-photo" style="background-image:url(\''+esc(s.photo)+'\');cursor:zoom-in;" onclick="openPhotoLb(\''+esc(s.id)+'\')"></div>'
+    : '<div class="sd-ini">'+initials(s.name)+'</div>';
+
+  document.getElementById('mHdr').innerHTML =
+    '<button class="mdl-x" onclick="closeModal()">×</button>'+phHtml;
+
+  document.getElementById('mBody').innerHTML =
+    '<div class="mdl-info">'+
+      '<div class="sd-name">'+esc(s.name)+'</div>'+
+      (s.role?'<div class="sd-role">'+esc(s.role)+'</div>':'')+
+      (s.company?'<div class="sd-co">'+esc(s.company)+'</div>':'')+
+      (liUrl?'<div><a href="'+esc(liUrl)+'" target="_blank" rel="noopener" class="sd-li">'+
+        '<img src="https://impactamais.com/wp-content/uploads/2026/04/linkedin-svgrepo-com.svg" width="14" height="14" alt="in"> LinkedIn</a></div>':'')+
+    '</div>'+
+    (s.bio?'<div class="sd-bio">'+esc(s.bio)+'</div>':'');
+
+  var ov = document.getElementById('ov');
+  window._positionOverlay(ov);
+  ov.className = 'ov on';
+}
+
+function closeModal(){
+  var ov = document.getElementById('ov');
+  ov.className = 'ov';
+  ov.style.top = ''; ov.style.height = '';
+  var inner = document.getElementById('ovInner');
+  if(inner){ inner.style.top=''; inner.style.height=''; }
+  var mdl = ov.querySelector('.mdl');
+  if(mdl) mdl.style.maxHeight = '';
+}
+document.addEventListener('keydown', function(e){
+  if(e.key==='Escape') closeModal();
+});
+</script>
+<!-- Lightbox de foto -->
+<div class="photo-lb-ov" id="photoLbOv" onclick="closePhotoLb()">
+  <div class="photo-lb-inner" id="photoLbInner">
+    <div class="photo-lb-wrap">
+      <img class="photo-lb-img" id="photoLbImg" src="" alt="">
+      <div class="photo-lb-name" id="photoLbName"></div>
+      <div class="photo-lb-role" id="photoLbRole"></div>
+      <div class="photo-lb-co" id="photoLbCo"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+function openPhotoLb(id){
+  var s=null;
+  for(var i=0;i<SPEAKERS.length;i++) if(SPEAKERS[i].id===id){s=SPEAKERS[i];break;}
+  if(!s||!s.photo) return;
+  var ov=document.getElementById('photoLbOv');
+  document.getElementById('photoLbImg').src=s.photo;
+  document.getElementById('photoLbName').textContent=s.name||'';
+  document.getElementById('photoLbRole').textContent=s.role||'';
+  var cel=document.getElementById('photoLbCo');
+  cel.textContent=s.company||''; cel.style.display=s.company?'block':'none';
+
+  // Posiciona igual ao modal principal
+  var docH  = document.body.scrollHeight;
+  var viewH, scrollOffset;
+  if(window._parentScrollY >= 0 && window._parentViewH > 0){
+    viewH        = window._parentViewH;
+    scrollOffset = Math.max(0, window._parentScrollY - window._iframeTop);
+  } else {
+    viewH        = window.innerHeight || document.documentElement.clientHeight;
+    scrollOffset = window.scrollY || window.pageYOffset || 0;
+  }
+  ov.style.top    = '0';
+  ov.style.height = docH + 'px';
+  var inner = document.getElementById('photoLbInner');
+  if(inner){ inner.style.top = scrollOffset + 'px'; inner.style.height = viewH + 'px'; }
+
+  ov.style.display='block';
+  requestAnimationFrame(function(){requestAnimationFrame(function(){ov.classList.add('on');});});
+  document.addEventListener('keydown',_lbKey);
+}
+function closePhotoLb(){
+  var ov=document.getElementById('photoLbOv');
+  ov.classList.remove('on');
+  ov.style.top=''; ov.style.height='';
+  var inner=document.getElementById('photoLbInner');
+  if(inner){ inner.style.top=''; inner.style.height=''; }
+  setTimeout(function(){ov.style.display='none';document.getElementById('photoLbImg').src='';},240);
+  document.removeEventListener('keydown',_lbKey);
+}
+function _lbKey(e){if(e.key==='Escape')closePhotoLb();}
+</script>
+
+<script>
+// ── Reporta altura real ao pai ────────────────────────────
+function reportHeight(){
+  window.parent.postMessage({type:'iframeHeight', height: document.body.scrollHeight},'*');
+}
+var _roHeight = new ResizeObserver(reportHeight);
+_roHeight.observe(document.body);
+reportHeight();
+
+// ── Dados do pai (scroll + geometria do iframe) ───────────
+var _parentScrollY = -1; // -1 = ainda não recebeu dados do pai
+var _iframeTop     = 0;
+var _parentViewH   = 0;
+window._parentScrollY = -1;
+window._iframeTop     = 0;
+window._parentViewH   = 0;
+
+window.addEventListener('message', function(e){
+  if(!e.data || e.data.type !== 'parentScroll') return;
+  _parentScrollY = e.data.scrollY   || 0;
+  _iframeTop     = e.data.iframeTop || 0;
+  _parentViewH   = e.data.viewH     || 0;
+  // expõe globalmente para o lightbox
+  window._parentScrollY = _parentScrollY;
+  window._iframeTop     = _iframeTop;
+  window._parentViewH   = _parentViewH;
+});
+
+// ── Posiciona overlay cobrindo todo o documento ───────────
+// O overlay cobre o documento inteiro (top:0, height=docHeight).
+// O .ov-inner usa position:sticky + top=scrollOffset para
+// ficar sempre visível no viewport do usuário.
+function positionOverlay(ovEl){
+  var docH  = document.body.scrollHeight;
+  var viewH, scrollOffset;
+
+  if(_parentScrollY >= 0 && _parentViewH > 0){
+    viewH        = _parentViewH;
+    scrollOffset = Math.max(0, _parentScrollY - _iframeTop);
+  } else {
+    viewH        = window.innerHeight || document.documentElement.clientHeight;
+    scrollOffset = window.scrollY || window.pageYOffset || 0;
+  }
+
+  // Overlay cobre o documento inteiro
+  ovEl.style.top    = '0';
+  ovEl.style.height = docH + 'px';
+
+  // Inner fica fixo no viewport via sticky
+  var inner = document.getElementById('ovInner');
+  if(inner){
+    inner.style.top    = scrollOffset + 'px';
+    inner.style.height = viewH + 'px';
+  }
+
+  // Modal com max-height para scroll interno em bios longas
+  var mdl = ovEl.querySelector('.mdl');
+  if(mdl) mdl.style.maxHeight = Math.floor(viewH * 0.88) + 'px';
+}
+
+window._positionOverlay = positionOverlay;
+</script>
+</body>
+</html>
