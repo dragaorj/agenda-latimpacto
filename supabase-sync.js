@@ -118,6 +118,38 @@
     deleteProfile:function(id){ return enabled ? _rpc('sb_delete_profile',{p_token:token,p_id:id}) : Promise.resolve(); },
     wipe:         function(){ return enabled ? _rpc('sb_wipe',{p_token:token}) : Promise.resolve(); },
 
+    // -------- RESTORE de backup completo (apaga tudo e reenvia) --------
+    // data = { speakers:[], schedules:[ {time:{room:talk}} ], slots, rooms, hubs, hubColors, days, highlights, categories }
+    restoreAll: function(data){
+      if(!enabled) return Promise.resolve();
+      var self = this;
+      // 1) achata schedules -> lista de talks
+      var talks = [];
+      try{
+        (data.schedules||[]).forEach(function(day, di){
+          Object.keys(day||{}).forEach(function(time){
+            var slot = day[time]||{};
+            Object.keys(slot).forEach(function(room){
+              var t = slot[room]; if(t && typeof t==='object'){ t.day=di; t.time=t.time||time; t.room=t.room||room; talks.push(t); }
+            });
+          });
+        });
+      }catch(e){}
+      var speakers = data.speakers||[];
+      // 2) wipe -> config -> speakers -> talks (sequencial p/ FKs e ordem)
+      return _rpc('sb_wipe',{p_token:token}).then(function(){
+        return self.saveConfig({
+          rooms:data.rooms||[], hubs:data.hubs||[], hubColors:data.hubColors||[],
+          slots:data.slots||[], days:data.days||[], highlights:data.highlights||null,
+          categories:data.categories||[]
+        });
+      }).then(function(){
+        return speakers.reduce(function(p, s){ return p.then(function(){ return self.upsertSpeaker(s); }); }, Promise.resolve());
+      }).then(function(){
+        return talks.reduce(function(p, t){ return p.then(function(){ return self.upsertTalk(t); }); }, Promise.resolve());
+      });
+    },
+
     // -------- UPLOAD de imagem (dataURL -> Storage) --------
     // resolve(publicUrl). Em caso de falha ou SB off, resolve(dataUrl) (fallback embutido).
     uploadDataUrl: function(dataUrl, folder){

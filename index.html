@@ -4202,14 +4202,17 @@ function openBackupModal(){
 
 function doDownloadBackup(filename){
   var payload = {
-    _version: 1,
+    _version: 2,
     _exported: new Date().toISOString(),
     speakers: SPEAKERS,
     schedules: SCHEDULES,
     slots: SLOTS,
     hubs: HUBS,
     hubColors: HUB_COLORS,
-    rooms: ROOMS
+    rooms: ROOMS,
+    days: DAYS,
+    highlights: HIGHLIGHTS,
+    categories: getCategories()
   };
   var blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
   var url  = URL.createObjectURL(blob);
@@ -4233,11 +4236,23 @@ function doRestoreBackup(input){
         st.style.display='none'; return;
       }
       _applyServerData(data);
-      saveData();
       _rerender();
       updateDayTabs();
-      st.style.color='#0f9d58'; st.textContent='✅ Backup restaurado! Dados enviados ao servidor.';
-      setTimeout(function(){ closeModal(); }, 1800);
+      if(window.SB && SB.enabled){
+        st.style.color='var(--text2)'; st.textContent='⏳ Enviando backup ao servidor… aguarde.';
+        SB.restoreAll(data).then(function(){
+          logAction('Restaurou um backup completo');
+          st.style.color='#0f9d58'; st.textContent='✅ Backup restaurado e salvo no servidor!';
+          setTimeout(function(){ closeModal(); }, 1600);
+        }).catch(function(err){
+          st.style.color='#d93025'; st.textContent='❌ Erro ao enviar ao servidor: '+(err&&err.message||err);
+        });
+      } else {
+        saveData();
+        logAction('Restaurou um backup completo');
+        st.style.color='#0f9d58'; st.textContent='✅ Backup restaurado!';
+        setTimeout(function(){ closeModal(); }, 1600);
+      }
     }catch(err){
       st.style.color='#d93025'; st.textContent='❌ Erro ao ler arquivo: '+err.message;
     }
