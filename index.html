@@ -501,6 +501,13 @@ body[data-mode="edit"] .btile:hover .btile-edit{display:flex;}
 .pub-spk-grid.view-wide .pub-spk-role{font-size:12px;margin-bottom:1px;text-align:left;}
 .pub-spk-grid.view-wide .pub-spk-co{font-size:11px;margin-bottom:0;text-align:left;}
 .pub-spk-grid.view-wide .pub-spk-bio{display:none;}
+/* Ações de edição nos cards (admin) */
+.pub-spk-card{position:relative;}
+.pub-spk-acts{position:absolute;top:8px;right:8px;display:none;gap:4px;z-index:3;}
+.pub-spk-card:hover .pub-spk-acts{display:flex;}
+.pub-spk-acts button{width:26px;height:26px;border-radius:7px;border:1px solid var(--border);background:var(--surface);cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 3px rgba(40,20,60,.12);padding:0;-webkit-tap-highlight-color:transparent;}
+.pub-spk-acts button:hover{background:var(--bg);}
+@media(hover:none){.pub-spk-acts{display:flex;}}
 
 /* Botões de view na toolbar de palestrantes */
 .spk-view-btns{display:flex;gap:2px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:2px;}
@@ -1332,6 +1339,7 @@ body[data-cardstyle="tint"] .lcard{
         <span class="pub-spk-count" id="pubSpkCount"></span>
       </div>
       <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+        <button class="btn btn-p" id="pubAddSpk" onclick="openSpkForm(null)" style="display:none">+ <span data-i18n="newSpeaker">Novo Participante</span></button>
         <!-- Botões de view -->
         <div class="spk-view-btns">
           <button class="spk-vbtn on" id="spkVCards" onclick="setSpkView('cards')" title="Cards">
@@ -1467,17 +1475,17 @@ var I18N={
   pt:{ appTitle:'Agenda', tabAgenda:'Agenda', tabSpk:'Participantes', viewGrid:'Grade', viewCards:'Cards', viewList:'Lista',
        searchPh:'Buscar palestra ou palestrante…', searchSpkPh:'Buscar participante…', allHubs:'TODOS OS HUBS',
        talks:'palestras', rooms:'salas', speakers:'Participantes', filters:'Filtros', clearF:'Limpar',
-       roomsPhys:'Salas Físicas', hubsThemes:'Hubs / Temas', descLabel:'Descrição', noResults:'Nenhuma palestra encontrada.', noSearchResults:'Nenhum resultado para "%s"',
+       roomsPhys:'Salas Físicas', hubsThemes:'Hubs / Temas', descLabel:'Descrição', noResults:'Nenhuma palestra encontrada.', noSearchResults:'Nenhum resultado para "%s"', newSpeaker:'Novo Participante',
        tabHighlights:'Destaques', navHome:'Início', spkSpeakers:'Palestrantes', spkCurators:'Curadores', catLabel:'Categoria', catSpeaker:'Palestrante', catCurator:'Curador', manageCats:'Gerenciar categorias', catMgrTitle:'Categorias de participantes', addCat:'Adicionar categoria', catNamePh:'Nome da categoria', catColorLbl:'Cor', catSave:'Salvar categorias', catEmpty:'Defina ao menos uma categoria.', navManage:'Gerenciar', navEditHl:'Editar Destaques', navTheme:'Tema', navLogin:'Entrar', navAccount:'Minha conta', hlCountdown:'Contagem regressiva', hlDays:'dias', hlHours:'horas', hlToGo:'para o evento', hlLive:'Acontecendo agora', hlNumbers:'O evento em números', hlSpeakers:'Vozes do palco', hlSeeAll:'Ver todos', hlOpening:'Abertura', hlNext:'Em destaque', hlEditTitle:'Editar Destaques', hlHero:'Capa (hero)', hlCoverImg:'Imagem da capa', hlChooseImg:'Escolher imagem', hlRemoveImg:'Remover', hlImgHint:'JPG/PNG · convertida p/ WebP < 100 KB', hlTitleLbl:'Título', hlSubtitleLbl:'Subtítulo', hlAutoLbl:'Blocos automáticos', hlManualLbl:'Blocos personalizados', hlAddCard:'Adicionar bloco', hlLinkTalk:'Vincular a uma palestra (opcional)', hlNoLink:'— Nenhuma —', hlAccent:'Cor do filete', hlSave:'Salvar', hlCancel:'Cancelar', hlShowCountdown:'Contagem regressiva', hlShowStats:'Números do evento', hlShowOpening:'Abertura do evento', hlShowSpeakers:'Participantes em destaque', hlEmptyManual:'Nenhum bloco ainda.', hlEditions:'Edições anteriores', hlShowNumbers:'Números do evento', hlShowEditions:'Edições anteriores', hlNumbersLbl:'Números gerais do evento', hlEditionsLbl:'Edições anteriores (gráfico)', hlAddNumber:'Adicionar número', hlAddEdition:'Adicionar edição', hlValueLbl:'Valor', hlYearLbl:'Ano', hlEditionsTitleLbl:'Título do gráfico', btnAddTalk:'+ Adicionar Palestra', toolsBtn:'Ferramentas', toolHours:'Horários', toolTags:'Gerenciar Tags', toolExport:'Exportar CSV', toolBackup:'Backup', toolClear:'Apagar tudo', evLibras:'Libras', evTrad:'Tradução', evLocation:'Localização da sala', evSpeaker:'Palestrante', evSpeakers:'Palestrantes', evSeeMore:'Ver mais', evSeeLess:'Ver menos', btnClose:'Fechar', btnGcal:'Google Agenda', evTitle:'Detalhes da Palestra', btnEdit:'Editar', btnDelete:'Excluir' },
   en:{ appTitle:'Agenda', tabAgenda:'Agenda', tabSpk:'Participants', viewGrid:'Grid', viewCards:'Cards', viewList:'List',
        searchPh:'Search a session or speaker…', searchSpkPh:'Search participant…', allHubs:'ALL HUBS',
        talks:'sessions', rooms:'rooms', speakers:'Participants', filters:'Filters', clearF:'Clear',
-       roomsPhys:'Rooms', hubsThemes:'Hubs / Themes', descLabel:'Description', noResults:'No sessions found.', noSearchResults:'No results for "%s"',
+       roomsPhys:'Rooms', hubsThemes:'Hubs / Themes', descLabel:'Description', noResults:'No sessions found.', noSearchResults:'No results for "%s"', newSpeaker:'New Participant',
        tabHighlights:'Highlights', navHome:'Home', spkSpeakers:'Speakers', spkCurators:'Curators', catLabel:'Category', catSpeaker:'Speaker', catCurator:'Curator', manageCats:'Manage categories', catMgrTitle:'Participant categories', addCat:'Add category', catNamePh:'Category name', catColorLbl:'Color', catSave:'Save categories', catEmpty:'Define at least one category.', navManage:'Manage', navEditHl:'Edit Highlights', navTheme:'Theme', navLogin:'Sign in', navAccount:'My account', hlCountdown:'Countdown', hlDays:'days', hlHours:'hours', hlToGo:'to the event', hlLive:'Happening now', hlNumbers:'The event in numbers', hlSpeakers:'Voices on stage', hlSeeAll:'See all', hlOpening:'Opening', hlNext:'Featured', hlEditTitle:'Edit Highlights', hlHero:'Hero', hlCoverImg:'Cover image', hlChooseImg:'Choose image', hlRemoveImg:'Remove', hlImgHint:'JPG/PNG · converted to WebP < 100 KB', hlTitleLbl:'Title', hlSubtitleLbl:'Subtitle', hlAutoLbl:'Automatic blocks', hlManualLbl:'Custom blocks', hlAddCard:'Add block', hlLinkTalk:'Link to a session (optional)', hlNoLink:'— None —', hlAccent:'Accent color', hlSave:'Save', hlCancel:'Cancel', hlShowCountdown:'Countdown', hlShowStats:'Event numbers', hlShowOpening:'Event opening', hlShowSpeakers:'Featured participants', hlEmptyManual:'No blocks yet.', hlEditions:'Previous editions', hlShowNumbers:'Event numbers', hlShowEditions:'Previous editions', hlNumbersLbl:'General event numbers', hlEditionsLbl:'Previous editions (chart)', hlAddNumber:'Add number', hlAddEdition:'Add edition', hlValueLbl:'Value', hlYearLbl:'Year', hlEditionsTitleLbl:'Chart title', btnAddTalk:'+ Add Session', toolsBtn:'Tools', toolHours:'Time slots', toolTags:'Manage Tags', toolExport:'Export CSV', toolBackup:'Backup', toolClear:'Clear all', evLibras:'Sign lang.', evTrad:'Translation', evLocation:'Room location', evSpeaker:'Speaker', evSpeakers:'Speakers', evSeeMore:'See more', evSeeLess:'See less', btnClose:'Close', btnGcal:'Google Calendar', evTitle:'Session details', btnEdit:'Edit', btnDelete:'Delete' },
   es:{ appTitle:'Agenda', tabAgenda:'Agenda', tabSpk:'Participantes', viewGrid:'Cuadrícula', viewCards:'Tarjetas', viewList:'Lista',
        searchPh:'Buscar sesión o ponente…', searchSpkPh:'Buscar participante…', allHubs:'TODOS LOS HUBS',
        talks:'sesiones', rooms:'salas', speakers:'Participantes', filters:'Filtros', clearF:'Limpiar',
-       roomsPhys:'Salas', hubsThemes:'Hubs / Temas', descLabel:'Descripción', noResults:'No se encontraron sesiones.', noSearchResults:'Sin resultados para "%s"',
+       roomsPhys:'Salas', hubsThemes:'Hubs / Temas', descLabel:'Descripción', noResults:'No se encontraron sesiones.', noSearchResults:'Sin resultados para "%s"', newSpeaker:'Nuevo Participante',
        tabHighlights:'Destacados', navHome:'Inicio', spkSpeakers:'Ponentes', spkCurators:'Curadores', catLabel:'Categoría', catSpeaker:'Ponente', catCurator:'Curador', manageCats:'Gestionar categorías', catMgrTitle:'Categorías de participantes', addCat:'Agregar categoría', catNamePh:'Nombre de la categoría', catColorLbl:'Color', catSave:'Guardar categorías', catEmpty:'Define al menos una categoría.', navManage:'Gestionar', navEditHl:'Editar Destacados', navTheme:'Tema', navLogin:'Entrar', navAccount:'Mi cuenta', hlCountdown:'Cuenta regresiva', hlDays:'días', hlHours:'horas', hlToGo:'para el evento', hlLive:'Sucediendo ahora', hlNumbers:'El evento en números', hlSpeakers:'Voces del escenario', hlSeeAll:'Ver todos', hlOpening:'Apertura', hlNext:'Destacado', hlEditTitle:'Editar Destacados', hlHero:'Portada', hlCoverImg:'Imagen de portada', hlChooseImg:'Elegir imagen', hlRemoveImg:'Quitar', hlImgHint:'JPG/PNG · convertida a WebP < 100 KB', hlTitleLbl:'Título', hlSubtitleLbl:'Subtítulo', hlAutoLbl:'Bloques automáticos', hlManualLbl:'Bloques personalizados', hlAddCard:'Agregar bloque', hlLinkTalk:'Vincular a una sesión (opcional)', hlNoLink:'— Ninguna —', hlAccent:'Color de acento', hlSave:'Guardar', hlCancel:'Cancelar', hlShowCountdown:'Cuenta regresiva', hlShowStats:'Números del evento', hlShowOpening:'Apertura del evento', hlShowSpeakers:'Participantes destacados', hlEmptyManual:'Aún no hay bloques.', hlEditions:'Ediciones anteriores', hlShowNumbers:'Números del evento', hlShowEditions:'Ediciones anteriores', hlNumbersLbl:'Números generales del evento', hlEditionsLbl:'Ediciones anteriores (gráfico)', hlAddNumber:'Agregar número', hlAddEdition:'Agregar edición', hlValueLbl:'Valor', hlYearLbl:'Año', hlEditionsTitleLbl:'Título del gráfico', btnAddTalk:'+ Agregar Sesión', toolsBtn:'Herramientas', toolHours:'Horarios', toolTags:'Gestionar Tags', toolExport:'Exportar CSV', toolBackup:'Backup', toolClear:'Borrar todo', evLibras:'Lengua de señas', evTrad:'Traducción', evLocation:'Ubicación de la sala', evSpeaker:'Ponente', evSpeakers:'Ponentes', evSeeMore:'Ver más', evSeeLess:'Ver menos', btnClose:'Cerrar', btnGcal:'Google Calendar', evTitle:'Detalles de la sesión', btnEdit:'Editar', btnDelete:'Eliminar' }
 };
 function t18(k){ return (I18N[LANG]&&I18N[LANG][k])||I18N.pt[k]||k; }
@@ -1762,16 +1770,10 @@ function showPage(p){
     renderMain();
     _animIn(document.getElementById('pgAgenda'));
   } else if(p==='spk'){
-    if(WP_ENABLED){
-      document.getElementById('pgAdmin').style.display='block';
-      if(mab){ mab.style.display='none'; }
-      renderSpkGrid();
-      _animIn(document.getElementById('pgAdmin'));
-    } else {
-      document.getElementById('pgSpk').style.display='block';
-      renderPubSpkGrid(_pubSpkQ||'');
-      _animIn(document.getElementById('pgSpk'));
-    }
+    document.getElementById('pgSpk').style.display='block';
+    if(mab){ mab.style.display='none'; }
+    renderPubSpkGrid(_pubSpkQ||'');
+    _animIn(document.getElementById('pgSpk'));
     document.getElementById('ptSpk').className='ptab on';
   }
   _syncRail();
@@ -3622,6 +3624,7 @@ function filterPubSpk(q){ _pubSpkQ=q.toLowerCase(); renderPubSpkGrid(_pubSpkQ); 
 
 function renderPubSpkGrid(q){
   document.getElementById('spkBadge').textContent=SPEAKERS.length;
+  var _pa=document.getElementById('pubAddSpk'); if(_pa) _pa.style.display=WP_ENABLED?'':'none';
   var list=q?SPEAKERS.filter(function(s){
     return (s.name||'').toLowerCase().indexOf(q)>-1||
            (s.role||'').toLowerCase().indexOf(q)>-1||
@@ -3675,6 +3678,7 @@ function renderPubSpkGrid(q){
       _lastCat=_cid;
     }
     var tc=talksFor(s.id);
+    var _adminActs = WP_ENABLED ? '<div class="pub-spk-acts"><button onclick="event.stopPropagation();openSpkForm(\''+s.id+'\')" title="Editar">✏️</button><button onclick="event.stopPropagation();delSpk(\''+s.id+'\')" title="Excluir">🗑</button></div>' : '';
     var tcBadge=tc?'<span style="margin-left:6px;font-size:11px;font-weight:700;color:var(--blue);background:var(--blue-lt);padding:2px 7px;border-radius:10px;white-space:nowrap;">'+tc+' palestra'+(tc!==1?'s':'')+'</span>':'';
 
     if(_spkView==='list'||_spkView==='wide'){
@@ -3683,7 +3687,7 @@ function renderPubSpkGrid(q){
       var avSm=s.photo
         ?'<img class="pub-spk-ph photo-clickable" src="'+s.photo+'" alt="'+esc(s.name)+'" style="width:'+sz+'px;height:'+sz+'px;min-width:'+sz+'px;" onclick="event.stopPropagation();openPhotoLb(\''+s.photo+'\',\''+esc(s.name)+'\',\''+esc(s.role||'')+'\',\''+esc(s.company||'')+'\')">'
         :'<div class="pub-spk-ini" style="background:'+avColor(s.name)+';width:'+sz+'px;height:'+sz+'px;min-width:'+sz+'px;font-size:'+(sz===52?17:16)+'px;margin-bottom:0;">'+initials(s.name)+'</div>';
-      h+='<div class="pub-spk-card" style="--ring:'+_ccol+'" onclick="viewSpk(\''+s.id+'\')">'+avSm+
+      h+='<div class="pub-spk-card" style="--ring:'+_ccol+'" onclick="viewSpk(\''+s.id+'\')">'+_adminActs+avSm+
         '<div class="pub-spk-list-info">'+
           '<div class="pub-spk-name" style="text-align:left;font-size:'+(sz===52?13:14)+'px;">'+esc(s.name)+'</div>'+
           (s.role?'<div class="pub-spk-role" style="text-align:left;font-size:'+(sz===52?12:13)+'px;">'+esc(s.role)+'</div>':'')+
@@ -3695,7 +3699,7 @@ function renderPubSpkGrid(q){
       var avLg=s.photo
         ?'<img class="pub-spk-ph photo-clickable" src="'+s.photo+'" alt="'+esc(s.name)+'" onclick="event.stopPropagation();openPhotoLb(\''+s.photo+'\',\''+esc(s.name)+'\',\''+esc(s.role||'')+'\',\''+esc(s.company||'')+'\')">'
         :'<div class="pub-spk-ini" style="background:'+avColor(s.name)+'">'+initials(s.name)+'</div>';
-      h+='<div class="pub-spk-card" style="--ring:'+_ccol+'" onclick="viewSpk(\''+s.id+'\')">'+avLg+
+      h+='<div class="pub-spk-card" style="--ring:'+_ccol+'" onclick="viewSpk(\''+s.id+'\')">'+_adminActs+avLg+
         '<div class="pub-spk-name">'+esc(s.name)+'</div>'+
         (s.role?'<div class="pub-spk-role">'+esc(s.role)+'</div>':'')+
         (s.company?'<div class="pub-spk-co">'+esc(s.company)+'</div>':'')+
@@ -3729,7 +3733,8 @@ function viewSpk(id){
 // ════════════════════════════════════════
 // SPEAKERS — ADMIN (editor only)
 // ════════════════════════════════════════
-function renderSpkGrid(){
+function renderSpkGrid(){ renderPubSpkGrid(_pubSpkQ||''); }
+function _legacyRenderSpkGrid(){
   document.getElementById('spkBadge').textContent=SPEAKERS.length;
   var g=document.getElementById('spkGrid');
   if(!SPEAKERS.length){ g.innerHTML='<div class="spk-empty"><div style="font-size:44px;opacity:.3;margin-bottom:11px">🎤</div><div style="font-size:15px;font-weight:500;margin-bottom:7px">Nenhum participante cadastrado</div><button class="btn btn-p" onclick="openSpkForm(null)">+ Cadastrar Primeiro Participante</button></div>'; return; }
