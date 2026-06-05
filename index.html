@@ -215,6 +215,16 @@ body[data-mode="edit"] .btile:hover .btile-edit{display:flex;}
   .band-top{grid-template-columns:1.6fr 1fr;min-height:260px;}
   .b-hero{min-height:240px;}
 }
+/* Monitores em pé / orientação retrato: NÃO esticar as bandas — altura natural,
+   conteúdo alinhado ao topo, espaço sobrando embaixo (melhor que esticar). */
+@media (min-width:681px) and (orientation:portrait){
+  #pgHighlights{min-height:0;}
+  .bento{flex:none;}
+  .band-top,.band-mid,.band-bot{flex:none;}
+  .band-top{min-height:300px;}
+  .band-mid>.btile{min-height:170px;}
+  .band-bot{min-height:300px;}
+}
 /* Tablet/telemóvel: empilha hero + contagem; bandas crescem pelo conteúdo */
 @media(max-width:680px){
   #pgHighlights{padding:14px 12px 88px;}
@@ -276,6 +286,8 @@ body[data-mode="edit"] .btile:hover .btile-edit{display:flex;}
 .ptabs{display:flex;align-items:center;background:var(--nav-bg);border-bottom:1px solid var(--nav-border);padding:0 20px;gap:0;}
 .ptab{font-family:var(--font);font-size:13px;font-weight:500;padding:10px 14px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;color:var(--text2);transition:color .18s,border-color .18s;display:flex;align-items:center;gap:6px;user-select:none;white-space:nowrap;letter-spacing:-.01em;}
 .ptab:hover{color:var(--text);}
+.ptab-add{margin-left:auto;align-self:center;width:34px;height:34px;border-radius:9px;border:none;background:var(--blue);color:#fff;font-size:21px;font-weight:600;line-height:1;cursor:pointer;flex-shrink:0;display:none;align-items:center;justify-content:center;box-shadow:0 1px 3px rgba(97,23,128,.32);-webkit-tap-highlight-color:transparent;}
+.ptab-add:active{transform:scale(.94);}
 .ptab.on{color:var(--blue);border-bottom-color:var(--blue);}
 .badge{background:var(--blue);color:#fff;font-size:10px;padding:1px 5px;border-radius:8px;font-weight:600;}
 
@@ -1112,10 +1124,21 @@ body{letter-spacing:-.005em;}
 /* Tags de acessibilidade neutras */
 .acc-tag{background:var(--bg);color:var(--text2);border:1px solid var(--border);}
 
-.lang-switch{display:flex;gap:2px;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:3px;margin-right:2px;flex-shrink:0;}
-.lang-btn{font-family:var(--font);font-size:11px;font-weight:600;letter-spacing:.03em;padding:5px 9px;border:none;background:transparent;color:var(--text2);cursor:pointer;border-radius:7px;transition:all .18s;-webkit-tap-highlight-color:transparent;}
-.lang-btn.on{background:var(--surface);color:var(--brand);box-shadow:0 1px 3px rgba(40,20,60,.12);}
-.lang-btn:hover{color:var(--text);}
+/* Seletor de idioma com bandeiras (dropdown) */
+.lang-dd{position:relative;flex-shrink:0;margin-right:2px;}
+.lang-trigger{display:flex;align-items:center;gap:7px;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:5px 9px;cursor:pointer;color:var(--text);font-family:var(--font);font-size:12px;font-weight:600;letter-spacing:.02em;-webkit-tap-highlight-color:transparent;transition:border-color .18s,background .18s;}
+.lang-trigger:hover{border-color:var(--muted);}
+.lang-flag{width:22px;height:15px;border-radius:3px;overflow:hidden;display:inline-flex;flex-shrink:0;box-shadow:0 0 0 1px rgba(0,0,0,.07);}
+.lang-flag svg{width:100%;height:100%;display:block;}
+.lang-caret{color:var(--text2);transition:transform .2s;}
+.lang-dd.open .lang-caret{transform:rotate(180deg);}
+.lang-menu{position:fixed;background:var(--surface);border:1px solid var(--border);border-radius:12px;box-shadow:var(--sh);padding:5px;min-width:168px;z-index:10000;display:none;flex-direction:column;gap:1px;animation:ddIn .18s cubic-bezier(.22,1,.36,1);}
+@keyframes ddIn{from{transform:translateY(-6px);}to{transform:none;}}
+.lang-dd.open .lang-menu{display:flex;}
+.lang-opt{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:none;border:none;color:var(--text);font-family:var(--font);font-size:13px;font-weight:500;padding:8px 10px;border-radius:8px;cursor:pointer;}
+.lang-opt:hover{background:var(--bg);}
+.lang-opt.on{color:var(--brand);font-weight:600;}
+.lang-opt.on::after{content:'✓';margin-left:auto;color:var(--brand);font-weight:700;font-size:13px;}
 /* abas do painel de conta */
 .auth-tabs{display:flex;gap:4px;border-bottom:1px solid var(--border);margin:-4px -2px 16px;padding-bottom:0;}
 .auth-tab{font-family:var(--font);font-size:13px;font-weight:600;color:var(--text2);background:none;border:none;border-bottom:2px solid transparent;padding:8px 10px;margin-bottom:-1px;cursor:pointer;transition:color .15s;}
@@ -1242,7 +1265,6 @@ body[data-cardstyle="tint"] .lcard{
   <div class="flex ml">
     <span id="saveIndicator" style="font-size:12px;color:#0f9d58;display:none;align-items:center;gap:4px;"></span>
     <!-- Botões só para editores (WP_ENABLED) -->
-    <button class="btn btn-p" id="btnAddTalk" onclick="openAddTalk()" style="display:none" data-i18n="btnAddTalk">+ Adicionar Palestra</button>
     <div class="tools-dd" id="toolsDd" style="display:none;position:relative;">
       <button class="btn" id="btnTools" onclick="toggleToolsMenu(event)" title="Ferramentas de edição">🛠 <span class="tools-lbl" data-i18n="toolsBtn">Ferramentas</span> ▾</button>
       <div class="tools-menu" id="toolsMenu">
@@ -1253,10 +1275,17 @@ body[data-cardstyle="tint"] .lcard{
         <button class="danger" onclick="closeToolsMenu();clearAllData()">🗑 <span data-i18n="toolClear">Apagar tudo</span></button>
       </div>
     </div>
-    <div class="lang-switch" id="langSwitch">
-      <button class="lang-btn" data-lang="pt" onclick="setLang('pt')">PT</button>
-      <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
-      <button class="lang-btn" data-lang="es" onclick="setLang('es')">ES</button>
+    <div class="lang-dd" id="langSwitch">
+      <button class="lang-trigger" id="langTrigger" onclick="toggleLangMenu(event)" aria-haspopup="true" title="Idioma / Language / Idioma">
+        <span class="lang-flag" id="langCurFlag"></span>
+        <span class="lang-code" id="langCurCode">PT</span>
+        <svg class="lang-caret" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="lang-menu" id="langMenu">
+        <button class="lang-opt" data-lang="pt" onclick="pickLang('pt')"><span class="lang-flag"></span><span>Português</span></button>
+        <button class="lang-opt" data-lang="en" onclick="pickLang('en')"><span class="lang-flag"></span><span>English</span></button>
+        <button class="lang-opt" data-lang="es" onclick="pickLang('es')"><span class="lang-flag"></span><span>Español</span></button>
+      </div>
     </div>
     <!-- Ícone chave — login (modo edição) -->
     <button class="auth-key-btn" id="authKeyBtn" onclick="openWPConfig()" title="Login WordPress (modo edição)">
@@ -1277,6 +1306,7 @@ body[data-cardstyle="tint"] .lcard{
   <div class="ptab on" id="ptHome" onclick="showPage('home')">🏠 <span data-i18n="navHome">Início</span></div>
   <div class="ptab" id="ptAgenda" onclick="showPage('agenda')">📅 <span data-i18n="tabAgenda">Agenda</span></div>
   <div class="ptab" id="ptSpk" onclick="showPage('spk')">🎤 <span data-i18n="tabSpk">Palestrantes</span> <span class="badge" id="spkBadge">0</span></div>
+  <button class="ptab-add" id="ptabAdd" onclick="_ptabAdd()" title="Adicionar" aria-label="Adicionar" style="display:none">+</button>
 </div>
 
 <!-- AGENDA HEADERS -->
@@ -1284,18 +1314,25 @@ body[data-cardstyle="tint"] .lcard{
   <div class="dtabs" id="dtabs"></div>
   <div id="dayControls">
   <div class="tbar">
-    <span class="tbar-title" id="tbarTitle">20 de Maio de 2026</span>
-    <div class="vbtns ml">
-      <button class="btn on" id="vGrid" onclick="setView('grid')" data-i18n="viewGrid">Grade</button>
-      <button class="btn" id="vCards" onclick="setView('cards')" data-i18n="viewCards">Cards</button>
-      <button class="btn" id="vList" onclick="setView('list')" data-i18n="viewList">Lista</button>
+    <div class="spk-view-btns" style="flex-shrink:0;">
+      <button class="spk-vbtn on" id="vGrid" onclick="setView('grid')" data-i18n-title="viewGrid" title="Grade" aria-label="Grade">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="18" rx="1"/><rect x="14" y="3" width="7" height="18" rx="1"/></svg>
+      </button>
+      <button class="spk-vbtn" id="vCards" onclick="setView('cards')" data-i18n-title="viewCards" title="Cards" aria-label="Cards">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      </button>
+      <button class="spk-vbtn" id="vList" onclick="setView('list')" data-i18n-title="viewList" title="Lista" aria-label="Lista">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3.5" cy="6" r="1" fill="currentColor" stroke="none"/><circle cx="3.5" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="3.5" cy="18" r="1" fill="currentColor" stroke="none"/></svg>
+      </button>
     </div>
+    <span class="tbar-title" id="tbarTitle" style="margin-left:14px;margin-right:auto;">20 de Maio de 2026</span>
     <!-- Zoom inline — compacto, só aparece em Grade/Gantt -->
     <div id="zoomControls" style="display:none;align-items:center;gap:0;border:1px solid var(--border);border-radius:6px;overflow:hidden;margin-left:6px;flex-shrink:0;">
       <button id="zoomMinus" onclick="_zoomOut()" style="width:28px;height:28px;border:none;background:var(--surface);color:var(--text);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;border-right:1px solid var(--border);-webkit-tap-highlight-color:transparent;" title="Zoom out">−</button>
       <span id="zoomLabel" style="font-size:11px;font-family:var(--mono);color:var(--text2);padding:0 6px;background:var(--surface);min-width:36px;text-align:center;line-height:28px;">100%</span>
       <button id="zoomPlus" onclick="_zoomIn()" style="width:28px;height:28px;border:none;background:var(--surface);color:var(--text);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;border-left:1px solid var(--border);-webkit-tap-highlight-color:transparent;" title="Zoom in">+</button>
     </div>
+    <button class="btn btn-p" id="btnAddTalk" onclick="openAddTalk()" style="display:none;margin-left:8px;flex-shrink:0;" data-i18n="btnAddTalk">+ Adicionar Palestra</button>
   </div>
   <div class="stats">
     <span>🗓 <b id="stDay">Dia 1</b></span>
@@ -1356,8 +1393,7 @@ body[data-cardstyle="tint"] .lcard{
         <h2 data-i18n="speakers">Palestrantes</h2>
         <span class="pub-spk-count" id="pubSpkCount"></span>
       </div>
-      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-        <button class="btn btn-p" id="pubAddSpk" onclick="openSpkForm(null)" style="display:none">+ <span data-i18n="newSpeaker">Novo Participante</span></button>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end;">
         <!-- Botões de view -->
         <div class="spk-view-btns">
           <button class="spk-vbtn" id="spkVCards" onclick="setSpkView('cards')" title="Cards">
@@ -1373,6 +1409,7 @@ body[data-cardstyle="tint"] .lcard{
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="4" height="4" rx="1"/><rect x="10" y="3" width="4" height="4" rx="1"/><rect x="17" y="3" width="4" height="4" rx="1"/><rect x="3" y="10" width="4" height="4" rx="1"/><rect x="10" y="10" width="4" height="4" rx="1"/><rect x="17" y="10" width="4" height="4" rx="1"/><rect x="3" y="17" width="4" height="4" rx="1"/><rect x="10" y="17" width="4" height="4" rx="1"/><rect x="17" y="17" width="4" height="4" rx="1"/></svg>
           </button>
         </div>
+        <button class="btn btn-p" id="pubAddSpk" onclick="openSpkForm(null)" style="display:none">+ <span data-i18n="newSpeaker">Novo Participante</span></button>
       </div>
     </div>
     <div class="pub-spk-grid" id="pubSpkGrid"></div>
@@ -1503,11 +1540,41 @@ var I18N={
        tabHighlights:'Destacados', navHome:'Inicio', spkSpeakers:'Ponentes', spkCurators:'Curadores', catLabel:'Categoría', catSpeaker:'Ponente', catCurator:'Curador', manageCats:'Gestionar categorías', daysTab:'Días', daysSaveBtn:'Guardar días', daysDate:'Fecha', daysWeekday:'Día de la semana (auto)', daysAdd:'Agregar día', daysEmpty:'Ningún día. Agrega al menos uno.', daysDelConfirm:'¿Eliminar este día? Sus sesiones se eliminarán.', daysMin:'Mantén al menos un día.', catMgrTitle:'Categorías de participantes', addCat:'Agregar categoría', catNamePh:'Nombre de la categoría', catColorLbl:'Color', catSave:'Guardar categorías', catEmpty:'Define al menos una categoría.', navManage:'Gestionar', navEditHl:'Editar Destacados', navTheme:'Tema', navLogin:'Entrar', navAccount:'Mi cuenta', hlCountdown:'Cuenta regresiva', hlDays:'días', hlHours:'horas', hlToGo:'para el evento', hlLive:'Sucediendo ahora', hlNumbers:'El evento en números', hlSpeakers:'Voces del escenario', hlSeeAll:'Ver todos', hlOpening:'Apertura', hlNext:'Destacado', hlEditTitle:'Editar Destacados', hlHero:'Portada', hlCoverImg:'Imagen de portada', hlChooseImg:'Elegir imagen', hlRemoveImg:'Quitar', hlImgHint:'JPG/PNG · convertida a WebP < 100 KB', hlTitleLbl:'Título', hlSubtitleLbl:'Subtítulo', hlAutoLbl:'Bloques automáticos', hlManualLbl:'Bloques personalizados', hlAddCard:'Agregar bloque', hlLinkTalk:'Vincular a una sesión (opcional)', hlNoLink:'— Ninguna —', hlAccent:'Color de acento', hlSave:'Guardar', hlCancel:'Cancelar', hlShowCountdown:'Cuenta regresiva', hlShowStats:'Números del evento', hlShowOpening:'Apertura del evento', hlShowSpeakers:'Participantes destacados', hlEmptyManual:'Aún no hay bloques.', hlEditions:'Ediciones anteriores', hlShowNumbers:'Números del evento', hlShowEditions:'Ediciones anteriores', hlNumbersLbl:'Números generales del evento', hlEditionsLbl:'Ediciones anteriores (gráfico)', hlAddNumber:'Agregar número', hlAddEdition:'Agregar edición', hlValueLbl:'Valor', hlYearLbl:'Año', hlEditionsTitleLbl:'Título del gráfico', btnAddTalk:'+ Agregar Sesión', toolsBtn:'Herramientas', toolHours:'Horarios', toolTags:'Gestionar', toolExport:'Exportar CSV', toolBackup:'Backup', toolClear:'Borrar todo', evLibras:'Lengua de señas', evTrad:'Traducción', evLocation:'Ubicación de la sala', evSpeaker:'Ponente', evSpeakers:'Ponentes', evSeeMore:'Ver más', evSeeLess:'Ver menos', btnClose:'Cerrar', btnGcal:'Google Calendar', evTitle:'Detalles de la sesión', btnEdit:'Editar', btnDelete:'Eliminar' }
 };
 function t18(k){ return (I18N[LANG]&&I18N[LANG][k])||I18N.pt[k]||k; }
-function updateLangBtn(){ var b=document.querySelectorAll('#langSwitch .lang-btn'); for(var i=0;i<b.length;i++){ b[i].classList.toggle('on', b[i].getAttribute('data-lang')===LANG); } }
+var LANG_FLAGS={
+  pt:'<svg viewBox="0 0 28 20" preserveAspectRatio="none"><rect width="28" height="20" fill="#1e9e47"/><path d="M14 3.2 24.6 10 14 16.8 3.4 10Z" fill="#ffd000"/><circle cx="14" cy="10" r="3.9" fill="#16357f"/></svg>',
+  en:'<svg viewBox="0 0 28 20" preserveAspectRatio="none"><rect width="28" height="20" fill="#fff"/><g fill="#b22234"><rect width="28" height="2" y="1.4"/><rect width="28" height="2" y="5.1"/><rect width="28" height="2" y="8.8"/><rect width="28" height="2" y="12.5"/><rect width="28" height="2" y="16.2"/></g><rect width="13" height="10.8" fill="#3c3b6e"/></svg>',
+  es:'<svg viewBox="0 0 28 20" preserveAspectRatio="none"><rect width="28" height="20" fill="#c60b1e"/><rect y="5" width="28" height="10" fill="#ffc400"/></svg>'
+};
+function toggleLangMenu(e){
+  if(e) e.stopPropagation();
+  var d=document.getElementById('langSwitch'), m=document.getElementById('langMenu'), t=document.getElementById('langTrigger');
+  if(!d||!m||!t) return;
+  if(d.classList.contains('open')){ d.classList.remove('open'); return; }
+  d.classList.add('open');
+  var r=t.getBoundingClientRect();
+  var w=m.offsetWidth||168;
+  var left=r.right-w; if(left<8) left=8; if(left+w>window.innerWidth-8) left=window.innerWidth-8-w;
+  m.style.top=(r.bottom+7)+'px';
+  m.style.left=left+'px';
+}
+function closeLangMenu(){ var d=document.getElementById('langSwitch'); if(d) d.classList.remove('open'); }
+function pickLang(l){ closeLangMenu(); setLang(l); }
+document.addEventListener('click', function(e){ var d=document.getElementById('langSwitch'); if(d && !d.contains(e.target)) closeLangMenu(); });
+function updateLangBtn(){
+  var codes={pt:'PT',en:'EN',es:'ES'};
+  var cf=document.getElementById('langCurFlag'); if(cf) cf.innerHTML=LANG_FLAGS[LANG]||'';
+  var cc=document.getElementById('langCurCode'); if(cc) cc.textContent=codes[LANG]||'';
+  var opts=document.querySelectorAll('#langMenu .lang-opt');
+  for(var i=0;i<opts.length;i++){ var lg=opts[i].getAttribute('data-lang');
+    var fl=opts[i].querySelector('.lang-flag'); if(fl) fl.innerHTML=LANG_FLAGS[lg]||'';
+    opts[i].classList.toggle('on', lg===LANG);
+  }
+}
 function applyLang(){
   document.documentElement.lang=(LANG==='pt'?'pt-BR':LANG);
   var els=document.querySelectorAll('[data-i18n]'); for(var i=0;i<els.length;i++) els[i].textContent=t18(els[i].getAttribute('data-i18n'));
   var ph=document.querySelectorAll('[data-i18n-ph]'); for(var j=0;j<ph.length;j++) ph[j].placeholder=t18(ph[j].getAttribute('data-i18n-ph'));
+  var ti=document.querySelectorAll('[data-i18n-title]'); for(var k=0;k<ti.length;k++){ var tv=t18(ti[k].getAttribute('data-i18n-title')); ti[k].title=tv; ti[k].setAttribute('aria-label',tv); }
   rebuildDayMeta();
   if(document.getElementById('dtabs')){ renderDayTabs(); _setActiveDay(curDay); }
   renderLegend(); updateLangBtn();
@@ -1715,6 +1782,8 @@ window.addEventListener('storage', function(e){
 });
 window.addEventListener('latimpacto-log', function(){ if(document.getElementById('logsList')) renderLogs(); });
 
+function _ptabAdd(){ if(curPage==='agenda'){ openAddTalk(); } else if(curPage==='spk'){ openSpkForm(null); } }
+function _updatePtabAdd(){ var b=document.getElementById('ptabAdd'); if(!b) return; b.style.display=(WP_ENABLED && (curPage==='agenda'||curPage==='spk'))?'flex':'none'; }
 function applyMode(){
   var ed = WP_ENABLED;
   ['btnAddTalk','toolsDd'].forEach(function(id){
@@ -1727,6 +1796,7 @@ function applyMode(){
   }
   document.body.setAttribute('data-mode', ed?'edit':'view');
   if(typeof _syncRail==='function') _syncRail();
+  if(typeof _updatePtabAdd==='function') _updatePtabAdd();
   if(typeof renderBento==='function' && curPage==='home') renderBento();
   if(curPage==='spk') showPage('spk');
 }
@@ -1791,6 +1861,7 @@ function showPage(p){
     document.getElementById('ptSpk').className='ptab on';
   }
   _syncRail();
+  _updatePtabAdd();
 }
 function _animIn(el){ if(!el) return; el.classList.remove('pg-anim'); void el.offsetWidth; el.classList.add('pg-anim'); }
 function _applyAgendaTab(){
@@ -3137,7 +3208,7 @@ function updateDayTabs(){
 }
 function _persistUI(){ try{localStorage.setItem('agenda_ui_state',JSON.stringify({day:curDay,view:curView,page:curPage}));}catch(e){} }
 function switchDay(i){ _setActiveDay(i); updateDayTabs(); _persistUI(); renderMain(); _animIn(document.getElementById('pgAgenda')); var sa=document.getElementById('scrollArea'); if(sa) sa.scrollTop=0; }
-function setView(v){ curView=v; document.getElementById('vGrid').className='btn'+(v==='grid'?' on':''); document.getElementById('vCards').className='btn'+(v==='cards'?' on':''); document.getElementById('vList').className='btn'+(v==='list'?' on':''); var _g=document.getElementById('vGantt'); if(_g) _g.className='btn'+(v==='gantt'?' on':''); _updateZoomControls(); _persistUI(); renderMain(); }
+function setView(v){ curView=v; document.getElementById('vGrid').className='spk-vbtn'+(v==='grid'?' on':''); document.getElementById('vCards').className='spk-vbtn'+(v==='cards'?' on':''); document.getElementById('vList').className='spk-vbtn'+(v==='list'?' on':''); _updateZoomControls(); _persistUI(); renderMain(); }
 function _zoomIn(){
   if(curView==='grid') gridSetZoom(_gridZoom + _gridZoomStep);
   else if(curView==='gantt') ganttSetZoom(_ganttZoom + _ganttZoomStep);
@@ -3164,7 +3235,7 @@ function _updateZoomControls(){
     bar.style.display='none';
   }
 }
-function setView(v){ curView=v; document.getElementById('vGrid').className='btn'+(v==='grid'?' on':''); document.getElementById('vCards').className='btn'+(v==='cards'?' on':''); document.getElementById('vList').className='btn'+(v==='list'?' on':''); var _g=document.getElementById('vGantt'); if(_g) _g.className='btn'+(v==='gantt'?' on':''); _updateZoomControls(); _persistUI(); renderMain(); }
+function setView(v){ curView=v; document.getElementById('vGrid').className='spk-vbtn'+(v==='grid'?' on':''); document.getElementById('vCards').className='spk-vbtn'+(v==='cards'?' on':''); document.getElementById('vList').className='spk-vbtn'+(v==='list'?' on':''); _updateZoomControls(); _persistUI(); renderMain(); }
 function onSearch(){
   var v = document.getElementById('srchInput').value.trim().toLowerCase();
   searchQ = v;
