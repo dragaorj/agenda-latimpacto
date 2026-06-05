@@ -80,7 +80,7 @@ html,body{height:100%;overflow:hidden;margin:0;padding:0;}
   #rail:hover ~ #appShell,#rail.pinned ~ #appShell{margin-left:236px;}
   .nav .logo a,.nav .logo svg,.nav .logo .logo-sep{display:none!important;}
   .nav .logo{gap:0;}
-  #topFixed #authKeyBtn,#topFixed #darkToggleBtn{display:none!important;}
+  #topFixed #darkToggleBtn{display:none!important;}
   .ptabs{display:none!important;}
   .nav{padding-left:24px;}
 }
@@ -134,7 +134,7 @@ html,body{height:100%;overflow:hidden;margin:0;padding:0;}
 @keyframes nowPulse{0%,100%{opacity:1;}50%{opacity:.35;}}
 .now-line{stroke-dasharray:5 5;}
 .now-lbl{font-size:10.5px;font-weight:600;}
-@media(max-width:900px){ .band-bot{grid-template-columns:1fr;flex:none;} .b-now-chart{min-height:200px;} }
+@media(max-width:900px){ .band-bot{grid-template-columns:1fr;flex:none;} .b-now-chart{min-height:230px;} .b-now{min-height:300px;} }
 .btile{position:relative;border-radius:18px;background:var(--surface);border:1px solid var(--border);padding:18px 20px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 1px 2px rgba(40,20,60,.04);}
 .btile-h{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text2);display:flex;align-items:center;gap:7px;}
 .btile-h svg{opacity:.7;}
@@ -288,6 +288,10 @@ body[data-mode="edit"] .btile:hover .btile-edit{display:flex;}
 .ptab:hover{color:var(--text);}
 .ptab-add{margin-left:auto;align-self:center;width:34px;height:34px;border-radius:9px;border:none;background:var(--blue);color:#fff;font-size:21px;font-weight:600;line-height:1;cursor:pointer;flex-shrink:0;display:none;align-items:center;justify-content:center;box-shadow:0 1px 3px rgba(97,23,128,.32);-webkit-tap-highlight-color:transparent;}
 .ptab-add:active{transform:scale(.94);}
+.add-sq{align-self:center;width:32px;height:32px;border-radius:9px;border:none;background:var(--blue);color:#fff;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 2px rgba(97,23,128,.22);-webkit-tap-highlight-color:transparent;transition:transform .12s,background .18s,box-shadow .18s;padding:0;}
+.add-sq svg{width:15px;height:15px;}
+.add-sq:hover{background:var(--blue-dk);box-shadow:0 2px 6px rgba(97,23,128,.28);}
+.add-sq:active{transform:scale(.92);}
 .ptab.on{color:var(--blue);border-bottom-color:var(--blue);}
 .badge{background:var(--blue);color:#fff;font-size:10px;padding:1px 5px;border-radius:8px;font-weight:600;}
 
@@ -318,9 +322,12 @@ body[data-mode="edit"] .btile:hover .btile-edit{display:flex;}
 .tabs-srch i{position:absolute;left:9px;font-style:normal;color:var(--text2);font-size:14px;pointer-events:none;}
 
 /* DAY TABS — integrado ao tbar, sem camada extra */
-.dtabs{display:flex;background:var(--nav-bg);padding:0 20px;gap:0;}
-.dtab{font-family:var(--font);font-size:13px;font-weight:500;padding:9px 14px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;color:var(--text2);transition:color .18s,border-color .18s;user-select:none;letter-spacing:-.01em;}
-.dtab small{display:inline;font-size:12px;opacity:.6;font-weight:400;margin-left:5px;}
+.dtabs{display:flex;background:var(--nav-bg);padding:0 20px;gap:0;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
+.dtabs::-webkit-scrollbar{display:none;}
+.dtab{font-family:var(--font);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;color:var(--text2);transition:color .18s,border-color .18s;user-select:none;letter-spacing:-.01em;flex-shrink:0;white-space:nowrap;display:grid;grid-template-columns:auto auto;grid-template-areas:'date count' 'wd wd';column-gap:7px;align-items:center;justify-items:start;padding:7px 16px;}
+.dtab-date{grid-area:date;font-size:14px;font-weight:600;line-height:1.1;}
+.dtab .dtab-count{grid-area:count;}
+.dtab small{grid-area:wd;display:block;font-size:11.5px;opacity:.6;font-weight:400;margin-left:0;line-height:1.1;}
 .dtab.on{color:var(--blue);border-bottom-color:var(--blue);}
 
 /* TOOLBAR — compacto, sem título redundante */
@@ -817,6 +824,14 @@ img.phprev, img.spk-ph, img.sd-photo, img.pkav, img.lav, img.cgrid-av, img.pub-s
 .mob-room-pill{font-family:var(--font);font-size:11px;font-weight:700;padding:4px 11px;border-radius:13px;border:2px solid transparent;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:opacity .15s,filter .15s;}
 .mob-room-pill.off{opacity:.35;text-decoration:line-through;}
 
+/* BOTTOM NAV (mobile) — escondido no desktop */
+#mobileNav{display:none;}
+.mnav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:none;border:none;cursor:pointer;color:var(--text2);font-family:var(--font);font-size:10.5px;font-weight:600;padding:7px 2px 4px;border-radius:12px;-webkit-tap-highlight-color:transparent;transition:color .15s,background .15s;position:relative;}
+.mnav-item svg{width:23px;height:23px;}
+.mnav-item span{line-height:1;letter-spacing:-.01em;}
+.mnav-item.on{color:var(--brand);}
+.mnav-item.on::before{content:'';position:absolute;top:3px;width:30px;height:30px;border-radius:10px;background:var(--blue-lt);z-index:-1;}
+
 @media(max-width:680px){
   .fr.c2,.fr.c3{grid-template-columns:1fr;}
 
@@ -850,14 +865,17 @@ img.phprev, img.spk-ph, img.sd-photo, img.pkav, img.lav, img.cgrid-av, img.pub-s
   }
   .logo{
     font-size:14px;
-    flex:1;
+    flex-direction:column;
+    align-items:flex-start;
+    gap:1px;
     min-width:0;
-    white-space:nowrap;
     overflow:hidden;
-    text-overflow:ellipsis;
   }
-  .logo svg{height:28px;width:auto;flex-shrink:0;}
-  .logo-title{font-size:13px;overflow:hidden;text-overflow:ellipsis;}
+  .logo svg{height:20px;width:auto;flex-shrink:0;}
+  .logo-sep{display:none!important;}
+  .logo-title{font-size:11px;overflow:hidden;text-overflow:ellipsis;max-width:100%;white-space:nowrap;}
+  /* Ferramentas saem do topo no mobile (vão para a barra inferior) */
+  #toolsDd{display:none!important;}
   /* Busca ocupa a própria linha (full-width) no mobile */
   .nav-srch{order:5;flex:1 0 100%;max-width:none;margin:3px 0 0;}
   .nav-srch input{padding:8px 12px 8px 36px;font-size:14px;}
@@ -882,11 +900,22 @@ img.phprev, img.spk-ph, img.sd-photo, img.pkav, img.lav, img.cgrid-av, img.pub-s
     .flex.ml{flex-wrap:wrap;}
   }
 
-  /* TABS: scroll horizontal, sem quebrar */
-  .ptabs{overflow-x:auto;overflow-y:visible;flex-wrap:nowrap;padding:0 10px;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
-  .ptabs::-webkit-scrollbar{display:none;}
+  /* TABS topo escondidas no mobile — navegação vai para a barra inferior */
+  .ptabs{display:none!important;}
   .ptab{font-size:13px;padding:9px 11px;white-space:nowrap;flex-shrink:0;}
   .tabs-srch{display:none;} /* oculta busca nas tabs no mobile — fica inline na nav */
+
+  /* BARRA INFERIOR DE NAVEGAÇÃO */
+  #mobileNav{
+    display:flex;
+    position:fixed;left:0;right:0;bottom:0;z-index:500;
+    background:var(--nav-bg);
+    border-top:1px solid var(--nav-border);
+    padding:5px 6px calc(5px + env(safe-area-inset-bottom));
+    gap:2px;
+    box-shadow:0 -2px 12px rgba(40,20,60,.06);
+  }
+  #scrollArea{padding-bottom:calc(64px + env(safe-area-inset-bottom));}
 
   /* DAY TABS */
   .dtabs{padding:0 10px;}
@@ -1306,7 +1335,6 @@ body[data-cardstyle="tint"] .lcard{
   <div class="ptab on" id="ptHome" onclick="showPage('home')">🏠 <span data-i18n="navHome">Início</span></div>
   <div class="ptab" id="ptAgenda" onclick="showPage('agenda')">📅 <span data-i18n="tabAgenda">Agenda</span></div>
   <div class="ptab" id="ptSpk" onclick="showPage('spk')">🎤 <span data-i18n="tabSpk">Palestrantes</span> <span class="badge" id="spkBadge">0</span></div>
-  <button class="ptab-add" id="ptabAdd" onclick="_ptabAdd()" title="Adicionar" aria-label="Adicionar" style="display:none">+</button>
 </div>
 
 <!-- AGENDA HEADERS -->
@@ -1332,13 +1360,7 @@ body[data-cardstyle="tint"] .lcard{
       <span id="zoomLabel" style="font-size:11px;font-family:var(--mono);color:var(--text2);padding:0 6px;background:var(--surface);min-width:36px;text-align:center;line-height:28px;">100%</span>
       <button id="zoomPlus" onclick="_zoomIn()" style="width:28px;height:28px;border:none;background:var(--surface);color:var(--text);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;border-left:1px solid var(--border);-webkit-tap-highlight-color:transparent;" title="Zoom in">+</button>
     </div>
-    <button class="btn btn-p" id="btnAddTalk" onclick="openAddTalk()" style="display:none;margin-left:8px;flex-shrink:0;" data-i18n="btnAddTalk">+ Adicionar Palestra</button>
-  </div>
-  <div class="stats">
-    <span>🗓 <b id="stDay">Dia 1</b></span>
-    <span>🎤 <b id="stTalks">0</b> <span data-i18n="talks">palestras</span></span>
-    <span>🏛 <b id="stRooms">0</b> <span data-i18n="rooms">salas</span></span>
-    <span>🕘 <span id="stHours">09:00 – 18:00</span></span>
+    <button class="add-sq" id="btnAddTalk" onclick="openAddTalk()" style="display:none;margin-left:8px;flex-shrink:0;" title="Adicionar Palestra" aria-label="Adicionar Palestra"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
   </div>
   <div class="legend" id="legend"></div>
   <div class="room-filters" id="roomFilters"></div>
@@ -1409,7 +1431,7 @@ body[data-cardstyle="tint"] .lcard{
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="4" height="4" rx="1"/><rect x="10" y="3" width="4" height="4" rx="1"/><rect x="17" y="3" width="4" height="4" rx="1"/><rect x="3" y="10" width="4" height="4" rx="1"/><rect x="10" y="10" width="4" height="4" rx="1"/><rect x="17" y="10" width="4" height="4" rx="1"/><rect x="3" y="17" width="4" height="4" rx="1"/><rect x="10" y="17" width="4" height="4" rx="1"/><rect x="17" y="17" width="4" height="4" rx="1"/></svg>
           </button>
         </div>
-        <button class="btn btn-p" id="pubAddSpk" onclick="openSpkForm(null)" style="display:none">+ <span data-i18n="newSpeaker">Novo Participante</span></button>
+        <button class="add-sq" id="pubAddSpk" onclick="openSpkForm(null)" style="display:none" title="Novo Participante" aria-label="Novo Participante"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
       </div>
     </div>
     <div class="pub-spk-grid" id="pubSpkGrid"></div>
@@ -1427,6 +1449,26 @@ body[data-cardstyle="tint"] .lcard{
   </div>
 </div>
 </div><!-- /appShell -->
+
+<!-- BOTTOM NAV (mobile) -->
+<nav id="mobileNav" aria-label="Navegação">
+  <button class="mnav-item on" id="mnHome" onclick="showPage('home')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 10.2 12 3.5l8.5 6.7"/><path d="M5.5 9v10.5a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1V9"/><path d="M9.5 20.5v-6h5v6"/></svg>
+    <span data-i18n="navHome">Início</span>
+  </button>
+  <button class="mnav-item" id="mnAgenda" onclick="showPage('agenda')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2.5"/><line x1="3" y1="9.5" x2="21" y2="9.5"/><line x1="8" y1="2.5" x2="8" y2="6"/><line x1="16" y1="2.5" x2="16" y2="6"/></svg>
+    <span data-i18n="tabAgenda">Agenda</span>
+  </button>
+  <button class="mnav-item" id="mnSpk" onclick="showPage('spk')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7.5" r="3"/><path d="M3.4 19.5c0-3.1 2.5-5.3 5.6-5.3s5.6 2.2 5.6 5.3"/><path d="M16.5 4.6a3 3 0 0 1 0 5.8"/><path d="M18.2 14.4c2 .5 3.4 2.2 3.4 5.1"/></svg>
+    <span data-i18n="tabSpk">Participantes</span>
+  </button>
+  <button class="mnav-item" id="mnTools" onclick="openToolsMobile(event)" style="display:none">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.2 5.2L3 18l3 3 6.5-6.5a4 4 0 0 0 5.2-5.2l-2.5 2.5-2.5-.7-.7-2.5z"/></svg>
+    <span data-i18n="toolsBtn">Ferramentas</span>
+  </button>
+</nav>
 
 <!-- PHOTO LIGHTBOX -->
 <div class="photo-lb-ov" id="photoLbOv" onclick="closePhotoLb()">
@@ -1487,7 +1529,7 @@ var DAYS = [
   {date:'2026-09-11', gcal:'20260911', wd:{pt:'Sexta',en:'Friday',es:'Viernes'}}
 ];
 var NDAYS = DAYS.length;
-var DAY_LABELS = [], DAY_SHORT = [], GCAL_DATES = [];
+var DAY_LABELS = [], DAY_SHORT = [], DAY_DATE = [], GCAL_DATES = [];
 var MONTHS = {
   pt:['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
   en:['January','February','March','April','May','June','July','August','September','October','November','December'],
@@ -1501,6 +1543,7 @@ function rebuildDayMeta(){
     DAY_LABELS[i]= (lng==='en') ? (mname+' '+da+', '+y) : (da+' de '+mname+' de '+y);
     var dword=(lng==='pt'?'Dia ':(lng==='es'?'Día ':'Day '));
     DAY_SHORT[i]= dword+(i+1)+' — '+p[2]+'/'+p[1];
+    DAY_DATE[i]= p[2]+'/'+p[1];
     GCAL_DATES[i]=DAYS[i].gcal;
   }
 }
@@ -1796,6 +1839,7 @@ function applyMode(){
   }
   document.body.setAttribute('data-mode', ed?'edit':'view');
   if(typeof _syncRail==='function') _syncRail();
+  if(typeof _syncMobileNav==='function') _syncMobileNav();
   if(typeof _updatePtabAdd==='function') _updatePtabAdd();
   if(typeof renderBento==='function' && curPage==='home') renderBento();
   if(curPage==='spk') showPage('spk');
@@ -1819,6 +1863,25 @@ function _syncRail(){
     if(av){ av.innerHTML = AUTH.photo?'<img src="'+AUTH.photo+'" style="width:100%;height:100%;object-fit:cover;">':'<span style="width:100%;height:100%;background:'+avColor(profileName(AUTH))+';color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;">'+initials(profileName(AUTH))+'</span>'; }
     var accL=acc?acc.querySelector('.rail-lbl'):null; if(accL) accL.textContent=profileName(AUTH);
   } else { if(au) au.style.display='flex'; if(acc) acc.style.display='none'; }
+  _syncMobileNav();
+}
+function _syncMobileNav(){
+  var map={home:'mnHome',agenda:'mnAgenda',spk:'mnSpk'};
+  ['mnHome','mnAgenda','mnSpk'].forEach(function(id){ var e=document.getElementById(id); if(e) e.classList.remove('on'); });
+  var act=document.getElementById(map[curPage]); if(act) act.classList.add('on');
+  var mt=document.getElementById('mnTools'); if(mt) mt.style.display=WP_ENABLED?'flex':'none';
+}
+function openToolsMobile(e){
+  if(e) e.stopPropagation();
+  var m=document.getElementById('toolsMenu'), b=document.getElementById('mnTools');
+  if(!m||!b) return;
+  if(m.classList.contains('open')){ m.classList.remove('open'); return; }
+  m.classList.add('open');
+  var r=b.getBoundingClientRect();
+  var w=m.offsetWidth||200, h=m.offsetHeight||220;
+  var left=r.left+r.width/2-w/2; if(left<8) left=8; if(left+w>window.innerWidth-8) left=window.innerWidth-8-w;
+  m.style.left=left+'px';
+  m.style.top=(r.top-h-8)+'px';
 }
 function showPage(p){
   if(p==='admin') p='spk';            // gerenciar foi absorvido em Palestrantes
@@ -2068,7 +2131,9 @@ function renderNowChart(){
   var dayStart=Math.floor(evs[0].min/60)*60;
   var dayEnd=Math.ceil(Math.max.apply(null,evs.map(function(e){return e.end;}))/60)*60;
   if(dayEnd-dayStart<120) dayEnd=dayStart+120;
-  var W=1000,H=300,padL=46,padR=26,padT=44,padB=46;
+  // viewBox = tamanho real em pixels do container → sem distorção (preserveAspectRatio none mapeia 1:1)
+  var W=Math.max(Math.round(host.clientWidth)||640, 280), H=Math.max(Math.round(host.clientHeight)||220, 190);
+  var padL=40,padR=24,padT=Math.max(36,Math.round(H*0.16)),padB=40;
   var plotW=W-padL-padR, axisY=H-padB, midY=padT+(axisY-padT)/2, amp=Math.min(64,(axisY-padT)*0.34);
   function PX(m){ return padL+(m-dayStart)/(dayEnd-dayStart)*plotW; }
   var pts=evs.map(function(e,i){ return {x:PX(e.min), y:midY - amp*Math.cos(i*0.9), ev:e}; });
@@ -2113,6 +2178,11 @@ function renderNowChart(){
   _nowChartData={dayStart:dayStart,dayEnd:dayEnd,PXa:[padL,dayStart,plotW,dayEnd],axisY:axisY,padT:padT,pts:pts,evs:evs,W:W};
   _nowTick();
 }
+var _nowResizeTimer=null;
+window.addEventListener('resize', function(){
+  if(_nowResizeTimer) clearTimeout(_nowResizeTimer);
+  _nowResizeTimer=setTimeout(function(){ if(curPage==='home' && document.getElementById('bNowChart')) renderNowChart(); }, 180);
+});
 function _progColor(p){ return p<0.5?'#2f9e5b':(p<0.8?'#d99a2b':'#d6453d'); }
 function _startNowTicker(){
   if(window._nowTimer){ clearInterval(window._nowTimer); window._nowTimer=null; }
@@ -3165,8 +3235,9 @@ function _ganttInitPinch(){
 }
 
 function updateStats(sc){
+  var et=document.getElementById('stTalks'); if(!et) return;
   var c=0,keys=Object.keys(sc); for(var i=0;i<keys.length;i++) c+=Object.keys(sc[keys[i]]).length;
-  var et=document.getElementById('stTalks'); if(et) et.textContent=c;
+  et.textContent=c;
   var ed=document.getElementById('stDay'); if(ed) ed.textContent=DAY_SHORT[curDay]||('Dia '+(curDay+1));
   var er=document.getElementById('stRooms'); if(er) er.textContent=ROOMS.length;
 }
@@ -3191,7 +3262,7 @@ function renderDayTabs(){
   for(var i=0;i<NDAYS;i++){
     var sub=DAYS[i].wd[lng]||'';
     hh+='<div class="dtab'+(i===curDay?' on':'')+'" id="d'+i+'" onclick="switchDay('+i+')">'+
-        (DAY_SHORT[i]||('Dia '+(i+1)))+'<small>'+sub+'</small></div>';
+        '<span class="dtab-date">'+(DAY_DATE[i]||('Dia '+(i+1)))+'</span><small>'+sub+'</small></div>';
   }
   c.innerHTML=hh;
   updateDayTabs();
@@ -3202,7 +3273,7 @@ function updateDayTabs(){
     var el=document.getElementById('d'+d); if(!el) continue;
     var count=_talksInDay(d), isOn=(d===curDay);
     var sub=DAYS[d].wd[lng]||'';
-    el.innerHTML=(DAY_SHORT[d]||('Dia '+(d+1)))+'<small>'+sub+'</small>'+
+    el.innerHTML='<span class="dtab-date">'+(DAY_DATE[d]||('Dia '+(d+1)))+'</span><small>'+sub+'</small>'+
       '<span class="dtab-count" style="margin-left:7px;font-size:11px;font-weight:700;padding:1px 7px;border-radius:20px;background:'+(isOn?'var(--blue)':'var(--border)')+';color:'+(isOn?'#fff':'var(--text2)')+'">'+count+'</span>';
   }
 }
@@ -5194,7 +5265,8 @@ initWP();
     if(typeof s.day==='number'&&s.day>=0&&s.day<NDAYS) curDay=s.day;
     if(s.view) curView=s.view;
     if(curView==='gantt') curView='grid';
-    if(s.page==='home'||s.page==='agenda'||s.page==='spk') curPage=s.page;
+    // Home é sempre a página inicial (não restaura a última aba)
+    curPage='home';
   }catch(e){}
   try{ if(!localStorage.getItem('agenda_ui_state') && (window.matchMedia('(max-width:680px)').matches || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent))) curView='list'; }catch(e){}
 })();
@@ -5204,7 +5276,7 @@ loadData(function(){
   applyLang();        // idioma + abas de dia + legenda + grade + botão de idioma
   setView(curView);
   _updateZoomControls();
-  showPage(curPage);
+  showPage('home');
 });
 
 // ── Polling em tempo real — atualiza a cada 30s para todos os usuários ──
