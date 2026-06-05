@@ -116,10 +116,25 @@ html,body{height:100%;overflow:hidden;margin:0;padding:0;}
 #pgHighlights{padding:22px 26px;max-width:none;margin:0;min-height:100%;box-sizing:border-box;display:flex;flex-direction:column;}
 .bento{display:flex;flex-direction:column;gap:14px;flex:1;min-height:0;}
 .b-band{display:grid;gap:14px;}
-.band-top{grid-template-columns:1.85fr 1fr;flex:1.25;min-height:300px;}
+.band-top{grid-template-columns:1.85fr 1fr;flex:1;min-height:250px;}
 .band-top.solo{grid-template-columns:1fr;}
-.band-mid{display:flex;flex-wrap:wrap;flex:1;}
-.band-mid>.btile{flex:1 1 240px;min-height:200px;}
+.band-mid{display:flex;flex-wrap:wrap;flex:.8;}
+.band-mid>.btile{flex:1 1 240px;min-height:180px;}
+.band-bot{grid-template-columns:1fr 1.75fr;flex:1.35;min-height:270px;}
+.band-bot>.btile{min-height:0;}
+.band-bot.solo{grid-template-columns:1fr;}
+/* Agenda ao vivo (gráfico em tempo real) */
+.b-now-chart{flex:1;min-height:140px;width:100%;position:relative;margin-top:4px;}
+.b-now-chart svg{width:100%;height:100%;display:block;overflow:visible;}
+.now-status{text-transform:none;letter-spacing:0;font-weight:700;font-size:11.5px;padding:3px 10px;border-radius:20px;display:inline-flex;align-items:center;gap:6px;background:var(--bg);color:var(--text2);max-width:62%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
+.now-status .sdot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.now-status.live .sdot{animation:nowPulse 1.1s ease-in-out infinite;}
+.nowdot{transition:fill .5s ease,r .3s ease;}
+.nowdot.active{animation:nowPulse 1.15s ease-in-out infinite;}
+@keyframes nowPulse{0%,100%{opacity:1;}50%{opacity:.35;}}
+.now-line{stroke-dasharray:5 5;}
+.now-lbl{font-size:10.5px;font-weight:600;}
+@media(max-width:900px){ .band-bot{grid-template-columns:1fr;flex:none;} .b-now-chart{min-height:200px;} }
 .btile{position:relative;border-radius:18px;background:var(--surface);border:1px solid var(--border);padding:18px 20px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 1px 2px rgba(40,20,60,.04);}
 .btile-h{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text2);display:flex;align-items:center;gap:7px;}
 .btile-h svg{opacity:.7;}
@@ -227,7 +242,7 @@ body[data-mode="edit"] .btile:hover .btile-edit{display:flex;}
 .logo{font-family:var(--font);font-size:15px;font-weight:600;display:flex;align-items:center;gap:8px;white-space:nowrap;letter-spacing:-.02em;color:var(--text);}
 .logo b{color:var(--blue);font-weight:600;}
 /* Busca na NAV — barra central que cresce */
-.nav-srch{position:relative;flex:1;max-width:520px;min-width:0;display:flex;align-items:center;margin:0 auto 0 8px;}
+.nav-srch{position:relative;flex:1 1 auto;max-width:min(900px,52vw);min-width:0;display:flex;align-items:center;margin:0 auto 0 8px;}
 .nav-srch .nav-srch-ic{position:absolute;left:13px;color:var(--text2);pointer-events:none;transition:color .2s;}
 .nav-srch input{width:100%;font-family:var(--font);font-size:13.5px;padding:9px 14px 9px 38px;border:1px solid var(--border);border-radius:11px;background:var(--bg);color:var(--text);outline:none;transition:border-color .2s,box-shadow .2s,background .2s;}
 .nav-srch input::placeholder{color:var(--muted);}
@@ -660,7 +675,9 @@ select.fi{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
 
 /* SPK DETAIL */
 .sd-head{display:flex;gap:16px;align-items:center;margin-bottom:13px;}
-.sd-photo{width:84px;height:84px;border-radius:50%;object-fit:cover;border:3px solid var(--border);}
+.sd-photo{width:84px;height:84px;border-radius:50%;object-fit:cover;border:3px solid var(--border);box-sizing:border-box;}
+.sd-photo-wrap{position:relative;width:84px;height:84px;flex-shrink:0;border-radius:50%;}
+.sd-zoom{position:absolute;right:-2px;bottom:-2px;width:28px;height:28px;border-radius:50%;background:var(--surface);border:1px solid var(--border);color:var(--text2);display:flex;align-items:center;justify-content:center;box-shadow:0 1px 4px rgba(40,20,60,.2);}
 .sd-ini{width:84px;height:84px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font);font-size:31px;font-weight:500;color:#fff;}
 .sd-name{font-family:var(--font);font-size:20px;font-weight:500;}
 .sd-role{color:var(--blue);font-size:14px;margin-top:2px;}
@@ -1355,10 +1372,6 @@ body[data-cardstyle="tint"] .lcard{
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="4" height="4" rx="1"/><rect x="10" y="3" width="4" height="4" rx="1"/><rect x="17" y="3" width="4" height="4" rx="1"/><rect x="3" y="10" width="4" height="4" rx="1"/><rect x="10" y="10" width="4" height="4" rx="1"/><rect x="17" y="10" width="4" height="4" rx="1"/><rect x="3" y="17" width="4" height="4" rx="1"/><rect x="10" y="17" width="4" height="4" rx="1"/><rect x="17" y="17" width="4" height="4" rx="1"/></svg>
           </button>
         </div>
-        <div class="pub-spk-srch">
-          <i>🔍</i>
-          <input type="text" id="pubSpkSearch" data-i18n-ph="searchSpkPh" placeholder="Buscar palestrante…" oninput="filterPubSpk(this.value)">
-        </div>
       </div>
     </div>
     <div class="pub-spk-grid" id="pubSpkGrid"></div>
@@ -1475,17 +1488,17 @@ var I18N={
   pt:{ appTitle:'Agenda', tabAgenda:'Agenda', tabSpk:'Participantes', viewGrid:'Grade', viewCards:'Cards', viewList:'Lista',
        searchPh:'Buscar palestra ou palestrante…', searchSpkPh:'Buscar participante…', allHubs:'TODOS OS HUBS',
        talks:'palestras', rooms:'salas', speakers:'Participantes', filters:'Filtros', clearF:'Limpar',
-       roomsPhys:'Salas Físicas', hubsThemes:'Hubs / Temas', descLabel:'Descrição', noResults:'Nenhuma palestra encontrada.', noSearchResults:'Nenhum resultado para "%s"', newSpeaker:'Novo Participante',
+       roomsPhys:'Salas Físicas', hubsThemes:'Hubs / Temas', descLabel:'Descrição', noResults:'Nenhuma palestra encontrada.', noSearchResults:'Nenhum resultado para "%s"', newSpeaker:'Novo Participante', nowTitle:'Agora no evento', nowLive:'AO VIVO', nowNext:'A seguir', nowEnded:'Encerrado por hoje', nowSoon:'Começa em breve', nowFree:'Intervalo',
        tabHighlights:'Destaques', navHome:'Início', spkSpeakers:'Palestrantes', spkCurators:'Curadores', catLabel:'Categoria', catSpeaker:'Palestrante', catCurator:'Curador', manageCats:'Gerenciar categorias', catMgrTitle:'Categorias de participantes', addCat:'Adicionar categoria', catNamePh:'Nome da categoria', catColorLbl:'Cor', catSave:'Salvar categorias', catEmpty:'Defina ao menos uma categoria.', navManage:'Gerenciar', navEditHl:'Editar Destaques', navTheme:'Tema', navLogin:'Entrar', navAccount:'Minha conta', hlCountdown:'Contagem regressiva', hlDays:'dias', hlHours:'horas', hlToGo:'para o evento', hlLive:'Acontecendo agora', hlNumbers:'O evento em números', hlSpeakers:'Vozes do palco', hlSeeAll:'Ver todos', hlOpening:'Abertura', hlNext:'Em destaque', hlEditTitle:'Editar Destaques', hlHero:'Capa (hero)', hlCoverImg:'Imagem da capa', hlChooseImg:'Escolher imagem', hlRemoveImg:'Remover', hlImgHint:'JPG/PNG · convertida p/ WebP < 100 KB', hlTitleLbl:'Título', hlSubtitleLbl:'Subtítulo', hlAutoLbl:'Blocos automáticos', hlManualLbl:'Blocos personalizados', hlAddCard:'Adicionar bloco', hlLinkTalk:'Vincular a uma palestra (opcional)', hlNoLink:'— Nenhuma —', hlAccent:'Cor do filete', hlSave:'Salvar', hlCancel:'Cancelar', hlShowCountdown:'Contagem regressiva', hlShowStats:'Números do evento', hlShowOpening:'Abertura do evento', hlShowSpeakers:'Participantes em destaque', hlEmptyManual:'Nenhum bloco ainda.', hlEditions:'Edições anteriores', hlShowNumbers:'Números do evento', hlShowEditions:'Edições anteriores', hlNumbersLbl:'Números gerais do evento', hlEditionsLbl:'Edições anteriores (gráfico)', hlAddNumber:'Adicionar número', hlAddEdition:'Adicionar edição', hlValueLbl:'Valor', hlYearLbl:'Ano', hlEditionsTitleLbl:'Título do gráfico', btnAddTalk:'+ Adicionar Palestra', toolsBtn:'Ferramentas', toolHours:'Horários', toolTags:'Gerenciar Tags', toolExport:'Exportar CSV', toolBackup:'Backup', toolClear:'Apagar tudo', evLibras:'Libras', evTrad:'Tradução', evLocation:'Localização da sala', evSpeaker:'Palestrante', evSpeakers:'Palestrantes', evSeeMore:'Ver mais', evSeeLess:'Ver menos', btnClose:'Fechar', btnGcal:'Google Agenda', evTitle:'Detalhes da Palestra', btnEdit:'Editar', btnDelete:'Excluir' },
   en:{ appTitle:'Agenda', tabAgenda:'Agenda', tabSpk:'Participants', viewGrid:'Grid', viewCards:'Cards', viewList:'List',
        searchPh:'Search a session or speaker…', searchSpkPh:'Search participant…', allHubs:'ALL HUBS',
        talks:'sessions', rooms:'rooms', speakers:'Participants', filters:'Filters', clearF:'Clear',
-       roomsPhys:'Rooms', hubsThemes:'Hubs / Themes', descLabel:'Description', noResults:'No sessions found.', noSearchResults:'No results for "%s"', newSpeaker:'New Participant',
+       roomsPhys:'Rooms', hubsThemes:'Hubs / Themes', descLabel:'Description', noResults:'No sessions found.', noSearchResults:'No results for "%s"', newSpeaker:'New Participant', nowTitle:'Live schedule', nowLive:'LIVE', nowNext:'Up next', nowEnded:'Done for today', nowSoon:'Starting soon', nowFree:'Break',
        tabHighlights:'Highlights', navHome:'Home', spkSpeakers:'Speakers', spkCurators:'Curators', catLabel:'Category', catSpeaker:'Speaker', catCurator:'Curator', manageCats:'Manage categories', catMgrTitle:'Participant categories', addCat:'Add category', catNamePh:'Category name', catColorLbl:'Color', catSave:'Save categories', catEmpty:'Define at least one category.', navManage:'Manage', navEditHl:'Edit Highlights', navTheme:'Theme', navLogin:'Sign in', navAccount:'My account', hlCountdown:'Countdown', hlDays:'days', hlHours:'hours', hlToGo:'to the event', hlLive:'Happening now', hlNumbers:'The event in numbers', hlSpeakers:'Voices on stage', hlSeeAll:'See all', hlOpening:'Opening', hlNext:'Featured', hlEditTitle:'Edit Highlights', hlHero:'Hero', hlCoverImg:'Cover image', hlChooseImg:'Choose image', hlRemoveImg:'Remove', hlImgHint:'JPG/PNG · converted to WebP < 100 KB', hlTitleLbl:'Title', hlSubtitleLbl:'Subtitle', hlAutoLbl:'Automatic blocks', hlManualLbl:'Custom blocks', hlAddCard:'Add block', hlLinkTalk:'Link to a session (optional)', hlNoLink:'— None —', hlAccent:'Accent color', hlSave:'Save', hlCancel:'Cancel', hlShowCountdown:'Countdown', hlShowStats:'Event numbers', hlShowOpening:'Event opening', hlShowSpeakers:'Featured participants', hlEmptyManual:'No blocks yet.', hlEditions:'Previous editions', hlShowNumbers:'Event numbers', hlShowEditions:'Previous editions', hlNumbersLbl:'General event numbers', hlEditionsLbl:'Previous editions (chart)', hlAddNumber:'Add number', hlAddEdition:'Add edition', hlValueLbl:'Value', hlYearLbl:'Year', hlEditionsTitleLbl:'Chart title', btnAddTalk:'+ Add Session', toolsBtn:'Tools', toolHours:'Time slots', toolTags:'Manage Tags', toolExport:'Export CSV', toolBackup:'Backup', toolClear:'Clear all', evLibras:'Sign lang.', evTrad:'Translation', evLocation:'Room location', evSpeaker:'Speaker', evSpeakers:'Speakers', evSeeMore:'See more', evSeeLess:'See less', btnClose:'Close', btnGcal:'Google Calendar', evTitle:'Session details', btnEdit:'Edit', btnDelete:'Delete' },
   es:{ appTitle:'Agenda', tabAgenda:'Agenda', tabSpk:'Participantes', viewGrid:'Cuadrícula', viewCards:'Tarjetas', viewList:'Lista',
        searchPh:'Buscar sesión o ponente…', searchSpkPh:'Buscar participante…', allHubs:'TODOS LOS HUBS',
        talks:'sesiones', rooms:'salas', speakers:'Participantes', filters:'Filtros', clearF:'Limpiar',
-       roomsPhys:'Salas', hubsThemes:'Hubs / Temas', descLabel:'Descripción', noResults:'No se encontraron sesiones.', noSearchResults:'Sin resultados para "%s"', newSpeaker:'Nuevo Participante',
+       roomsPhys:'Salas', hubsThemes:'Hubs / Temas', descLabel:'Descripción', noResults:'No se encontraron sesiones.', noSearchResults:'Sin resultados para "%s"', newSpeaker:'Nuevo Participante', nowTitle:'En vivo', nowLive:'EN VIVO', nowNext:'A seguir', nowEnded:'Terminado por hoy', nowSoon:'Empieza pronto', nowFree:'Intervalo',
        tabHighlights:'Destacados', navHome:'Inicio', spkSpeakers:'Ponentes', spkCurators:'Curadores', catLabel:'Categoría', catSpeaker:'Ponente', catCurator:'Curador', manageCats:'Gestionar categorías', catMgrTitle:'Categorías de participantes', addCat:'Agregar categoría', catNamePh:'Nombre de la categoría', catColorLbl:'Color', catSave:'Guardar categorías', catEmpty:'Define al menos una categoría.', navManage:'Gestionar', navEditHl:'Editar Destacados', navTheme:'Tema', navLogin:'Entrar', navAccount:'Mi cuenta', hlCountdown:'Cuenta regresiva', hlDays:'días', hlHours:'horas', hlToGo:'para el evento', hlLive:'Sucediendo ahora', hlNumbers:'El evento en números', hlSpeakers:'Voces del escenario', hlSeeAll:'Ver todos', hlOpening:'Apertura', hlNext:'Destacado', hlEditTitle:'Editar Destacados', hlHero:'Portada', hlCoverImg:'Imagen de portada', hlChooseImg:'Elegir imagen', hlRemoveImg:'Quitar', hlImgHint:'JPG/PNG · convertida a WebP < 100 KB', hlTitleLbl:'Título', hlSubtitleLbl:'Subtítulo', hlAutoLbl:'Bloques automáticos', hlManualLbl:'Bloques personalizados', hlAddCard:'Agregar bloque', hlLinkTalk:'Vincular a una sesión (opcional)', hlNoLink:'— Ninguna —', hlAccent:'Color de acento', hlSave:'Guardar', hlCancel:'Cancelar', hlShowCountdown:'Cuenta regresiva', hlShowStats:'Números del evento', hlShowOpening:'Apertura del evento', hlShowSpeakers:'Participantes destacados', hlEmptyManual:'Aún no hay bloques.', hlEditions:'Ediciones anteriores', hlShowNumbers:'Números del evento', hlShowEditions:'Ediciones anteriores', hlNumbersLbl:'Números generales del evento', hlEditionsLbl:'Ediciones anteriores (gráfico)', hlAddNumber:'Agregar número', hlAddEdition:'Agregar edición', hlValueLbl:'Valor', hlYearLbl:'Año', hlEditionsTitleLbl:'Título del gráfico', btnAddTalk:'+ Agregar Sesión', toolsBtn:'Herramientas', toolHours:'Horarios', toolTags:'Gestionar Tags', toolExport:'Exportar CSV', toolBackup:'Backup', toolClear:'Borrar todo', evLibras:'Lengua de señas', evTrad:'Traducción', evLocation:'Ubicación de la sala', evSpeaker:'Ponente', evSpeakers:'Ponentes', evSeeMore:'Ver más', evSeeLess:'Ver menos', btnClose:'Cerrar', btnGcal:'Google Calendar', evTitle:'Detalles de la sesión', btnEdit:'Editar', btnDelete:'Eliminar' }
 };
 function t18(k){ return (I18N[LANG]&&I18N[LANG][k])||I18N.pt[k]||k; }
@@ -1938,12 +1951,141 @@ function renderBento(){
   // Faixa 3: edições + cards de info (auto-fit → sempre preenche a largura)
   var midHtml=editionsHtml+cardsHtml;
   if(midHtml) html+='<div class="b-band band-mid">'+midHtml+'</div>';
-  // Faixa 4: participantes em destaque (largura total)
-  if(speakersHtml) html+=speakersHtml;
+  // Faixa 4: participantes em destaque + agenda ao vivo
+  var nowChartHtml='<div class="btile b-now">'+
+    '<div class="btile-h" style="justify-content:space-between;"><span>'+t18('nowTitle')+'</span><span id="nowStatus" class="now-status"></span></div>'+
+    '<div class="b-now-chart" id="bNowChart"></div></div>';
+  var botInner=speakersHtml+nowChartHtml;
+  html+='<div class="b-band band-bot'+(speakersHtml?'':' solo')+'">'+botInner+'</div>';
 
   c.innerHTML=html;
   _startCountdown();
+  renderNowChart();
+  _startNowTicker();
 }
+// ── AGENDA AO VIVO (gráfico em tempo real) ──
+function _toMinG(t){ var p=String(t||'00:00').split(':'); return (parseInt(p[0],10)||0)*60+(parseInt(p[1],10)||0); }
+function _chartEvents(day){
+  var sc=SCHEDULES[day]||{}, slots=Object.keys(sc), arr=[];
+  for(var i=0;i<slots.length;i++){
+    var rks=Object.keys(sc[slots[i]]||{}); if(!rks.length) continue;
+    var t=sc[slots[i]][rks[0]]; var st=_toMinG(slots[i]);
+    arr.push({min:st, end:st+(talkDur(t)||30), title:String(L(t.title)||''), id:t.id, room:rks[0]});
+  }
+  arr.sort(function(a,b){return a.min-b.min;});
+  return arr;
+}
+function _smoothPath(pts){
+  if(!pts.length) return '';
+  if(pts.length<2) return 'M'+pts[0].x+','+pts[0].y;
+  var d='M'+pts[0].x+','+pts[0].y;
+  for(var i=0;i<pts.length-1;i++){
+    var p0=pts[i-1]||pts[i],p1=pts[i],p2=pts[i+1],p3=pts[i+2]||p2;
+    var c1x=p1.x+(p2.x-p0.x)/6, c1y=p1.y+(p2.y-p0.y)/6;
+    var c2x=p2.x-(p3.x-p1.x)/6, c2y=p2.y-(p3.y-p1.y)/6;
+    d+=' C'+c1x.toFixed(1)+','+c1y.toFixed(1)+' '+c2x.toFixed(1)+','+c2y.toFixed(1)+' '+p2.x.toFixed(1)+','+p2.y.toFixed(1);
+  }
+  return d;
+}
+var _nowChartData=null;
+function renderNowChart(){
+  var host=document.getElementById('bNowChart'); if(!host) return;
+  var evs=_chartEvents(curDay);
+  if(!evs.length){ host.innerHTML='<div style="height:100%;display:flex;align-items:center;justify-content:center;color:var(--text2);font-size:13px;">—</div>'; _nowChartData=null; return; }
+  var dayStart=Math.floor(evs[0].min/60)*60;
+  var dayEnd=Math.ceil(Math.max.apply(null,evs.map(function(e){return e.end;}))/60)*60;
+  if(dayEnd-dayStart<120) dayEnd=dayStart+120;
+  var W=1000,H=300,padL=46,padR=26,padT=44,padB=46;
+  var plotW=W-padL-padR, axisY=H-padB, midY=padT+(axisY-padT)/2, amp=Math.min(64,(axisY-padT)*0.34);
+  function PX(m){ return padL+(m-dayStart)/(dayEnd-dayStart)*plotW; }
+  var pts=evs.map(function(e,i){ return {x:PX(e.min), y:midY - amp*Math.cos(i*0.9), ev:e}; });
+  var linePath=_smoothPath(pts);
+  var areaPath=linePath+' L'+pts[pts.length-1].x.toFixed(1)+','+axisY+' L'+pts[0].x.toFixed(1)+','+axisY+' Z';
+  // hour ticks
+  var ticks='';
+  for(var hh=dayStart; hh<=dayEnd; hh+=60){
+    var tx=PX(hh);
+    ticks+='<line x1="'+tx.toFixed(1)+'" y1="'+padT+'" x2="'+tx.toFixed(1)+'" y2="'+axisY+'" stroke="var(--border)" stroke-width="1" opacity=".5"/>'+
+      '<text x="'+tx.toFixed(1)+'" y="'+(axisY+18)+'" text-anchor="middle" fill="var(--text2)" class="now-lbl">'+Math.floor(hh/60)+'h</text>';
+  }
+  // nodes + labels
+  var nodes='', labels='';
+  for(var i=0;i<pts.length;i++){
+    var p=pts[i], e=p.ev;
+    nodes+='<circle id="nowdot-'+i+'" class="nowdot" cx="'+p.x.toFixed(1)+'" cy="'+p.y.toFixed(1)+'" r="5.5" fill="var(--brand)" stroke="var(--surface)" stroke-width="2"><title>'+esc(_fmtMin(e.min)+' · '+e.title)+'</title></circle>';
+    var below=p.y<midY;
+    var ly=below?(p.y+16):(p.y-26);
+    var ttl=e.title.length>16?e.title.slice(0,15)+'…':e.title;
+    var lt=_fmtMin(e.min)+(ttl?' · '+ttl:'');
+    var lw=Math.max(40, lt.length*5.3+12);
+    var lx=Math.min(Math.max(p.x-lw/2, 2), W-lw-2);
+    labels+='<g>'+
+      '<rect x="'+lx.toFixed(1)+'" y="'+(ly-12)+'" width="'+lw.toFixed(1)+'" height="18" rx="6" fill="var(--surface)" stroke="var(--border)" stroke-width="1"/>'+
+      '<text x="'+(lx+lw/2).toFixed(1)+'" y="'+(ly+1)+'" text-anchor="middle" fill="var(--text)" class="now-lbl">'+esc(lt)+'</text>'+
+    '</g>';
+  }
+  host.innerHTML='<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none">'+
+    '<defs><linearGradient id="nowGrad" x1="0" y1="0" x2="0" y2="1">'+
+      '<stop offset="0" stop-color="var(--brand)" stop-opacity=".26"/>'+
+      '<stop offset="1" stop-color="var(--brand)" stop-opacity="0"/>'+
+    '</linearGradient></defs>'+
+    '<line x1="'+padL+'" y1="'+axisY+'" x2="'+(W-padR)+'" y2="'+axisY+'" stroke="var(--border)" stroke-width="1"/>'+
+    ticks+
+    '<path d="'+areaPath+'" fill="url(#nowGrad)"/>'+
+    '<path d="'+linePath+'" fill="none" stroke="var(--brand)" stroke-width="2.5" stroke-linecap="round"/>'+
+    '<line id="nowLine" class="now-line" x1="0" y1="'+(padT-6)+'" x2="0" y2="'+axisY+'" stroke="#d6453d" stroke-width="2" style="display:none"/>'+
+    '<circle id="nowMarker" r="4" fill="#d6453d" style="display:none"/>'+
+    nodes+labels+
+  '</svg>';
+  _nowChartData={dayStart:dayStart,dayEnd:dayEnd,PXa:[padL,dayStart,plotW,dayEnd],axisY:axisY,padT:padT,pts:pts,evs:evs,W:W};
+  _nowTick();
+}
+function _progColor(p){ return p<0.5?'#2f9e5b':(p<0.8?'#d99a2b':'#d6453d'); }
+function _startNowTicker(){
+  if(window._nowTimer){ clearInterval(window._nowTimer); window._nowTimer=null; }
+  if(!document.getElementById('bNowChart')) return;
+  _nowTick();
+  window._nowTimer=setInterval(_nowTick,1000);
+}
+function _nowTick(){
+  var host=document.getElementById('bNowChart');
+  if(!host || !_nowChartData){ if(window._nowTimer){ clearInterval(window._nowTimer); window._nowTimer=null; } return; }
+  var D=_nowChartData;
+  var d=new Date(), nowMin=d.getHours()*60+d.getMinutes()+d.getSeconds()/60;
+  function PX(m){ return D.PXa[0]+(m-D.PXa[1])/(D.PXa[3]-D.PXa[1])*D.PXa[2]; }
+  var line=document.getElementById('nowLine'), marker=document.getElementById('nowMarker');
+  var st=document.getElementById('nowStatus');
+  var active=-1, prog=0;
+  for(var i=0;i<D.evs.length;i++){ if(nowMin>=D.evs[i].min && nowMin<D.evs[i].end){ active=i; prog=(nowMin-D.evs[i].min)/(D.evs[i].end-D.evs[i].min); break; } }
+  // reset nodes
+  for(var j=0;j<D.pts.length;j++){ var c=document.getElementById('nowdot-'+j); if(!c) continue;
+    if(j===active){ var col=_progColor(prog); c.setAttribute('fill',col); c.setAttribute('r','8'); c.classList.add('active'); c.style.filter='drop-shadow(0 0 6px '+col+')'; }
+    else { c.setAttribute('fill','var(--brand)'); c.setAttribute('r','5.5'); c.classList.remove('active'); c.style.filter='none'; }
+  }
+  // now-line
+  if(nowMin>=D.dayStart && nowMin<=D.dayEnd){
+    var x=PX(nowMin);
+    if(line){ line.setAttribute('x1',x.toFixed(1)); line.setAttribute('x2',x.toFixed(1)); line.style.display=''; }
+    if(marker){ marker.setAttribute('cx',x.toFixed(1)); marker.setAttribute('cy',D.axisY); marker.style.display=''; }
+  } else { if(line) line.style.display='none'; if(marker) marker.style.display='none'; }
+  // status badge
+  if(!st) return;
+  if(active>=0){
+    var e=D.evs[active], col2=_progColor(prog);
+    st.className='now-status live';
+    st.style.background='color-mix(in srgb,'+col2+' 16%,transparent)'; st.style.color=col2;
+    var tt=e.title.length>22?e.title.slice(0,21)+'…':e.title;
+    st.innerHTML='<span class="sdot" style="background:'+col2+'"></span>'+t18('nowLive')+' · '+esc(tt);
+  } else {
+    var nextI=-1; for(var k=0;k<D.evs.length;k++){ if(D.evs[k].min>nowMin){ nextI=k; break; } }
+    st.className='now-status';
+    st.style.background='var(--bg)'; st.style.color='var(--text2)';
+    if(nowMin>D.dayEnd){ st.textContent=t18('nowEnded'); }
+    else if(nextI>=0){ var ne=D.evs[nextI]; var ntt=ne.title.length>20?ne.title.slice(0,19)+'…':ne.title; st.textContent=t18('nowNext')+': '+_fmtMin(ne.min)+' '+ntt; }
+    else { st.textContent=t18('nowSoon'); }
+  }
+}
+function _fmtMin(m){ var h=Math.floor(m/60),mm=Math.round(m%60); return h+':'+(mm<10?'0':'')+mm; }
 function _startCountdown(){
   if(window._cdTimer){ clearInterval(window._cdTimer); window._cdTimer=null; }
   if(!document.getElementById('cdDays')) return;
@@ -3715,7 +3857,10 @@ function renderPubSpkGrid(q){
 // viewSpk — abre perfil completo; botão Editar só para editor
 function viewSpk(id){
   var s=findSpk(id); if(!s) return;
-  var av=s.photo?'<img class="sd-photo" src="'+s.photo+'" alt="">':'<div class="sd-ini" style="background:'+avColor(s.name)+'">'+initials(s.name)+'</div>';
+  var _ring=catColor(s);
+  var av=s.photo
+    ? '<div class="sd-photo-wrap photo-clickable" onclick="openPhotoLb(\''+s.photo+'\',\''+esc(s.name)+'\',\''+esc(s.role||'')+'\',\''+esc(s.company||'')+'\')"><img class="sd-photo" src="'+s.photo+'" alt="" style="border-color:'+_ring+'"><span class="sd-zoom"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span></div>'
+    : '<div class="sd-ini" style="background:'+avColor(s.name)+';border:3px solid '+_ring+';box-sizing:border-box;">'+initials(s.name)+'</div>';
   var ftr='<button class="btn" onclick="closeModal()">Fechar</button>';
   if(WP_ENABLED) ftr+='<button class="btn btn-p" onclick="closeModal();openSpkForm(\''+s.id+'\')">✏️ Editar</button>';
   var liHtml='';
