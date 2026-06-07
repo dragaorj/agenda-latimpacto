@@ -766,6 +766,15 @@ img.phprev, img.spk-ph, img.sd-photo, img.pkav, img.lav, img.cgrid-av, img.pub-s
 .auth-key-btn{background:none;border:1px solid transparent;cursor:pointer;padding:6px 8px;border-radius:9px;color:var(--text2);transition:color .18s,background .18s,border-color .18s,transform .12s;line-height:1;display:flex;align-items:center;justify-content:center;}
 .auth-key-btn:hover{background:var(--bg);color:var(--blue);}
 .auth-key-btn.logged{color:#0f9d58;}
+/* Botão Entrar / conta (topo) */
+.top-auth-btn{display:inline-flex;align-items:center;gap:7px;background:var(--blue);border:1px solid var(--blue);cursor:pointer;padding:6px 12px;border-radius:9px;color:#fff;font-family:var(--font);font-size:13px;font-weight:600;line-height:1;flex-shrink:0;-webkit-tap-highlight-color:transparent;transition:background .18s,border-color .18s,transform .12s;box-shadow:0 1px 3px rgba(97,23,128,.32);}
+.top-auth-btn:hover{background:var(--blue-dk);border-color:var(--blue-dk);}
+.top-auth-btn:active{transform:scale(.96);}
+.top-auth-btn .tab-ico{flex-shrink:0;}
+.top-auth-btn.logged{background:var(--surface);border-color:var(--border);color:var(--text);box-shadow:none;padding:5px 11px 5px 5px;}
+.top-auth-btn.logged:hover{border-color:var(--muted);background:var(--bg);}
+.top-auth-btn .taa-av{width:24px;height:24px;border-radius:50%;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700;}
+.top-auth-btn .taa-av img{width:100%;height:100%;object-fit:cover;display:block;}
 
 /* FORMAT BADGES */
 .fmt-badge{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.3px;padding:2px 7px;border-radius:10px;white-space:nowrap;}
@@ -1296,13 +1305,13 @@ body[data-cardstyle="tint"] .lcard{
     <!-- Botões só para editores (WP_ENABLED) -->
     <div class="tools-dd" id="toolsDd" style="display:none;position:relative;">
       <button class="btn" id="btnTools" onclick="toggleToolsMenu(event)" title="Ferramentas de edição">🛠 <span class="tools-lbl" data-i18n="toolsBtn">Ferramentas</span> ▾</button>
-      <div class="tools-menu" id="toolsMenu">
-        <button onclick="closeToolsMenu();openSlotManager()">⏰ <span data-i18n="toolHours">Horários</span></button>
-        <button onclick="closeToolsMenu();openHubRoomManager()">🛠 <span data-i18n="toolTags">Gerenciar</span></button>
-        <button onclick="closeToolsMenu();doExport()">⬇ <span data-i18n="toolExport">Exportar CSV</span></button>
-        <button onclick="closeToolsMenu();openBackupModal()">💾 <span data-i18n="toolBackup">Backup</span></button>
-        <button class="danger" onclick="closeToolsMenu();clearAllData()">🗑 <span data-i18n="toolClear">Apagar tudo</span></button>
-      </div>
+    </div>
+    <div class="tools-menu" id="toolsMenu">
+      <button onclick="closeToolsMenu();openSlotManager()">⏰ <span data-i18n="toolHours">Horários</span></button>
+      <button onclick="closeToolsMenu();openHubRoomManager()">🛠 <span data-i18n="toolTags">Gerenciar</span></button>
+      <button onclick="closeToolsMenu();doExport()">⬇ <span data-i18n="toolExport">Exportar CSV</span></button>
+      <button onclick="closeToolsMenu();openBackupModal()">💾 <span data-i18n="toolBackup">Backup</span></button>
+      <button class="danger" onclick="closeToolsMenu();clearAllData()">🗑 <span data-i18n="toolClear">Apagar tudo</span></button>
     </div>
     <div class="lang-dd" id="langSwitch">
       <button class="lang-trigger" id="langTrigger" onclick="toggleLangMenu(event)" aria-haspopup="true" title="Idioma / Language / Idioma">
@@ -1316,11 +1325,10 @@ body[data-cardstyle="tint"] .lcard{
         <button class="lang-opt" data-lang="es" onclick="pickLang('es')"><span class="lang-flag"></span><span>Español</span></button>
       </div>
     </div>
-    <!-- Ícone chave — login (modo edição) -->
-    <button class="auth-key-btn" id="authKeyBtn" onclick="openWPConfig()" title="Login WordPress (modo edição)">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="8" cy="15" r="4"/><line x1="11.5" y1="11.5" x2="20" y2="3"/><line x1="17" y1="6" x2="19" y2="8"/>
-      </svg>
+    <!-- Botão Entrar / conta (modo edição) -->
+    <button class="top-auth-btn" id="authKeyBtn" onclick="openWPConfig()" title="Entrar (modo edição)">
+      <svg class="tab-ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-4"/><path d="M10 17l5-5-5-5"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+      <span class="tab-lbl" data-i18n="navLogin">Entrar</span>
     </button>
     <!-- Botão dark mode -->
     <button class="auth-key-btn" id="darkToggleBtn" onclick="toggleDark()" title="Alternar dark/light mode">
@@ -1834,8 +1842,16 @@ function applyMode(){
   });
   var kb = document.getElementById('authKeyBtn');
   if(kb){
-    kb.className = 'auth-key-btn'+(ed?' logged':'');
-    kb.title = ed ? ('Logado: '+WP_USER+' — clique para conta / sair') : 'Entrar (modo edição)';
+    kb.className = 'top-auth-btn'+(ed?' logged':'');
+    if(ed && AUTH){
+      var pn=profileName(AUTH);
+      var avi = AUTH.photo?'<span class="taa-av"><img src="'+AUTH.photo+'"></span>':'<span class="taa-av" style="background:'+avColor(pn)+'">'+initials(pn)+'</span>';
+      kb.innerHTML = avi+'<span class="tab-lbl">'+esc((pn||'').split(' ')[0]||pn)+'</span>';
+      kb.title = 'Logado: '+pn+' — clique para conta / sair';
+    } else {
+      kb.innerHTML = '<svg class="tab-ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-4"/><path d="M10 17l5-5-5-5"/><line x1="15" y1="12" x2="3" y2="12"/></svg><span class="tab-lbl">'+t18('navLogin')+'</span>';
+      kb.title = 'Entrar (modo edição)';
+    }
   }
   document.body.setAttribute('data-mode', ed?'edit':'view');
   if(typeof _syncRail==='function') _syncRail();
@@ -1850,7 +1866,7 @@ function applyMode(){
 // ════════════════════════════════════════
 function toggleToolsMenu(e){ if(e){ e.stopPropagation(); } var m=document.getElementById('toolsMenu'), b=document.getElementById('btnTools'); if(!m||!b) return; if(m.classList.contains('open')){ m.classList.remove('open'); return; } if(m.parentNode!==document.body) document.body.appendChild(m); var r=b.getBoundingClientRect(); m.style.top=(r.bottom+6)+'px'; m.classList.add('open'); var w=m.offsetWidth||200; var left=r.right-w; if(left<8) left=8; var maxL=window.innerWidth-w-8; if(left>maxL) left=maxL; m.style.left=left+'px'; }
 function closeToolsMenu(){ var m=document.getElementById('toolsMenu'); if(m) m.classList.remove('open'); }
-document.addEventListener('click',function(e){ var dd=document.getElementById('toolsDd'); var m=document.getElementById('toolsMenu'); if(!m||!m.classList.contains('open')) return; if((dd && dd.contains(e.target)) || m.contains(e.target)) return; closeToolsMenu(); });
+document.addEventListener('click',function(e){ var dd=document.getElementById('toolsDd'); var mt=document.getElementById('mnTools'); var m=document.getElementById('toolsMenu'); if(!m||!m.classList.contains('open')) return; if((dd && dd.contains(e.target)) || (mt && mt.contains(e.target)) || m.contains(e.target)) return; closeToolsMenu(); });
 var curPage = 'home';
 function _syncRail(){
   var map={home:'railHome',agenda:'railAgenda',spk:'railSpk'};
@@ -1913,7 +1929,7 @@ function showPage(p){
     document.getElementById('pgAgenda').style.display='block';
     document.getElementById('ptAgenda').className='ptab on';
     renderDayTabs(); _setActiveDay(curDay); setView(curView);
-    if(mab && WP_ENABLED){ mab.textContent=t18('btnAddTalk'); mab.onclick=openAddTalk; mab.style.display=''; }
+    if(mab && WP_ENABLED){ mab.onclick=openAddTalk; mab.style.display='flex'; }
     renderMain();
     _animIn(document.getElementById('pgAgenda'));
   } else if(p==='spk'){
@@ -1935,7 +1951,7 @@ function _applyAgendaTab(){
   if(pgA) pgA.style.display='block';
   if(dc)  dc.style.display='block';
   var mab=document.getElementById('btnAddTalk');
-  if(mab){ if(WP_ENABLED){ mab.textContent=t18('btnAddTalk'); mab.onclick=openAddTalk; mab.style.display=''; } else { mab.style.display='none'; } }
+  if(mab){ if(WP_ENABLED){ mab.onclick=openAddTalk; mab.style.display='flex'; } else { mab.style.display='none'; } }
   renderMain();
 }
 function showHighlights(){ showPage('home'); }
