@@ -80,7 +80,7 @@ html,body{height:100%;overflow:hidden;margin:0;padding:0;}
   #rail:hover ~ #appShell,#rail.pinned ~ #appShell{margin-left:236px;}
   .nav .logo a,.nav .logo svg,.nav .logo .logo-sep{display:none!important;}
   .nav .logo{gap:0;}
-  #topFixed #darkToggleBtn{display:none!important;}
+  #topFixed #toolsDd{display:none!important;} /* Ferramentas vai para a barra lateral no desktop */
   .ptabs{display:none!important;}
   .nav{padding-left:24px;}
 }
@@ -114,15 +114,18 @@ html,body{height:100%;overflow:hidden;margin:0;padding:0;}
 
 /* ===== DESTAQUES (bento) ===== */
 #pgHighlights{padding:22px 26px;max-width:none;margin:0;min-height:100%;box-sizing:border-box;display:flex;flex-direction:column;}
-.bento{display:flex;flex-direction:column;gap:14px;flex:1;min-height:0;}
+.bento{display:flex;flex-direction:column;gap:14px;}
 .b-band{display:grid;gap:14px;}
-.band-top{grid-template-columns:1.85fr 1fr;flex:1;min-height:250px;}
+.band-top{grid-template-columns:1.7fr 1fr;align-items:stretch;}
 .band-top.solo{grid-template-columns:1fr;}
-.band-mid{display:flex;flex-wrap:wrap;flex:.8;}
-.band-mid>.btile{flex:1 1 240px;min-height:180px;}
-.band-bot{grid-template-columns:1fr 1.75fr;flex:1.35;min-height:270px;}
-.band-bot>.btile{min-height:0;}
-.band-bot.solo{grid-template-columns:1fr;}
+.band-top>.btile{min-height:300px;}
+.band-media{display:flex;flex-wrap:wrap;}
+.band-media>.btile{flex:1 1 300px;min-height:210px;}
+.band-mid{display:flex;flex-wrap:wrap;}
+.band-mid>.btile{flex:1 1 280px;min-height:190px;}
+.band-bot{display:flex;flex-wrap:wrap;}
+.band-bot>.btile{flex:1 1 320px;min-height:280px;}
+.band-bot>.b-now{flex:1.6 1 380px;}
 /* Agenda ao vivo (gráfico em tempo real) */
 .b-now-chart{flex:1;min-height:140px;width:100%;position:relative;margin-top:4px;}
 .b-now-chart svg{width:100%;height:100%;display:block;overflow:visible;}
@@ -134,7 +137,7 @@ html,body{height:100%;overflow:hidden;margin:0;padding:0;}
 @keyframes nowPulse{0%,100%{opacity:1;}50%{opacity:.35;}}
 .now-line{stroke-dasharray:5 5;}
 .now-lbl{font-size:10.5px;font-weight:600;}
-@media(max-width:900px){ .band-bot{grid-template-columns:1fr;flex:none;} .b-now-chart{min-height:230px;} .b-now{min-height:300px;} }
+@media(max-width:900px){ .band-bot>.b-now{flex:1 1 100%;} .b-now-chart{min-height:230px;} .b-now{min-height:300px;} }
 .btile{position:relative;border-radius:18px;background:var(--surface);border:1px solid var(--border);padding:18px 20px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 1px 2px rgba(40,20,60,.04);}
 .btile-h{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text2);display:flex;align-items:center;gap:7px;}
 .btile-h svg{opacity:.7;}
@@ -157,12 +160,12 @@ html,body{height:100%;overflow:hidden;margin:0;padding:0;}
 [data-theme="dark"] .b-hero{color:#1a1020;}
 [data-theme="dark"] .b-hero .dates{background:rgba(0,0,0,.16);}
 /* Countdown */
-.b-count{align-items:stretch;justify-content:center;background:linear-gradient(160deg,var(--blue-lt),color-mix(in srgb,var(--brand) 8%,var(--surface)));border-color:transparent;}
-.b-count .cd-wrap{margin:auto 0;width:100%;display:flex;flex-direction:column;height:100%;justify-content:center;}
-.b-count .cd-top{display:flex;align-items:baseline;gap:10px;margin-bottom:auto;padding-top:6px;}
-.b-count .big{font-size:clamp(56px,6.5vw,108px);font-weight:800;line-height:.82;color:var(--brand);font-variant-numeric:tabular-nums;letter-spacing:-.05em;}
+.b-count{align-items:stretch;justify-content:flex-start;background:linear-gradient(160deg,var(--blue-lt),color-mix(in srgb,var(--brand) 8%,var(--surface)));border-color:transparent;min-height:230px;}
+.b-count .cd-wrap{width:100%;display:flex;flex-direction:column;flex:1;justify-content:center;gap:2px;}
+.b-count .cd-top{display:flex;align-items:baseline;gap:10px;}
+.b-count .big{font-size:clamp(48px,5vw,84px);font-weight:800;line-height:.9;color:var(--brand);font-variant-numeric:tabular-nums;letter-spacing:-.05em;}
 .b-count .lbl{font-size:18px;font-weight:600;color:var(--brand);}
-.b-count .cd-hms{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:18px 0 14px;}
+.b-count .cd-hms{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:14px 0 4px;}
 .b-count .cd-u{display:flex;flex-direction:column;align-items:center;gap:5px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 4px 9px;}
 [data-theme="dark"] .b-count .cd-u{background:rgba(255,255,255,.05);}
 .b-count .cd-u .v{font-size:clamp(22px,2vw,32px);font-weight:700;color:var(--text);font-variant-numeric:tabular-nums;line-height:1;letter-spacing:-.02em;}
@@ -199,6 +202,23 @@ html,body{height:100%;overflow:hidden;margin:0;padding:0;}
 .btile-edit{position:absolute;top:10px;right:10px;width:28px;height:28px;border-radius:8px;border:none;background:rgba(255,255,255,.85);color:var(--brand);cursor:pointer;display:none;align-items:center;justify-content:center;box-shadow:0 1px 3px rgba(0,0,0,.12);}
 body[data-mode="edit"] .btile:hover .btile-edit{display:flex;}
 .b-hero .btile-edit{background:rgba(255,255,255,.92);}
+/* Hero: ações (datas + inscrição) e link "sobre" */
+.b-hero-actions{position:relative;z-index:2;display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px;}
+.b-hero-actions .dates{margin-top:0;}
+.hero-reg{display:inline-flex;align-items:center;gap:6px;background:#fff;color:var(--brand);font-family:var(--font);font-size:13px;font-weight:700;padding:7px 15px;border-radius:30px;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.18);transition:transform .12s,background .18s;}
+.hero-reg:hover{transform:translateY(-1px);background:#f6f0fb;}
+.hero-more{position:absolute;top:16px;right:18px;z-index:2;font-size:12px;font-weight:600;color:#fff;opacity:.82;letter-spacing:.01em;}
+.b-hero:hover .hero-more{opacity:1;text-decoration:underline;}
+/* Coluna lateral do topo (legado) */
+.band-top-side{display:flex;flex-direction:column;gap:14px;min-width:0;}
+/* Vídeo do evento */
+.b-video{position:relative;overflow:hidden;border:none;min-height:130px;padding:0;}
+.b-video-bg{position:absolute;inset:0;background-size:cover;background-position:center;z-index:0;transition:transform .4s ease;}
+.b-video:hover .b-video-bg{transform:scale(1.05);}
+.b-video-scrim{position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(20,8,28,.15),rgba(20,8,28,.55));}
+.b-video-play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2;width:54px;height:54px;border-radius:50%;background:rgba(97,23,128,.92);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,.3);padding-left:3px;transition:transform .14s;}
+.b-video:hover .b-video-play{transform:translate(-50%,-50%) scale(1.08);}
+.b-video-lbl{position:absolute;left:16px;bottom:13px;z-index:2;color:#fff;font-size:13px;font-weight:600;letter-spacing:-.01em;text-shadow:0 1px 4px rgba(0,0,0,.4);}
 /* ===== RESPONSIVO — qualquer resolução/dispositivo ===== */
 /* Ultrawide: mais respiro */
 @media(min-width:1700px){
@@ -219,19 +239,19 @@ body[data-mode="edit"] .btile:hover .btile-edit{display:flex;}
    conteúdo alinhado ao topo, espaço sobrando embaixo (melhor que esticar). */
 @media (min-width:681px) and (orientation:portrait){
   #pgHighlights{min-height:0;}
-  .bento{flex:none;}
-  .band-top,.band-mid,.band-bot{flex:none;}
-  .band-top{min-height:300px;}
-  .band-mid>.btile{min-height:170px;}
-  .band-bot{min-height:300px;}
+  .band-top{min-height:0;}
 }
 /* Tablet/telemóvel: empilha hero + contagem; bandas crescem pelo conteúdo */
+@media(max-width:760px){
+  .band-top{grid-template-columns:1fr;}
+  .band-top>.btile{min-height:0;}
+}
 @media(max-width:680px){
   #pgHighlights{padding:14px 12px 88px;}
-  .bento{gap:12px;flex:none;}
-  .band-top{grid-template-columns:1fr;flex:none;min-height:0;}
-  .band-mid{flex:none;}
-  .band-mid>.btile{flex:1 1 150px;min-height:160px;}
+  .bento{gap:12px;}
+  .band-top{grid-template-columns:1fr;min-height:0;}
+  .band-media>.btile,.band-mid>.btile{flex:1 1 100%;min-height:160px;}
+  .band-bot>.btile{flex:1 1 100%;min-height:240px;}
   .btile{min-height:0;}
   .b-hero{min-height:210px;justify-content:flex-end;}
   .b-count .cd-top{margin-bottom:14px;}
@@ -1257,17 +1277,9 @@ body[data-cardstyle="tint"] .lcard{
   </div>
   <div class="rail-bottom">
     <div class="rail-sep"></div>
-    <button class="rail-ic" id="railDark" onclick="toggleDark()" aria-label="Tema">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>
-      <span class="rail-lbl" data-i18n="navTheme">Tema</span>
-    </button>
-    <button class="rail-ic" id="railAuth" onclick="openWPConfig()" aria-label="Entrar">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-4"/><path d="M10 17l5-5-5-5"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
-      <span class="rail-lbl" data-i18n="navLogin">Entrar</span>
-    </button>
-    <button class="rail-ic" id="railAccount" onclick="openWPConfig()" aria-label="Minha conta" style="display:none">
-      <span class="rail-av" id="railAvatar"></span>
-      <span class="rail-lbl" data-i18n="navAccount">Minha conta</span>
+    <button class="rail-ic" id="railTools" onclick="toggleRailTools(event)" aria-label="Ferramentas" style="display:none">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.2 5.2L3 18l3 3 6.5-6.5a4 4 0 0 0 5.2-5.2l-2.5 2.5-2.5-.7-.7-2.5z"/></svg>
+      <span class="rail-lbl" data-i18n="toolsBtn">Ferramentas</span>
     </button>
   </div>
 </aside>
@@ -1578,17 +1590,17 @@ var I18N={
        searchPh:'Buscar palestra ou palestrante…', searchSpkPh:'Buscar participante…', allHubs:'TODOS OS HUBS',
        talks:'palestras', rooms:'salas', speakers:'Participantes', filters:'Filtros', clearF:'Limpar',
        roomsPhys:'Salas Físicas', hubsThemes:'Hubs / Temas', descLabel:'Descrição', noResults:'Nenhuma palestra encontrada.', noSearchResults:'Nenhum resultado para "%s"', newSpeaker:'Novo Participante', nowTitle:'Agora no evento', nowLive:'AO VIVO', nowNext:'A seguir', nowEnded:'Encerrado por hoje', nowSoon:'Começa em breve', nowFree:'Intervalo',
-       tabHighlights:'Destaques', navHome:'Início', spkSpeakers:'Palestrantes', spkCurators:'Curadores', catLabel:'Categoria', catSpeaker:'Palestrante', catCurator:'Curador', manageCats:'Gerenciar categorias', daysTab:'Dias', daysSaveBtn:'Salvar dias', daysDate:'Data', daysWeekday:'Dia da semana (auto)', daysAdd:'Adicionar dia', daysEmpty:'Nenhum dia. Adicione ao menos um.', daysDelConfirm:'Excluir este dia? As palestras deste dia serão removidas.', daysMin:'Mantenha ao menos um dia.', catMgrTitle:'Categorias de participantes', addCat:'Adicionar categoria', catNamePh:'Nome da categoria', catColorLbl:'Cor', catSave:'Salvar categorias', catEmpty:'Defina ao menos uma categoria.', navManage:'Gerenciar', navEditHl:'Editar Destaques', navTheme:'Tema', navLogin:'Entrar', navAccount:'Minha conta', hlCountdown:'Contagem regressiva', hlDays:'dias', hlHours:'horas', hlToGo:'para o evento', hlLive:'Acontecendo agora', hlNumbers:'O evento em números', hlSpeakers:'Vozes do palco', hlSeeAll:'Ver todos', hlOpening:'Abertura', hlNext:'Em destaque', hlEditTitle:'Editar Destaques', hlHero:'Capa (hero)', hlCoverImg:'Imagem da capa', hlChooseImg:'Escolher imagem', hlRemoveImg:'Remover', hlImgHint:'JPG/PNG · convertida p/ WebP < 100 KB', hlTitleLbl:'Título', hlSubtitleLbl:'Subtítulo', hlAutoLbl:'Blocos automáticos', hlManualLbl:'Blocos personalizados', hlAddCard:'Adicionar bloco', hlLinkTalk:'Vincular a uma palestra (opcional)', hlNoLink:'— Nenhuma —', hlAccent:'Cor do filete', hlSave:'Salvar', hlCancel:'Cancelar', hlShowCountdown:'Contagem regressiva', hlShowStats:'Números do evento', hlShowOpening:'Abertura do evento', hlShowSpeakers:'Participantes em destaque', hlEmptyManual:'Nenhum bloco ainda.', hlEditions:'Edições anteriores', hlShowNumbers:'Números do evento', hlShowEditions:'Edições anteriores', hlNumbersLbl:'Números gerais do evento', hlEditionsLbl:'Edições anteriores (gráfico)', hlAddNumber:'Adicionar número', hlAddEdition:'Adicionar edição', hlValueLbl:'Valor', hlYearLbl:'Ano', hlEditionsTitleLbl:'Título do gráfico', btnAddTalk:'+ Adicionar Palestra', toolsBtn:'Ferramentas', toolHours:'Horários', toolTags:'Gerenciar', toolExport:'Exportar CSV', toolBackup:'Backup', toolClear:'Apagar tudo', evLibras:'Libras', evTrad:'Tradução', evLocation:'Localização da sala', evSpeaker:'Palestrante', evSpeakers:'Palestrantes', evSeeMore:'Ver mais', evSeeLess:'Ver menos', btnClose:'Fechar', btnGcal:'Google Agenda', evTitle:'Detalhes da Palestra', btnEdit:'Editar', btnDelete:'Excluir' },
+       tabHighlights:'Destaques', navHome:'Início', hlRegister:'Inscreva-se já', hlAboutLink:'Sobre o evento', hlVideo:'Vídeo do evento', hlAboutLbl:'Sobre o evento', hlVideoLbl:'Vídeo (YouTube)', hlRegUrlLbl:'Link de inscrição', hlShowVideo:'Vídeo do evento', hlAboutTitleLbl:'Título', hlAboutTextLbl:'Texto', hlVideoUrlLbl:'URL do YouTube', spkSpeakers:'Palestrantes', spkCurators:'Curadores', catLabel:'Categoria', catSpeaker:'Palestrante', catCurator:'Curador', manageCats:'Gerenciar categorias', daysTab:'Dias', daysSaveBtn:'Salvar dias', daysDate:'Data', daysWeekday:'Dia da semana (auto)', daysAdd:'Adicionar dia', daysEmpty:'Nenhum dia. Adicione ao menos um.', daysDelConfirm:'Excluir este dia? As palestras deste dia serão removidas.', daysMin:'Mantenha ao menos um dia.', catMgrTitle:'Categorias de participantes', addCat:'Adicionar categoria', catNamePh:'Nome da categoria', catColorLbl:'Cor', catSave:'Salvar categorias', catEmpty:'Defina ao menos uma categoria.', navManage:'Gerenciar', navEditHl:'Editar Destaques', navTheme:'Tema', navLogin:'Entrar', navAccount:'Minha conta', hlCountdown:'Contagem regressiva', hlDays:'dias', hlHours:'horas', hlToGo:'para o evento', hlLive:'Acontecendo agora', hlNumbers:'O evento em números', hlSpeakers:'Vozes do palco', hlSeeAll:'Ver todos', hlOpening:'Abertura', hlNext:'Em destaque', hlEditTitle:'Editar Destaques', hlHero:'Capa (hero)', hlCoverImg:'Imagem da capa', hlChooseImg:'Escolher imagem', hlRemoveImg:'Remover', hlImgHint:'JPG/PNG · convertida p/ WebP < 100 KB', hlTitleLbl:'Título', hlSubtitleLbl:'Subtítulo', hlAutoLbl:'Blocos automáticos', hlManualLbl:'Blocos personalizados', hlAddCard:'Adicionar bloco', hlLinkTalk:'Vincular a uma palestra (opcional)', hlNoLink:'— Nenhuma —', hlAccent:'Cor do filete', hlSave:'Salvar', hlCancel:'Cancelar', hlShowCountdown:'Contagem regressiva', hlShowStats:'Números do evento', hlShowOpening:'Abertura do evento', hlShowSpeakers:'Participantes em destaque', hlEmptyManual:'Nenhum bloco ainda.', hlEditions:'Edições anteriores', hlShowNumbers:'Números do evento', hlShowEditions:'Edições anteriores', hlNumbersLbl:'Números gerais do evento', hlEditionsLbl:'Edições anteriores (gráfico)', hlAddNumber:'Adicionar número', hlAddEdition:'Adicionar edição', hlValueLbl:'Valor', hlYearLbl:'Ano', hlEditionsTitleLbl:'Título do gráfico', btnAddTalk:'+ Adicionar Palestra', toolsBtn:'Ferramentas', toolHours:'Horários', toolTags:'Gerenciar', toolExport:'Exportar CSV', toolBackup:'Backup', toolClear:'Apagar tudo', evLibras:'Libras', evTrad:'Tradução', evLocation:'Localização da sala', evSpeaker:'Palestrante', evSpeakers:'Palestrantes', evSeeMore:'Ver mais', evSeeLess:'Ver menos', btnClose:'Fechar', btnGcal:'Google Agenda', evTitle:'Detalhes da Palestra', btnEdit:'Editar', btnDelete:'Excluir' },
   en:{ appTitle:'Agenda', tabAgenda:'Agenda', tabSpk:'Participants', viewGrid:'Grid', viewCards:'Cards', viewList:'List',
        searchPh:'Search a session or speaker…', searchSpkPh:'Search participant…', allHubs:'ALL HUBS',
        talks:'sessions', rooms:'rooms', speakers:'Participants', filters:'Filters', clearF:'Clear',
        roomsPhys:'Rooms', hubsThemes:'Hubs / Themes', descLabel:'Description', noResults:'No sessions found.', noSearchResults:'No results for "%s"', newSpeaker:'New Participant', nowTitle:'Live schedule', nowLive:'LIVE', nowNext:'Up next', nowEnded:'Done for today', nowSoon:'Starting soon', nowFree:'Break',
-       tabHighlights:'Highlights', navHome:'Home', spkSpeakers:'Speakers', spkCurators:'Curators', catLabel:'Category', catSpeaker:'Speaker', catCurator:'Curator', manageCats:'Manage categories', daysTab:'Days', daysSaveBtn:'Save days', daysDate:'Date', daysWeekday:'Weekday (auto)', daysAdd:'Add day', daysEmpty:'No days. Add at least one.', daysDelConfirm:'Delete this day? Its sessions will be removed.', daysMin:'Keep at least one day.', catMgrTitle:'Participant categories', addCat:'Add category', catNamePh:'Category name', catColorLbl:'Color', catSave:'Save categories', catEmpty:'Define at least one category.', navManage:'Manage', navEditHl:'Edit Highlights', navTheme:'Theme', navLogin:'Sign in', navAccount:'My account', hlCountdown:'Countdown', hlDays:'days', hlHours:'hours', hlToGo:'to the event', hlLive:'Happening now', hlNumbers:'The event in numbers', hlSpeakers:'Voices on stage', hlSeeAll:'See all', hlOpening:'Opening', hlNext:'Featured', hlEditTitle:'Edit Highlights', hlHero:'Hero', hlCoverImg:'Cover image', hlChooseImg:'Choose image', hlRemoveImg:'Remove', hlImgHint:'JPG/PNG · converted to WebP < 100 KB', hlTitleLbl:'Title', hlSubtitleLbl:'Subtitle', hlAutoLbl:'Automatic blocks', hlManualLbl:'Custom blocks', hlAddCard:'Add block', hlLinkTalk:'Link to a session (optional)', hlNoLink:'— None —', hlAccent:'Accent color', hlSave:'Save', hlCancel:'Cancel', hlShowCountdown:'Countdown', hlShowStats:'Event numbers', hlShowOpening:'Event opening', hlShowSpeakers:'Featured participants', hlEmptyManual:'No blocks yet.', hlEditions:'Previous editions', hlShowNumbers:'Event numbers', hlShowEditions:'Previous editions', hlNumbersLbl:'General event numbers', hlEditionsLbl:'Previous editions (chart)', hlAddNumber:'Add number', hlAddEdition:'Add edition', hlValueLbl:'Value', hlYearLbl:'Year', hlEditionsTitleLbl:'Chart title', btnAddTalk:'+ Add Session', toolsBtn:'Tools', toolHours:'Time slots', toolTags:'Manage', toolExport:'Export CSV', toolBackup:'Backup', toolClear:'Clear all', evLibras:'Sign lang.', evTrad:'Translation', evLocation:'Room location', evSpeaker:'Speaker', evSpeakers:'Speakers', evSeeMore:'See more', evSeeLess:'See less', btnClose:'Close', btnGcal:'Google Calendar', evTitle:'Session details', btnEdit:'Edit', btnDelete:'Delete' },
+       tabHighlights:'Highlights', navHome:'Home', hlRegister:'Register now', hlAboutLink:'About the event', hlVideo:'Event video', hlAboutLbl:'About the event', hlVideoLbl:'Video (YouTube)', hlRegUrlLbl:'Registration link', hlShowVideo:'Event video', hlAboutTitleLbl:'Title', hlAboutTextLbl:'Text', hlVideoUrlLbl:'YouTube URL', spkSpeakers:'Speakers', spkCurators:'Curators', catLabel:'Category', catSpeaker:'Speaker', catCurator:'Curator', manageCats:'Manage categories', daysTab:'Days', daysSaveBtn:'Save days', daysDate:'Date', daysWeekday:'Weekday (auto)', daysAdd:'Add day', daysEmpty:'No days. Add at least one.', daysDelConfirm:'Delete this day? Its sessions will be removed.', daysMin:'Keep at least one day.', catMgrTitle:'Participant categories', addCat:'Add category', catNamePh:'Category name', catColorLbl:'Color', catSave:'Save categories', catEmpty:'Define at least one category.', navManage:'Manage', navEditHl:'Edit Highlights', navTheme:'Theme', navLogin:'Sign in', navAccount:'My account', hlCountdown:'Countdown', hlDays:'days', hlHours:'hours', hlToGo:'to the event', hlLive:'Happening now', hlNumbers:'The event in numbers', hlSpeakers:'Voices on stage', hlSeeAll:'See all', hlOpening:'Opening', hlNext:'Featured', hlEditTitle:'Edit Highlights', hlHero:'Hero', hlCoverImg:'Cover image', hlChooseImg:'Choose image', hlRemoveImg:'Remove', hlImgHint:'JPG/PNG · converted to WebP < 100 KB', hlTitleLbl:'Title', hlSubtitleLbl:'Subtitle', hlAutoLbl:'Automatic blocks', hlManualLbl:'Custom blocks', hlAddCard:'Add block', hlLinkTalk:'Link to a session (optional)', hlNoLink:'— None —', hlAccent:'Accent color', hlSave:'Save', hlCancel:'Cancel', hlShowCountdown:'Countdown', hlShowStats:'Event numbers', hlShowOpening:'Event opening', hlShowSpeakers:'Featured participants', hlEmptyManual:'No blocks yet.', hlEditions:'Previous editions', hlShowNumbers:'Event numbers', hlShowEditions:'Previous editions', hlNumbersLbl:'General event numbers', hlEditionsLbl:'Previous editions (chart)', hlAddNumber:'Add number', hlAddEdition:'Add edition', hlValueLbl:'Value', hlYearLbl:'Year', hlEditionsTitleLbl:'Chart title', btnAddTalk:'+ Add Session', toolsBtn:'Tools', toolHours:'Time slots', toolTags:'Manage', toolExport:'Export CSV', toolBackup:'Backup', toolClear:'Clear all', evLibras:'Sign lang.', evTrad:'Translation', evLocation:'Room location', evSpeaker:'Speaker', evSpeakers:'Speakers', evSeeMore:'See more', evSeeLess:'See less', btnClose:'Close', btnGcal:'Google Calendar', evTitle:'Session details', btnEdit:'Edit', btnDelete:'Delete' },
   es:{ appTitle:'Agenda', tabAgenda:'Agenda', tabSpk:'Participantes', viewGrid:'Cuadrícula', viewCards:'Tarjetas', viewList:'Lista',
        searchPh:'Buscar sesión o ponente…', searchSpkPh:'Buscar participante…', allHubs:'TODOS LOS HUBS',
        talks:'sesiones', rooms:'salas', speakers:'Participantes', filters:'Filtros', clearF:'Limpiar',
        roomsPhys:'Salas', hubsThemes:'Hubs / Temas', descLabel:'Descripción', noResults:'No se encontraron sesiones.', noSearchResults:'Sin resultados para "%s"', newSpeaker:'Nuevo Participante', nowTitle:'En vivo', nowLive:'EN VIVO', nowNext:'A seguir', nowEnded:'Terminado por hoy', nowSoon:'Empieza pronto', nowFree:'Intervalo',
-       tabHighlights:'Destacados', navHome:'Inicio', spkSpeakers:'Ponentes', spkCurators:'Curadores', catLabel:'Categoría', catSpeaker:'Ponente', catCurator:'Curador', manageCats:'Gestionar categorías', daysTab:'Días', daysSaveBtn:'Guardar días', daysDate:'Fecha', daysWeekday:'Día de la semana (auto)', daysAdd:'Agregar día', daysEmpty:'Ningún día. Agrega al menos uno.', daysDelConfirm:'¿Eliminar este día? Sus sesiones se eliminarán.', daysMin:'Mantén al menos un día.', catMgrTitle:'Categorías de participantes', addCat:'Agregar categoría', catNamePh:'Nombre de la categoría', catColorLbl:'Color', catSave:'Guardar categorías', catEmpty:'Define al menos una categoría.', navManage:'Gestionar', navEditHl:'Editar Destacados', navTheme:'Tema', navLogin:'Entrar', navAccount:'Mi cuenta', hlCountdown:'Cuenta regresiva', hlDays:'días', hlHours:'horas', hlToGo:'para el evento', hlLive:'Sucediendo ahora', hlNumbers:'El evento en números', hlSpeakers:'Voces del escenario', hlSeeAll:'Ver todos', hlOpening:'Apertura', hlNext:'Destacado', hlEditTitle:'Editar Destacados', hlHero:'Portada', hlCoverImg:'Imagen de portada', hlChooseImg:'Elegir imagen', hlRemoveImg:'Quitar', hlImgHint:'JPG/PNG · convertida a WebP < 100 KB', hlTitleLbl:'Título', hlSubtitleLbl:'Subtítulo', hlAutoLbl:'Bloques automáticos', hlManualLbl:'Bloques personalizados', hlAddCard:'Agregar bloque', hlLinkTalk:'Vincular a una sesión (opcional)', hlNoLink:'— Ninguna —', hlAccent:'Color de acento', hlSave:'Guardar', hlCancel:'Cancelar', hlShowCountdown:'Cuenta regresiva', hlShowStats:'Números del evento', hlShowOpening:'Apertura del evento', hlShowSpeakers:'Participantes destacados', hlEmptyManual:'Aún no hay bloques.', hlEditions:'Ediciones anteriores', hlShowNumbers:'Números del evento', hlShowEditions:'Ediciones anteriores', hlNumbersLbl:'Números generales del evento', hlEditionsLbl:'Ediciones anteriores (gráfico)', hlAddNumber:'Agregar número', hlAddEdition:'Agregar edición', hlValueLbl:'Valor', hlYearLbl:'Año', hlEditionsTitleLbl:'Título del gráfico', btnAddTalk:'+ Agregar Sesión', toolsBtn:'Herramientas', toolHours:'Horarios', toolTags:'Gestionar', toolExport:'Exportar CSV', toolBackup:'Backup', toolClear:'Borrar todo', evLibras:'Lengua de señas', evTrad:'Traducción', evLocation:'Ubicación de la sala', evSpeaker:'Ponente', evSpeakers:'Ponentes', evSeeMore:'Ver más', evSeeLess:'Ver menos', btnClose:'Cerrar', btnGcal:'Google Calendar', evTitle:'Detalles de la sesión', btnEdit:'Editar', btnDelete:'Eliminar' }
+       tabHighlights:'Destacados', navHome:'Inicio', hlRegister:'Inscríbete ya', hlAboutLink:'Sobre el evento', hlVideo:'Video del evento', hlAboutLbl:'Sobre el evento', hlVideoLbl:'Video (YouTube)', hlRegUrlLbl:'Enlace de inscripción', hlShowVideo:'Video del evento', hlAboutTitleLbl:'Título', hlAboutTextLbl:'Texto', hlVideoUrlLbl:'URL de YouTube', spkSpeakers:'Ponentes', spkCurators:'Curadores', catLabel:'Categoría', catSpeaker:'Ponente', catCurator:'Curador', manageCats:'Gestionar categorías', daysTab:'Días', daysSaveBtn:'Guardar días', daysDate:'Fecha', daysWeekday:'Día de la semana (auto)', daysAdd:'Agregar día', daysEmpty:'Ningún día. Agrega al menos uno.', daysDelConfirm:'¿Eliminar este día? Sus sesiones se eliminarán.', daysMin:'Mantén al menos un día.', catMgrTitle:'Categorías de participantes', addCat:'Agregar categoría', catNamePh:'Nombre de la categoría', catColorLbl:'Color', catSave:'Guardar categorías', catEmpty:'Define al menos una categoría.', navManage:'Gestionar', navEditHl:'Editar Destacados', navTheme:'Tema', navLogin:'Entrar', navAccount:'Mi cuenta', hlCountdown:'Cuenta regresiva', hlDays:'días', hlHours:'horas', hlToGo:'para el evento', hlLive:'Sucediendo ahora', hlNumbers:'El evento en números', hlSpeakers:'Voces del escenario', hlSeeAll:'Ver todos', hlOpening:'Apertura', hlNext:'Destacado', hlEditTitle:'Editar Destacados', hlHero:'Portada', hlCoverImg:'Imagen de portada', hlChooseImg:'Elegir imagen', hlRemoveImg:'Quitar', hlImgHint:'JPG/PNG · convertida a WebP < 100 KB', hlTitleLbl:'Título', hlSubtitleLbl:'Subtítulo', hlAutoLbl:'Bloques automáticos', hlManualLbl:'Bloques personalizados', hlAddCard:'Agregar bloque', hlLinkTalk:'Vincular a una sesión (opcional)', hlNoLink:'— Ninguna —', hlAccent:'Color de acento', hlSave:'Guardar', hlCancel:'Cancelar', hlShowCountdown:'Cuenta regresiva', hlShowStats:'Números del evento', hlShowOpening:'Apertura del evento', hlShowSpeakers:'Participantes destacados', hlEmptyManual:'Aún no hay bloques.', hlEditions:'Ediciones anteriores', hlShowNumbers:'Números del evento', hlShowEditions:'Ediciones anteriores', hlNumbersLbl:'Números generales del evento', hlEditionsLbl:'Ediciones anteriores (gráfico)', hlAddNumber:'Agregar número', hlAddEdition:'Agregar edición', hlValueLbl:'Valor', hlYearLbl:'Año', hlEditionsTitleLbl:'Título del gráfico', btnAddTalk:'+ Agregar Sesión', toolsBtn:'Herramientas', toolHours:'Horarios', toolTags:'Gestionar', toolExport:'Exportar CSV', toolBackup:'Backup', toolClear:'Borrar todo', evLibras:'Lengua de señas', evTrad:'Traducción', evLocation:'Ubicación de la sala', evSpeaker:'Ponente', evSpeakers:'Ponentes', evSeeMore:'Ver más', evSeeLess:'Ver menos', btnClose:'Cerrar', btnGcal:'Google Calendar', evTitle:'Detalles de la sesión', btnEdit:'Editar', btnDelete:'Eliminar' }
 };
 function t18(k){ return (I18N[LANG]&&I18N[LANG][k])||I18N.pt[k]||k; }
 var LANG_FLAGS={
@@ -1737,9 +1749,15 @@ function catColor(s){ return catById(s&&s.category?s.category:'speaker').color; 
 function catName(id){ return catById(id).name; }
 function _defaultHighlights(){
   return {
-    hero:{ image:'', title:{pt:'Impact Minds: Connecting Us',en:'Impact Minds: Connecting Us',es:'Impact Minds: Connecting Us'},
+    hero:{ image:'', registerUrl:'https://impactmindsconference.com/pt/#registro',
+           title:{pt:'Impact Minds: Connecting Us',en:'Impact Minds: Connecting Us',es:'Impact Minds: Connecting Us'},
            subtitle:{pt:'Quatro dias conectando capital, inovação e impacto na América Latina.',en:'Four days connecting capital, innovation and impact across Latin America.',es:'Cuatro días conectando capital, innovación e impacto en América Latina.'} },
-    auto:{ countdown:true, numbers:true, editions:true, speakers:true },
+    about:{ title:{pt:'O que é o Impact Minds',en:'What is Impact Minds',es:'¿Qué es Impact Minds?'},
+           text:{pt:'A conferência da Latimpacto, Impact Minds, é mais do que um evento — é um ponto de encontro onde ideias, estratégia e capital se conectam para transformar realidades. Este espaço reúne grandes provedores de capital de todo o mundo que compartilham uma visão de impacto para a América Latina e o Caribe.\n\nDesenhado para inspirar uma participação genuína, o Impact Minds convida cada participante a assumir um papel protagonista: conectar, aprender e cocriar soluções que mobilizem capital para o impacto social e ambiental que nossa região precisa.',
+                  en:'Latimpacto\u2019s conference, Impact Minds, is more than an event — it is a meeting point where ideas, strategy and capital connect to transform realities. This space brings together major capital providers from around the world who share a vision of impact for Latin America and the Caribbean.\n\nDesigned to inspire genuine participation, Impact Minds invites each attendee to take a leading role: to connect, learn and co-create solutions that mobilize capital for the social and environmental impact our region needs.',
+                  es:'La conferencia de Latimpacto, Impact Minds, es más que un evento: es un punto de encuentro donde ideas, estrategia y capital se conectan para transformar realidades. Este espacio reúne a grandes proveedores de capital de todo el mundo que comparten una visión de impacto para América Latina y el Caribe.\n\nDiseñado para inspirar una participación genuina, Impact Minds invita a cada participante a asumir un papel protagonista: conectar, aprender y cocrear soluciones que movilicen capital para el impacto social y ambiental que nuestra región necesita.'} },
+    video:{ url:'https://www.youtube.com/watch?v=VT588b12FCM' },
+    auto:{ countdown:true, numbers:true, editions:true, speakers:true, video:true },
     numbers:[
       { value:'45',  label:{pt:'países participantes',en:'participating countries',es:'países participantes'} },
       { value:'823', label:{pt:'palestrantes de todo o mundo',en:'speakers worldwide',es:'ponentes de todo el mundo'} },
@@ -1866,19 +1884,26 @@ function applyMode(){
 // ════════════════════════════════════════
 function toggleToolsMenu(e){ if(e){ e.stopPropagation(); } var m=document.getElementById('toolsMenu'), b=document.getElementById('btnTools'); if(!m||!b) return; if(m.classList.contains('open')){ m.classList.remove('open'); return; } if(m.parentNode!==document.body) document.body.appendChild(m); var r=b.getBoundingClientRect(); m.style.top=(r.bottom+6)+'px'; m.classList.add('open'); var w=m.offsetWidth||200; var left=r.right-w; if(left<8) left=8; var maxL=window.innerWidth-w-8; if(left>maxL) left=maxL; m.style.left=left+'px'; }
 function closeToolsMenu(){ var m=document.getElementById('toolsMenu'); if(m) m.classList.remove('open'); }
-document.addEventListener('click',function(e){ var dd=document.getElementById('toolsDd'); var mt=document.getElementById('mnTools'); var m=document.getElementById('toolsMenu'); if(!m||!m.classList.contains('open')) return; if((dd && dd.contains(e.target)) || (mt && mt.contains(e.target)) || m.contains(e.target)) return; closeToolsMenu(); });
+function toggleRailTools(e){
+  if(e) e.stopPropagation();
+  var m=document.getElementById('toolsMenu'), b=document.getElementById('railTools');
+  if(!m||!b) return;
+  if(m.classList.contains('open')){ m.classList.remove('open'); return; }
+  m.classList.add('open');
+  var r=b.getBoundingClientRect();
+  var w=m.offsetWidth||200, h=m.offsetHeight||220;
+  var left=r.right+8;
+  var top=r.top+r.height-h; if(top<8) top=8;
+  m.style.left=left+'px';
+  m.style.top=top+'px';
+}
+document.addEventListener('click',function(e){ var dd=document.getElementById('toolsDd'); var mt=document.getElementById('mnTools'); var rt=document.getElementById('railTools'); var m=document.getElementById('toolsMenu'); if(!m||!m.classList.contains('open')) return; if((dd && dd.contains(e.target)) || (mt && mt.contains(e.target)) || (rt && rt.contains(e.target)) || m.contains(e.target)) return; closeToolsMenu(); });
 var curPage = 'home';
 function _syncRail(){
   var map={home:'railHome',agenda:'railAgenda',spk:'railSpk'};
   ['railHome','railAgenda','railSpk'].forEach(function(id){ var e=document.getElementById(id); if(e) e.classList.remove('on'); });
   var act=document.getElementById(map[curPage]); if(act) act.classList.add('on');
-  var au=document.getElementById('railAuth'), acc=document.getElementById('railAccount'), av=document.getElementById('railAvatar');
-  if(WP_ENABLED && AUTH){
-    if(au) au.style.display='none';
-    if(acc){ acc.style.display='flex'; }
-    if(av){ av.innerHTML = AUTH.photo?'<img src="'+AUTH.photo+'" style="width:100%;height:100%;object-fit:cover;">':'<span style="width:100%;height:100%;background:'+avColor(profileName(AUTH))+';color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;">'+initials(profileName(AUTH))+'</span>'; }
-    var accL=acc?acc.querySelector('.rail-lbl'):null; if(accL) accL.textContent=profileName(AUTH);
-  } else { if(au) au.style.display='flex'; if(acc) acc.style.display='none'; }
+  var rt=document.getElementById('railTools'); if(rt) rt.style.display=WP_ENABLED?'flex':'none';
   _syncMobileNav();
 }
 function _syncMobileNav(){
@@ -1990,7 +2015,35 @@ function _migrateHighlights(H){
   if(!Array.isArray(H.editions) || !H.editions.length) H.editions=d.editions;
   if(!H.editionsTitle) H.editionsTitle=d.editionsTitle;
   if(!Array.isArray(H.cards)) H.cards=[];
+  if(!H.about) H.about=d.about;
+  if(!H.video) H.video=d.video;
+  if(typeof H.auto.video!=='boolean') H.auto.video=true;
+  if(!H.hero.registerUrl) H.hero.registerUrl=d.hero.registerUrl;
   return H;
+}
+function _ytId(url){
+  if(!url) return '';
+  var m=String(url).match(/(?:youtu\.be\/|v=|\/embed\/|\/shorts\/)([A-Za-z0-9_-]{6,})/);
+  return m?m[1]:'';
+}
+function openEventAbout(){
+  var H=HIGHLIGHTS||{}; var ab=H.about||{};
+  var paras=String(L(ab.text)||'').split('\n').filter(function(s){return s.trim();}).map(function(p){return '<p style="margin:0 0 14px;line-height:1.6;font-size:15px;color:var(--text);">'+esc(p)+'</p>';}).join('');
+  var body='<div style="max-width:640px;"><h2 style="font-family:var(--font);font-size:clamp(22px,3vw,30px);font-weight:700;color:var(--brand);letter-spacing:-.02em;margin:0 0 16px;">'+esc(L(ab.title))+'</h2>'+paras+'</div>';
+  var reg=H.hero&&H.hero.registerUrl;
+  var ftr='<button class="btn" onclick="closeModal()">'+t18('hlCancel')+'</button>'+(reg?'<a class="btn btn-p" href="'+esc(reg)+'" target="_blank" rel="noopener" style="text-decoration:none;">'+t18('hlRegister')+'</a>':'');
+  openModal('', body, ftr, true);
+}
+function openEventVideo(){
+  var url=(HIGHLIGHTS&&HIGHLIGHTS.video&&HIGHLIGHTS.video.url)||'';
+  var id=_ytId(url);
+  if(!id){ return; }
+  var watch='https://www.youtube.com/watch?v='+id;
+  var watchLbl=(LANG==='en'?'Watch on YouTube':(LANG==='es'?'Ver en YouTube':'Assistir no YouTube'));
+  var body='<div style="position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:8px;overflow:hidden;">'+
+    '<iframe src="https://www.youtube-nocookie.com/embed/'+id+'?rel=0&playsinline=1&autoplay=1" style="position:absolute;inset:0;width:100%;height:100%;border:0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>';
+  var ftr='<a class="btn btn-p" href="'+watch+'" target="_blank" rel="noopener" style="text-decoration:none;">▶ '+watchLbl+'</a><button class="btn" onclick="closeModal()">'+t18('hlCancel')+'</button>';
+  openModal('', body, ftr, true);
 }
 function renderBento(){
   var c=document.getElementById('bentoGrid'); if(!c) return;
@@ -2001,15 +2054,20 @@ function renderBento(){
 
   // ── HERO ──
   var heroImg = (H.hero && H.hero.image) ? H.hero.image : '';
-  var heroHtml='<div class="btile b-hero'+(heroImg?' has-img':'')+'">'+
+  var regUrl = (H.hero && H.hero.registerUrl) ? H.hero.registerUrl : '';
+  var heroHtml='<div class="btile b-hero'+(heroImg?' has-img':'')+'" onclick="openEventAbout()" style="cursor:pointer;">'+
     (heroImg?'<div class="b-hero-bg" style="background-image:url('+heroImg+')"></div><div class="b-hero-scrim"></div>':'')+
     editBtn()+
     '<span class="eyebrow">Latimpacto</span>'+
     '<h1>'+esc(L(H.hero.title))+'</h1>'+
     '<p>'+esc(L(H.hero.subtitle))+'</p>'+
-    '<span class="dates">'+
-      '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4.5" width="18" height="16" rx="2.5"/><line x1="3" y1="9" x2="21" y2="9"/></svg>'+
-      esc(_heroDates())+'</span>'+
+    '<div class="b-hero-actions">'+
+      '<span class="dates">'+
+        '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4.5" width="18" height="16" rx="2.5"/><line x1="3" y1="9" x2="21" y2="9"/></svg>'+
+        esc(_heroDates())+'</span>'+
+      (regUrl?'<a class="hero-reg" href="'+esc(regUrl)+'" target="_blank" rel="noopener" onclick="event.stopPropagation();">'+t18('hlRegister')+'</a>':'')+
+    '</div>'+
+    '<span class="hero-more">'+t18('hlAboutLink')+' →</span>'+
   '</div>';
 
   // ── COUNTDOWN / LIVE ──
@@ -2093,16 +2151,32 @@ function renderBento(){
     '</div><div class="row">'+row+'</div></div>';
   }
 
+  // ── VÍDEO (YouTube) ──
+  var videoHtml='';
+  if(H.auto.video!==false){
+    var vid=_ytId(H.video&&H.video.url);
+    if(vid){
+      var thumb='https://img.youtube.com/vi/'+vid+'/hqdefault.jpg';
+      videoHtml='<div class="btile b-video" onclick="openEventVideo()" style="cursor:pointer;">'+editBtn()+
+        '<div class="b-video-bg" style="background-image:url('+thumb+')"></div><div class="b-video-scrim"></div>'+
+        '<div class="b-video-play"><svg width="26" height="26" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg></div>'+
+        '<span class="b-video-lbl">'+t18('hlVideo')+'</span>'+
+      '</div>';
+    }
+  }
+
   // ── MONTAGEM EM FAIXAS (cada faixa preenche a largura → sem buracos) ──
   var html='';
   // Faixa 1: hero (largo) + contagem (estreito)
   html+='<div class="b-band band-top'+(countdownHtml?'':' solo')+'">'+heroHtml+countdownHtml+'</div>';
-  // Faixa 2: números gerais (largura total)
+  // Faixa 2: vídeo + edições anteriores (cada um seu bloco; preenchem a largura)
+  var mediaTiles=videoHtml+editionsHtml;
+  if(mediaTiles) html+='<div class="b-band band-media">'+mediaTiles+'</div>';
+  // Faixa 3: números gerais (largura total)
   if(numbersHtml) html+=numbersHtml;
-  // Faixa 3: edições + cards de info (auto-fit → sempre preenche a largura)
-  var midHtml=editionsHtml+cardsHtml;
-  if(midHtml) html+='<div class="b-band band-mid">'+midHtml+'</div>';
-  // Faixa 4: participantes em destaque + agenda ao vivo
+  // Faixa 4: cards de informação (auto-fit → sempre preenche a largura)
+  if(cardsHtml) html+='<div class="b-band band-mid">'+cardsHtml+'</div>';
+  // Faixa 5: participantes em destaque + agenda ao vivo
   var nowChartHtml='<div class="btile b-now">'+
     '<div class="btile-h" style="justify-content:space-between;"><span>'+t18('nowTitle')+'</span><span id="nowStatus" class="now-status"></span></div>'+
     '<div class="b-now-chart" id="bNowChart"></div></div>';
@@ -2313,6 +2387,14 @@ function _hlCapture(){
   _hlDraft.auto.numbers=document.getElementById('hlAutoNum')?document.getElementById('hlAutoNum').checked:true;
   _hlDraft.auto.editions=document.getElementById('hlAutoEd')?document.getElementById('hlAutoEd').checked:true;
   _hlDraft.auto.speakers=document.getElementById('hlAutoSp')?document.getElementById('hlAutoSp').checked:true;
+  _hlDraft.auto.video=document.getElementById('hlAutoVid')?document.getElementById('hlAutoVid').checked:true;
+  // sobre / vídeo / inscrição
+  if(!_hlDraft.about) _hlDraft.about={title:{},text:{}};
+  ['pt','en','es'].forEach(function(lg){ _hlDraft.about.title[lg]=gv('hlAboutT_'+lg); _hlDraft.about.text[lg]=gv('hlAboutX_'+lg); });
+  if(!_hlDraft.video) _hlDraft.video={};
+  _hlDraft.video.url=gv('hlVideoUrl');
+  if(!_hlDraft.hero) _hlDraft.hero={};
+  _hlDraft.hero.registerUrl=gv('hlRegUrl');
   // números gerais
   if(Array.isArray(_hlDraft.numbers)) for(var n=0;n<_hlDraft.numbers.length;n++){ var it=_hlDraft.numbers[n];
     it.value=gv('hlN'+n+'v'); if(!it.label) it.label={}; ['pt','en','es'].forEach(function(lg){ it.label[lg]=gv('hlN'+n+'l_'+lg); });
@@ -2360,11 +2442,26 @@ function _renderHlManager(){
        '<input type="file" id="hlHeroImgInp" accept="image/*" style="display:none" onchange="_hlHeroImgChange(this)"></div>'+
      _ml(t18('hlTitleLbl'),'hlHeroTitle',_hlDraft.hero.title,false)+
      '<div style="height:12px"></div>'+
-     _ml(t18('hlSubtitleLbl'),'hlHeroSub',_hlDraft.hero.subtitle,true)+'</div>';
+     _ml(t18('hlSubtitleLbl'),'hlHeroSub',_hlDraft.hero.subtitle,true)+
+     '<div style="height:12px"></div>'+
+     '<div style="margin-bottom:5px;font-size:11px;font-weight:700;text-transform:uppercase;color:var(--text2);">'+t18('hlRegUrlLbl')+'</div>'+
+     '<input id="hlRegUrl" class="fi" value="'+esc((_hlDraft.hero&&_hlDraft.hero.registerUrl)||'')+'" placeholder="https://">'+
+     '</div>';
+  // sobre o evento
+  if(!_hlDraft.about) _hlDraft.about={title:{},text:{}};
+  b+='<div><div class="filter-section-title" style="margin-bottom:10px;">ℹ️ '+t18('hlAboutLbl')+'</div>'+
+     _ml(t18('hlAboutTitleLbl'),'hlAboutT',_hlDraft.about.title,false)+
+     '<div style="height:12px"></div>'+
+     _ml(t18('hlAboutTextLbl'),'hlAboutX',_hlDraft.about.text,true)+'</div>';
+  // vídeo
+  if(!_hlDraft.video) _hlDraft.video={};
+  b+='<div><div class="filter-section-title" style="margin-bottom:10px;">▶️ '+t18('hlVideoLbl')+'</div>'+
+     '<input id="hlVideoUrl" class="fi" value="'+esc(_hlDraft.video.url||'')+'" placeholder="https://www.youtube.com/watch?v=..."></div>';
   // auto toggles
   function cb(id,on,lbl){ return '<label style="display:flex;align-items:center;gap:9px;font-size:13px;cursor:pointer;padding:7px 0;"><input type="checkbox" id="'+id+'"'+(on?' checked':'')+' style="width:17px;height:17px;accent-color:var(--brand);">'+esc(lbl)+'</label>'; }
   b+='<div><div class="filter-section-title" style="margin-bottom:6px;">⚙️ '+t18('hlAutoLbl')+'</div>'+
      cb('hlAutoCd',_hlDraft.auto.countdown,t18('hlShowCountdown'))+
+     cb('hlAutoVid',_hlDraft.auto.video!==false,t18('hlShowVideo'))+
      cb('hlAutoNum',_hlDraft.auto.numbers!==false,t18('hlShowNumbers'))+
      cb('hlAutoEd',_hlDraft.auto.editions!==false,t18('hlShowEditions'))+
      cb('hlAutoSp',_hlDraft.auto.speakers,t18('hlShowSpeakers'))+'</div>';
