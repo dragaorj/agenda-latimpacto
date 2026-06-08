@@ -85,6 +85,25 @@ html,body{height:100%;overflow:hidden;margin:0;padding:0;}
   .nav{padding-left:24px;}
 }
 
+/* Abaixo da largura do trilho lateral: navegação vai SEMPRE para a barra
+   inferior (estilo mobile). Cobre também a faixa de tablet 681–860px, que
+   antes ficava sem trilho e sem barra inferior (mostrava as abas do topo). */
+@media(max-width:860px){
+  .ptabs{display:none!important;}
+  #topFixed #toolsDd{display:none!important;} /* Ferramentas vão para a barra inferior */
+  #mobileNav{
+    display:flex!important;
+    position:fixed;left:0;right:0;bottom:0;z-index:500;
+    background:var(--nav-bg);
+    border-top:1px solid var(--nav-border);
+    padding:5px 6px calc(5px + env(safe-area-inset-bottom));
+    gap:2px;
+    box-shadow:0 -2px 12px rgba(40,20,60,.06);
+  }
+  #scrollArea{padding-bottom:calc(64px + env(safe-area-inset-bottom));}
+  #pgHighlights{padding-bottom:calc(78px + env(safe-area-inset-bottom));}
+}
+
 /* ===== ANIMAÇÕES SUAVES (globais) ===== */
 @media (prefers-reduced-motion: no-preference){
   /* transição de tema (claro/escuro) e estados */
@@ -175,9 +194,9 @@ html,body{height:100%;overflow:hidden;margin:0;padding:0;}
 .b-live .pulse{width:8px;height:8px;border-radius:50%;background:#fff;animation:bpulse 1.4s infinite;}
 @keyframes bpulse{0%,100%{opacity:1}50%{opacity:.3}}
 /* Números gerais (faixa larga, editável) */
-.b-numbers .bn-row{display:flex;flex-wrap:wrap;gap:14px;margin-top:auto;align-items:flex-end;}
-.b-numbers .bn-item{flex:1 1 110px;min-width:90px;}
-.b-numbers .bn-v{font-size:clamp(28px,2.6vw,44px);font-weight:700;color:var(--brand);line-height:.95;font-variant-numeric:tabular-nums;letter-spacing:-.02em;}
+.b-numbers .bn-row{display:flex;flex-wrap:wrap;gap:14px;margin-top:auto;align-items:flex-start;}
+.b-numbers .bn-item{flex:1 1 110px;min-width:90px;display:flex;flex-direction:column;}
+.b-numbers .bn-v{font-size:clamp(28px,2.6vw,44px);font-weight:700;color:var(--brand);line-height:.95;font-variant-numeric:tabular-nums;letter-spacing:-.02em;min-height:clamp(28px,2.6vw,44px);display:flex;align-items:flex-end;}
 .b-numbers .bn-l{font-size:12px;color:var(--text2);margin-top:6px;line-height:1.25;}
 /* Edições anteriores (gráfico de barras) */
 .b-ed{min-height:200px;}
@@ -1351,12 +1370,6 @@ body[data-cardstyle="tint"] .lcard{
   </div>
 </nav>
 
-<div class="ptabs">
-  <div class="ptab on" id="ptHome" onclick="showPage('home')">🏠 <span data-i18n="navHome">Início</span></div>
-  <div class="ptab" id="ptAgenda" onclick="showPage('agenda')">📅 <span data-i18n="tabAgenda">Agenda</span></div>
-  <div class="ptab" id="ptSpk" onclick="showPage('spk')">🎤 <span data-i18n="tabSpk">Palestrantes</span> <span class="badge" id="spkBadge">0</span></div>
-</div>
-
 <!-- AGENDA HEADERS -->
 <div id="pgAgendaHdr" style="display:block;">
   <div class="dtabs" id="dtabs"></div>
@@ -1590,7 +1603,7 @@ var I18N={
        searchPh:'Buscar palestra ou palestrante…', searchSpkPh:'Buscar participante…', allHubs:'TODOS OS HUBS',
        talks:'palestras', rooms:'salas', speakers:'Participantes', filters:'Filtros', clearF:'Limpar',
        roomsPhys:'Salas Físicas', hubsThemes:'Hubs / Temas', descLabel:'Descrição', noResults:'Nenhuma palestra encontrada.', noSearchResults:'Nenhum resultado para "%s"', newSpeaker:'Novo Participante', nowTitle:'Agora no evento', nowLive:'AO VIVO', nowNext:'A seguir', nowEnded:'Encerrado por hoje', nowSoon:'Começa em breve', nowFree:'Intervalo',
-       tabHighlights:'Destaques', navHome:'Início', hlRegister:'Inscreva-se já', hlAboutLink:'Sobre o evento', hlVideo:'Vídeo do evento', hlAboutLbl:'Sobre o evento', hlVideoLbl:'Vídeo (YouTube)', hlRegUrlLbl:'Link de inscrição', hlShowVideo:'Vídeo do evento', hlAboutTitleLbl:'Título', hlAboutTextLbl:'Texto', hlVideoUrlLbl:'URL do YouTube', spkSpeakers:'Palestrantes', spkCurators:'Curadores', catLabel:'Categoria', catSpeaker:'Palestrante', catCurator:'Curador', manageCats:'Gerenciar categorias', daysTab:'Dias', daysSaveBtn:'Salvar dias', daysDate:'Data', daysWeekday:'Dia da semana (auto)', daysAdd:'Adicionar dia', daysEmpty:'Nenhum dia. Adicione ao menos um.', daysDelConfirm:'Excluir este dia? As palestras deste dia serão removidas.', daysMin:'Mantenha ao menos um dia.', catMgrTitle:'Categorias de participantes', addCat:'Adicionar categoria', catNamePh:'Nome da categoria', catColorLbl:'Cor', catSave:'Salvar categorias', catEmpty:'Defina ao menos uma categoria.', navManage:'Gerenciar', navEditHl:'Editar Destaques', navTheme:'Tema', navLogin:'Entrar', navAccount:'Minha conta', hlCountdown:'Contagem regressiva', hlDays:'dias', hlHours:'horas', hlToGo:'para o evento', hlLive:'Acontecendo agora', hlNumbers:'O evento em números', hlSpeakers:'Vozes do palco', hlSeeAll:'Ver todos', hlOpening:'Abertura', hlNext:'Em destaque', hlEditTitle:'Editar Destaques', hlHero:'Capa (hero)', hlCoverImg:'Imagem da capa', hlChooseImg:'Escolher imagem', hlRemoveImg:'Remover', hlImgHint:'JPG/PNG · convertida p/ WebP < 100 KB', hlTitleLbl:'Título', hlSubtitleLbl:'Subtítulo', hlAutoLbl:'Blocos automáticos', hlManualLbl:'Blocos personalizados', hlAddCard:'Adicionar bloco', hlLinkTalk:'Vincular a uma palestra (opcional)', hlNoLink:'— Nenhuma —', hlAccent:'Cor do filete', hlSave:'Salvar', hlCancel:'Cancelar', hlShowCountdown:'Contagem regressiva', hlShowStats:'Números do evento', hlShowOpening:'Abertura do evento', hlShowSpeakers:'Participantes em destaque', hlEmptyManual:'Nenhum bloco ainda.', hlEditions:'Edições anteriores', hlShowNumbers:'Números do evento', hlShowEditions:'Edições anteriores', hlNumbersLbl:'Números gerais do evento', hlEditionsLbl:'Edições anteriores (gráfico)', hlAddNumber:'Adicionar número', hlAddEdition:'Adicionar edição', hlValueLbl:'Valor', hlYearLbl:'Ano', hlEditionsTitleLbl:'Título do gráfico', btnAddTalk:'+ Adicionar Palestra', toolsBtn:'Ferramentas', toolHours:'Horários', toolTags:'Gerenciar', toolExport:'Exportar CSV', toolBackup:'Backup', toolClear:'Apagar tudo', evLibras:'Libras', evTrad:'Tradução', evLocation:'Localização da sala', evSpeaker:'Palestrante', evSpeakers:'Palestrantes', evSeeMore:'Ver mais', evSeeLess:'Ver menos', btnClose:'Fechar', btnGcal:'Google Agenda', evTitle:'Detalhes da Palestra', btnEdit:'Editar', btnDelete:'Excluir' },
+       tabHighlights:'Destaques', navHome:'Início', hlRegister:'Inscreva-se', hlAboutLink:'Sobre o evento', hlVideo:'Vídeo do evento', hlAboutLbl:'Sobre o evento', hlVideoLbl:'Vídeo (YouTube)', hlRegUrlLbl:'Link de inscrição', hlShowVideo:'Vídeo do evento', hlAboutTitleLbl:'Título', hlAboutTextLbl:'Texto', hlVideoUrlLbl:'URL do YouTube', spkSpeakers:'Palestrantes', spkCurators:'Curadores', catLabel:'Categoria', catSpeaker:'Palestrante', catCurator:'Curador', manageCats:'Gerenciar categorias', daysTab:'Dias', daysSaveBtn:'Salvar dias', daysDate:'Data', daysWeekday:'Dia da semana (auto)', daysAdd:'Adicionar dia', daysEmpty:'Nenhum dia. Adicione ao menos um.', daysDelConfirm:'Excluir este dia? As palestras deste dia serão removidas.', daysMin:'Mantenha ao menos um dia.', catMgrTitle:'Categorias de participantes', addCat:'Adicionar categoria', catNamePh:'Nome da categoria', catColorLbl:'Cor', catSave:'Salvar categorias', catEmpty:'Defina ao menos uma categoria.', navManage:'Gerenciar', navEditHl:'Editar Destaques', navTheme:'Tema', navLogin:'Entrar', navAccount:'Minha conta', hlCountdown:'Contagem regressiva', hlDays:'dias', hlHours:'horas', hlToGo:'para o evento', hlLive:'Acontecendo agora', hlNumbers:'O evento em números', hlSpeakers:'Vozes do palco', hlSeeAll:'Ver todos', hlOpening:'Abertura', hlNext:'Em destaque', hlEditTitle:'Editar Destaques', hlHero:'Capa (hero)', hlCoverImg:'Imagem da capa', hlChooseImg:'Escolher imagem', hlRemoveImg:'Remover', hlImgHint:'JPG/PNG · convertida p/ WebP < 100 KB', hlTitleLbl:'Título', hlSubtitleLbl:'Subtítulo', hlAutoLbl:'Blocos automáticos', hlManualLbl:'Blocos personalizados', hlAddCard:'Adicionar bloco', hlLinkTalk:'Vincular a uma palestra (opcional)', hlNoLink:'— Nenhuma —', hlAccent:'Cor do filete', hlSave:'Salvar', hlCancel:'Cancelar', hlShowCountdown:'Contagem regressiva', hlShowStats:'Números do evento', hlShowOpening:'Abertura do evento', hlShowSpeakers:'Participantes em destaque', hlEmptyManual:'Nenhum bloco ainda.', hlEditions:'Edições anteriores', hlShowNumbers:'Números do evento', hlShowEditions:'Edições anteriores', hlNumbersLbl:'Números gerais do evento', hlEditionsLbl:'Edições anteriores (gráfico)', hlAddNumber:'Adicionar número', hlAddEdition:'Adicionar edição', hlValueLbl:'Valor', hlYearLbl:'Ano', hlEditionsTitleLbl:'Título do gráfico', btnAddTalk:'+ Adicionar Palestra', toolsBtn:'Ferramentas', toolHours:'Horários', toolTags:'Gerenciar', toolExport:'Exportar CSV', toolBackup:'Backup', toolClear:'Apagar tudo', evLibras:'Libras', evTrad:'Tradução', evLocation:'Localização da sala', evSpeaker:'Palestrante', evSpeakers:'Palestrantes', evSeeMore:'Ver mais', evSeeLess:'Ver menos', btnClose:'Fechar', btnGcal:'Google Agenda', evTitle:'Detalhes da Palestra', btnEdit:'Editar', btnDelete:'Excluir' },
   en:{ appTitle:'Agenda', tabAgenda:'Agenda', tabSpk:'Participants', viewGrid:'Grid', viewCards:'Cards', viewList:'List',
        searchPh:'Search a session or speaker…', searchSpkPh:'Search participant…', allHubs:'ALL HUBS',
        talks:'sessions', rooms:'rooms', speakers:'Participants', filters:'Filters', clearF:'Clear',
@@ -1733,6 +1746,9 @@ var PROFILES_KEY = 'latimpacto_profiles_v1';
 var LOGS_KEY = 'latimpacto_logs_v1';
 var SESSION_KEY = 'latimpacto_session_v1';
 var HIGHLIGHTS = null; // preenchido no load (default ou salvo)
+// Link FIXO do botão "Inscreva-se". Forçado aqui para sempre apontar para a
+// inscrição oficial, independentemente do que estiver salvo no banco/Destaques.
+var REGISTER_URL = 'https://fd.eventos.tmp.br/latimpacto2026/visitantes/inicio.php?lang=pt';
 // Categorias de participantes (editáveis: nome + cor). Persistidas na config.
 var SPK_CATEGORIES = null;
 function _defaultCategories(){
@@ -1749,7 +1765,7 @@ function catColor(s){ return catById(s&&s.category?s.category:'speaker').color; 
 function catName(id){ return catById(id).name; }
 function _defaultHighlights(){
   return {
-    hero:{ image:'', registerUrl:'https://impactmindsconference.com/pt/#registro',
+    hero:{ image:'', registerUrl:'https://fd.eventos.tmp.br/latimpacto2026/visitantes/inicio.php?lang=pt',
            title:{pt:'Impact Minds: Connecting Us',en:'Impact Minds: Connecting Us',es:'Impact Minds: Connecting Us'},
            subtitle:{pt:'Quatro dias conectando capital, inovação e impacto na América Latina.',en:'Four days connecting capital, innovation and impact across Latin America.',es:'Cuatro días conectando capital, innovación e impacto en América Latina.'} },
     about:{ title:{pt:'O que é o Impact Minds',en:'What is Impact Minds',es:'¿Qué es Impact Minds?'},
@@ -1883,12 +1899,17 @@ function applyMode(){
 // PAGE SWITCH
 // ════════════════════════════════════════
 function toggleToolsMenu(e){ if(e){ e.stopPropagation(); } var m=document.getElementById('toolsMenu'), b=document.getElementById('btnTools'); if(!m||!b) return; if(m.classList.contains('open')){ m.classList.remove('open'); return; } if(m.parentNode!==document.body) document.body.appendChild(m); var r=b.getBoundingClientRect(); m.style.top=(r.bottom+6)+'px'; m.classList.add('open'); var w=m.offsetWidth||200; var left=r.right-w; if(left<8) left=8; var maxL=window.innerWidth-w-8; if(left>maxL) left=maxL; m.style.left=left+'px'; }
-function closeToolsMenu(){ var m=document.getElementById('toolsMenu'); if(m) m.classList.remove('open'); }
+function closeToolsMenu(){ var m=document.getElementById('toolsMenu'); if(m) m.classList.remove('open'); var rail=document.getElementById('rail'); if(rail) rail.classList.remove('pinned'); }
 function toggleRailTools(e){
   if(e) e.stopPropagation();
-  var m=document.getElementById('toolsMenu'), b=document.getElementById('railTools');
+  var m=document.getElementById('toolsMenu'), b=document.getElementById('railTools'), rail=document.getElementById('rail');
   if(!m||!b) return;
-  if(m.classList.contains('open')){ m.classList.remove('open'); return; }
+  if(m.classList.contains('open')){ closeToolsMenu(); return; }
+  // Mantém o trilho EXPANDIDO enquanto o menu estiver aberto, para o popup
+  // permanecer colado ao botão. Sem isto, ao tirar o mouse o trilho recolhia
+  // (236px → 66px) e o popup ficava "solto", longe do ícone.
+  if(rail) rail.classList.add('pinned');
+  if(m.parentNode!==document.body) document.body.appendChild(m);
   m.classList.add('open');
   var r=b.getBoundingClientRect();
   var w=m.offsetWidth||200, h=m.offsetHeight||220;
@@ -1898,6 +1919,13 @@ function toggleRailTools(e){
   m.style.top=top+'px';
 }
 document.addEventListener('click',function(e){ var dd=document.getElementById('toolsDd'); var mt=document.getElementById('mnTools'); var rt=document.getElementById('railTools'); var m=document.getElementById('toolsMenu'); if(!m||!m.classList.contains('open')) return; if((dd && dd.contains(e.target)) || (mt && mt.contains(e.target)) || (rt && rt.contains(e.target)) || m.contains(e.target)) return; closeToolsMenu(); });
+// O popup de Ferramentas é posicionado em coordenadas fixas relativas ao
+// botão que o abriu. Quando o layout muda (topbar ↔ rail lateral, rotação,
+// scroll) esse botão se move ou some, e o popup ficava "preso" no lugar
+// antigo. Fechamos o menu nesses eventos para evitar o popup órfão.
+window.addEventListener('resize', closeToolsMenu);
+window.addEventListener('orientationchange', closeToolsMenu);
+window.addEventListener('scroll', function(e){ var m=document.getElementById('toolsMenu'); if(m && m.classList.contains('open') && !(e.target && e.target.nodeType===1 && m.contains(e.target))) closeToolsMenu(); }, true);
 var curPage = 'home';
 function _syncRail(){
   var map={home:'railHome',agenda:'railAgenda',spk:'railSpk'};
@@ -2030,7 +2058,7 @@ function openEventAbout(){
   var H=HIGHLIGHTS||{}; var ab=H.about||{};
   var paras=String(L(ab.text)||'').split('\n').filter(function(s){return s.trim();}).map(function(p){return '<p style="margin:0 0 14px;line-height:1.6;font-size:15px;color:var(--text);">'+esc(p)+'</p>';}).join('');
   var body='<div style="max-width:640px;"><h2 style="font-family:var(--font);font-size:clamp(22px,3vw,30px);font-weight:700;color:var(--brand);letter-spacing:-.02em;margin:0 0 16px;">'+esc(L(ab.title))+'</h2>'+paras+'</div>';
-  var reg=H.hero&&H.hero.registerUrl;
+  var reg=REGISTER_URL;
   var ftr='<button class="btn" onclick="closeModal()">'+t18('hlCancel')+'</button>'+(reg?'<a class="btn btn-p" href="'+esc(reg)+'" target="_blank" rel="noopener" style="text-decoration:none;">'+t18('hlRegister')+'</a>':'');
   openModal('', body, ftr, true);
 }
@@ -2054,7 +2082,7 @@ function renderBento(){
 
   // ── HERO ──
   var heroImg = (H.hero && H.hero.image) ? H.hero.image : '';
-  var regUrl = (H.hero && H.hero.registerUrl) ? H.hero.registerUrl : '';
+  var regUrl = REGISTER_URL;
   var heroHtml='<div class="btile b-hero'+(heroImg?' has-img':'')+'" onclick="openEventAbout()" style="cursor:pointer;">'+
     (heroImg?'<div class="b-hero-bg" style="background-image:url('+heroImg+')"></div><div class="b-hero-scrim"></div>':'')+
     editBtn()+
@@ -4964,9 +4992,34 @@ function doRestoreBackup(input){
 function clearAllData(){
   if(!WP_ENABLED) return;
   if(!confirm('⚠️ Apagar TODOS os dados?')) return;
-  try{localStorage.removeItem(LS_KEY);}catch(e){}
+
+  // ── Backend (Supabase) ──────────────────────────────────
+  // Espera o wipe CONCLUIR no servidor e só então recarrega a
+  // página, garantindo que o estado refletido é o do banco.
+  // Sem isso, a tela limpava localmente mas o reload buscava de
+  // novo os dados do servidor (que não tinham sido apagados).
+  if(window.SB && SB.enabled){
+    SB.wipe().then(function(){
+      try{ SB.log('Apagou TODOS os dados',''); }catch(e){}
+      try{ localStorage.removeItem(LS_KEY); localStorage.removeItem(DATA_KEY); }catch(e){}
+      alert('Dados apagados.');
+      location.reload();
+    }).catch(function(err){
+      var msg = (err && err.message) ? err.message : String(err||'');
+      if(/master/i.test(msg)){
+        alert('Apenas o usuário master pode apagar todos os dados.');
+      } else {
+        alert('Não foi possível apagar os dados: ' + msg);
+      }
+    });
+    return;
+  }
+
+  // ── Modo local (sem backend) ────────────────────────────
+  try{ localStorage.removeItem(LS_KEY); localStorage.removeItem(DATA_KEY); }catch(e){}
   SPEAKERS=[]; SCHEDULES=(function(){var a=[];for(var i=0;i<NDAYS;i++)a.push(emptyDay());return a;})(); SLOTS=buildSlots();
-  if(window.SB&&SB.enabled){ SB.wipe(); } else { saveData(); }
+  HIGHLIGHTS=_defaultHighlights();
+  saveData();
   logAction('Apagou TODOS os dados');
   renderLegend(); renderMain(); renderSpkGrid(); alert('Dados apagados.');
 }
