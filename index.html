@@ -1331,7 +1331,7 @@ body[data-cardstyle="tint"] .lcard{
   </div>
   <div class="nav-srch" id="navSrch">
     <svg class="nav-srch-ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-    <input id="srchInput" type="text" data-i18n-ph="searchPh" placeholder="Buscar palestra ou palestrante…" oninput="onSearch()" onfocus="showSearchDrop('srchDrop')" onblur="hideSearchDropDelayed('srchDrop')" autocomplete="off">
+    <input id="srchInput" type="text" data-i18n-ph="searchPh" placeholder="Buscar sessão ou palestrante…" oninput="onSearch()" onfocus="showSearchDrop('srchDrop')" onblur="hideSearchDropDelayed('srchDrop')" autocomplete="off">
     <div class="srch-drop" id="srchDrop"></div>
   </div>
   <div class="flex ml">
@@ -1396,7 +1396,7 @@ body[data-cardstyle="tint"] .lcard{
       <span id="zoomLabel" style="font-size:11px;font-family:var(--mono);color:var(--text2);padding:0 6px;background:var(--surface);min-width:36px;text-align:center;line-height:28px;">100%</span>
       <button id="zoomPlus" onclick="_zoomIn()" style="width:28px;height:28px;border:none;background:var(--surface);color:var(--text);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;border-left:1px solid var(--border);-webkit-tap-highlight-color:transparent;" title="Zoom in">+</button>
     </div>
-    <button class="add-sq" id="btnAddTalk" onclick="openAddTalk()" style="display:none;margin-left:8px;flex-shrink:0;" title="Adicionar Palestra" aria-label="Adicionar Palestra"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+    <button class="add-sq" id="btnAddTalk" onclick="openAddTalk()" style="display:none;margin-left:8px;flex-shrink:0;" title="Adicionar Sessão" aria-label="Adicionar Sessão"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
   </div>
   <div class="legend" id="legend"></div>
   <div class="room-filters" id="roomFilters"></div>
@@ -1603,10 +1603,10 @@ try{ var _sl=localStorage.getItem('latimpacto_lang'); if(_sl&&['pt','en','es'].i
 function L(v){ if(v&&typeof v==='object'&&!Array.isArray(v)) return v[LANG]||v.pt||v.en||v.es||''; return (v==null?'':v); }
 var I18N={
   pt:{ appTitle:'Agenda', tabAgenda:'Agenda', tabSpk:'Participantes', viewGrid:'Grade', viewCards:'Cards', viewList:'Lista',
-       searchPh:'Buscar palestra ou palestrante…', searchSpkPh:'Buscar participante…', allHubs:'TODOS OS HUBS',
-       talks:'palestras', rooms:'salas', speakers:'Participantes', filters:'Filtros', clearF:'Limpar',
-       roomsPhys:'Salas Físicas', hubsThemes:'Hubs / Temas', descLabel:'Descrição', noResults:'Nenhuma palestra encontrada.', noSearchResults:'Nenhum resultado para "%s"', newSpeaker:'Novo Participante', nowTitle:'Agora no evento', nowLive:'AO VIVO', nowNext:'A seguir', nowEnded:'Encerrado por hoje', nowSoon:'Começa em breve', nowFree:'Intervalo',
-       tabHighlights:'Destaques', navHome:'Início', hlRegister:'Inscreva-se', hlAboutLink:'Sobre o evento', hlVideo:'Vídeo do evento', hlAboutLbl:'Sobre o evento', hlVideoLbl:'Vídeo (YouTube)', hlRegUrlLbl:'Link de inscrição', hlShowVideo:'Vídeo do evento', hlAboutTitleLbl:'Título', hlAboutTextLbl:'Texto', hlVideoUrlLbl:'URL do YouTube', spkSpeakers:'Palestrantes', spkCurators:'Curadores', catLabel:'Categoria', catSpeaker:'Palestrante', catCurator:'Curador', manageCats:'Gerenciar categorias', daysTab:'Dias', daysSaveBtn:'Salvar dias', daysDate:'Data', daysWeekday:'Dia da semana (auto)', daysAdd:'Adicionar dia', daysEmpty:'Nenhum dia. Adicione ao menos um.', daysDelConfirm:'Excluir este dia? As palestras deste dia serão removidas.', daysMin:'Mantenha ao menos um dia.', catMgrTitle:'Categorias de participantes', addCat:'Adicionar categoria', catNamePh:'Nome da categoria', catColorLbl:'Cor', catSave:'Salvar categorias', catEmpty:'Defina ao menos uma categoria.', navManage:'Gerenciar', navEditHl:'Editar Destaques', navTheme:'Tema', navLogin:'Entrar', navAccount:'Minha conta', hlCountdown:'Contagem regressiva', hlDays:'dias', hlHours:'horas', hlToGo:'para o evento', hlLive:'Acontecendo agora', hlNumbers:'O evento em números', hlSpeakers:'Vozes do palco', hlSeeAll:'Ver todos', hlOpening:'Abertura', hlNext:'Em destaque', hlEditTitle:'Editar Destaques', hlHero:'Capa (hero)', hlCoverImg:'Imagem da capa', hlChooseImg:'Escolher imagem', hlRemoveImg:'Remover', hlImgHint:'JPG/PNG · convertida p/ WebP < 100 KB', hlTitleLbl:'Título', hlSubtitleLbl:'Subtítulo', hlAutoLbl:'Blocos automáticos', hlManualLbl:'Blocos personalizados', hlAddCard:'Adicionar bloco', hlLinkTalk:'Vincular a uma palestra (opcional)', hlNoLink:'— Nenhuma —', hlAccent:'Cor do filete', hlSave:'Salvar', hlCancel:'Cancelar', hlShowCountdown:'Contagem regressiva', hlShowStats:'Números do evento', hlShowOpening:'Abertura do evento', hlShowSpeakers:'Participantes em destaque', hlEmptyManual:'Nenhum bloco ainda.', hlEditions:'Edições anteriores', hlShowNumbers:'Números do evento', hlShowEditions:'Edições anteriores', hlNumbersLbl:'Números gerais do evento', hlEditionsLbl:'Edições anteriores (gráfico)', hlAddNumber:'Adicionar número', hlAddEdition:'Adicionar edição', hlValueLbl:'Valor', hlYearLbl:'Ano', hlEditionsTitleLbl:'Título do gráfico', btnAddTalk:'+ Adicionar Palestra', toolsBtn:'Ferramentas', toolHours:'Horários', toolTags:'Gerenciar', toolExport:'Exportar CSV', toolBackup:'Backup', toolClear:'Apagar tudo', evLibras:'Libras', evTrad:'Tradução', evLocation:'Localização da sala', evSpeaker:'Palestrante', evSpeakers:'Palestrantes', evSeeMore:'Ver mais', evSeeLess:'Ver menos', btnClose:'Fechar', btnGcal:'Google Agenda', evTitle:'Detalhes da Palestra', btnEdit:'Editar', btnDelete:'Excluir' },
+       searchPh:'Buscar sessão ou palestrante…', searchSpkPh:'Buscar participante…', allHubs:'TODOS OS HUBS',
+       talks:'sessões', rooms:'salas', speakers:'Participantes', filters:'Filtros', clearF:'Limpar',
+       roomsPhys:'Salas Físicas', hubsThemes:'Hubs / Temas', descLabel:'Descrição', noResults:'Nenhuma sessão encontrada.', noSearchResults:'Nenhum resultado para "%s"', newSpeaker:'Novo Participante', nowTitle:'Agora no evento', nowLive:'AO VIVO', nowNext:'A seguir', nowEnded:'Encerrado por hoje', nowSoon:'Começa em breve', nowFree:'Intervalo',
+       tabHighlights:'Destaques', navHome:'Início', hlRegister:'Inscreva-se', hlAboutLink:'Sobre o evento', hlVideo:'Vídeo do evento', hlAboutLbl:'Sobre o evento', hlVideoLbl:'Vídeo (YouTube)', hlRegUrlLbl:'Link de inscrição', hlShowVideo:'Vídeo do evento', hlAboutTitleLbl:'Título', hlAboutTextLbl:'Texto', hlVideoUrlLbl:'URL do YouTube', spkSpeakers:'Palestrantes', spkCurators:'Curadores', catLabel:'Categoria', catSpeaker:'Palestrante', catCurator:'Curador', manageCats:'Gerenciar categorias', daysTab:'Dias', daysSaveBtn:'Salvar dias', daysDate:'Data', daysWeekday:'Dia da semana (auto)', daysAdd:'Adicionar dia', daysEmpty:'Nenhum dia. Adicione ao menos um.', daysDelConfirm:'Excluir este dia? As sessões deste dia serão removidas.', daysMin:'Mantenha ao menos um dia.', catMgrTitle:'Categorias de participantes', addCat:'Adicionar categoria', catNamePh:'Nome da categoria', catColorLbl:'Cor', catSave:'Salvar categorias', catEmpty:'Defina ao menos uma categoria.', navManage:'Gerenciar', navEditHl:'Editar Destaques', navTheme:'Tema', navLogin:'Entrar', navAccount:'Minha conta', hlCountdown:'Contagem regressiva', hlDays:'dias', hlHours:'horas', hlToGo:'para o evento', hlLive:'Acontecendo agora', hlNumbers:'O evento em números', hlSpeakers:'Vozes do palco', hlSeeAll:'Ver todos', hlOpening:'Abertura', hlNext:'Em destaque', hlEditTitle:'Editar Destaques', hlHero:'Capa (hero)', hlCoverImg:'Imagem da capa', hlChooseImg:'Escolher imagem', hlRemoveImg:'Remover', hlImgHint:'JPG/PNG · convertida p/ WebP < 100 KB', hlTitleLbl:'Título', hlSubtitleLbl:'Subtítulo', hlAutoLbl:'Blocos automáticos', hlManualLbl:'Blocos personalizados', hlAddCard:'Adicionar bloco', hlLinkTalk:'Vincular a uma sessão (opcional)', hlNoLink:'— Nenhuma —', hlAccent:'Cor do filete', hlSave:'Salvar', hlCancel:'Cancelar', hlShowCountdown:'Contagem regressiva', hlShowStats:'Números do evento', hlShowOpening:'Abertura do evento', hlShowSpeakers:'Participantes em destaque', hlEmptyManual:'Nenhum bloco ainda.', hlEditions:'Edições anteriores', hlShowNumbers:'Números do evento', hlShowEditions:'Edições anteriores', hlNumbersLbl:'Números gerais do evento', hlEditionsLbl:'Edições anteriores (gráfico)', hlAddNumber:'Adicionar número', hlAddEdition:'Adicionar edição', hlValueLbl:'Valor', hlYearLbl:'Ano', hlEditionsTitleLbl:'Título do gráfico', btnAddTalk:'+ Adicionar Sessão', toolsBtn:'Ferramentas', toolHours:'Horários', toolTags:'Gerenciar', toolExport:'Exportar CSV', toolBackup:'Backup', toolClear:'Apagar tudo', evLibras:'Libras', evTrad:'Tradução', evLocation:'Localização da sala', evSpeaker:'Palestrante', evSpeakers:'Palestrantes', evSeeMore:'Ver mais', evSeeLess:'Ver menos', btnClose:'Fechar', btnGcal:'Google Agenda', evTitle:'Detalhes da Sessão', btnEdit:'Editar', btnDelete:'Excluir' },
   en:{ appTitle:'Agenda', tabAgenda:'Agenda', tabSpk:'Participants', viewGrid:'Grid', viewCards:'Cards', viewList:'List',
        searchPh:'Search a session or speaker…', searchSpkPh:'Search participant…', allHubs:'ALL HUBS',
        talks:'sessions', rooms:'rooms', speakers:'Participants', filters:'Filters', clearF:'Clear',
@@ -1687,7 +1687,7 @@ function _mlTab(base,lg){
 }
 function _mlRead(base){ var o={}; ['pt','en','es'].forEach(function(lg){ var el=document.getElementById(base+'_'+lg); o[lg]=el?el.value.trim():''; }); return o; }
 
-// Retorna {color, bg, cls} com base no Hub da palestra (se definido), senão usa a sala
+// Retorna {color, bg, cls} com base no Hub da sessão (se definido), senão usa a sala
 // Filetes de hub — cores suaves, harmônicas, ancoradas na marca Latimpacto.
 // No viewer aparecem APENAS como filete na borda esquerda do card.
 var HUB_COLORS = [
@@ -1997,7 +1997,7 @@ function showPage(p){
     document.getElementById('pgAgendaHdr').style.display='block';
     if(dc) dc.style.display='block';
     document.getElementById('pgAgenda').style.display='block';
-    document.getElementById('ptAgenda').className='ptab on';
+    var pta=document.getElementById('ptAgenda'); if(pta) pta.className='ptab on';
     renderDayTabs(); _setActiveDay(curDay); setView(curView);
     if(mab && WP_ENABLED){ mab.onclick=openAddTalk; mab.style.display='flex'; }
     renderMain();
@@ -2007,7 +2007,7 @@ function showPage(p){
     if(mab){ mab.style.display='none'; }
     renderPubSpkGrid(_pubSpkQ||'');
     _animIn(document.getElementById('pgSpk'));
-    document.getElementById('ptSpk').className='ptab on';
+    var pts=document.getElementById('ptSpk'); if(pts) pts.className='ptab on';
   }
   _syncRail();
   _updatePtabAdd();
@@ -2575,7 +2575,7 @@ function openSlotManager(){
     var s=SLOTS[i];
     rows+='<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid #f1f3f4;">'+
       '<span style="font-size:14px;font-weight:600;min-width:52px;font-family:monospace;letter-spacing:1px;">'+esc(s.label)+'</span>'+
-      '<span style="flex:1;font-size:12px;color:var(--text2);">'+allTalksInSlot(s.label)+' palestra(s)</span>'+
+      '<span style="flex:1;font-size:12px;color:var(--text2);">'+allTalksInSlot(s.label)+' sessões</span>'+
       '<button class="btn" style="font-size:11px;padding:3px 8px" onclick="editSlot(\''+esc(s.label)+'\')">✏️ Editar</button>'+
       '<button class="btn btn-d" style="font-size:11px;padding:3px 8px" onclick="deleteSlot(\''+esc(s.label)+'\')">🗑</button></div>';
   }
@@ -2603,7 +2603,7 @@ function addSlot(){
 }
 function deleteSlot(lbl){
   var t=allTalksInSlot(lbl);
-  if(!confirm(t>0?'Horário tem '+t+' palestra(s). Excluir?':'Excluir '+lbl+'?')) return;
+  if(!confirm(t>0?'Horário tem '+t+' sessões. Excluir?':'Excluir '+lbl+'?')) return;
   SLOTS=SLOTS.filter(function(s){return s.label!==lbl;});
   for(var d=0;d<NDAYS;d++) delete SCHEDULES[d][lbl];
   saveData(); renderMain(); openSlotManager();
@@ -2710,7 +2710,7 @@ function addHub(){
 
 function deleteHub(idx){
   var cnt = _countTalksWithHub(idx);
-  if(!confirm((cnt>0?cnt+' palestra(s) usam este Hub e ficarão sem Hub. ':'')+'Excluir "'+L(HUBS[idx])+'"?')) return;
+  if(!confirm((cnt>0?cnt+' sessões usam este Hub e ficarão sem Hub. ':'')+'Excluir "'+L(HUBS[idx])+'"?')) return;
   HUBS.splice(idx,1);
   HUB_COLORS.splice(idx,1);
   for(var d=0;d<NDAYS;d++){
@@ -2775,7 +2775,7 @@ function deleteRoom(rid){
   var rm = ROOMS.filter(function(r){return r.id===rid;})[0];
   if(!rm) return;
   var cnt = _countTalksInRoom(rid);
-  if(!confirm((cnt>0?cnt+' palestra(s) estão nesta sala e serão removidas. ':'')+'Excluir sala "'+rm.name+'"?')) return;
+  if(!confirm((cnt>0?cnt+' sessões estão nesta sala e serão removidas. ':'')+'Excluir sala "'+rm.name+'"?')) return;
   for(var d=0;d<NDAYS;d++){
     var slotKeys=Object.keys(SCHEDULES[d]);
     for(var si=0;si<slotKeys.length;si++){
@@ -3016,7 +3016,7 @@ function renderGrid(sc,vis){
 
   var dayStart = toMinG(activeSlots[0].label);
   var dayEnd   = toMinG(activeSlots[activeSlots.length-1].label) + 30;
-  // Extender dayEnd se alguma palestra termina além
+  // Extender dayEnd se alguma sessão termina além
   for(var si0=0;si0<activeSlots.length;si0++){
     var sl0=activeSlots[si0].label;
     for(var ri0=0;ri0<ROOMS.length;ri0++){
@@ -3095,7 +3095,7 @@ function renderGrid(sc,vis){
       h+='<div class="tcell" id="'+cid+'" data-slot="'+activeSlots[si4].label+'" data-room="'+room.id+'"'+ddAttrs+' style="position:absolute;top:'+dTop+'px;left:0;right:0;height:'+dH+'px;min-height:0;padding:0;border:none;background:transparent;z-index:1;"></div>';
     }
 
-    // Cards das palestras
+    // Cards das sessões
     for(var si5=0;si5<activeSlots.length;si5++){
       var slLabel=activeSlots[si5].label;
       var t=sc[slLabel]&&sc[slLabel][room.id];
@@ -3495,7 +3495,7 @@ function buildSearchDrop(q, dropId){
     if(spkResults.length>=6) break;
   }
 
-  // 2) Palestras que batem (título ou nome do participante)
+  // 2) Sessões que batem (título ou nome do participante)
   var results = [];
   for(var d=0;d<NDAYS;d++){
     var sc = SCHEDULES[d], slotKeys = Object.keys(sc);
@@ -3561,7 +3561,7 @@ function buildSearchDrop(q, dropId){
     }
   }
 
-  // —— Palestras ——
+  // —— Sessões ——
   if(results.length){
     addHeader(t18('talks'));
     for(var j=0;j<results.length;j++){
@@ -3808,31 +3808,51 @@ function addToGoogleCalendar(id){
 // ════════════════════════════════════════
 function deleteTalk(id){
   if(!WP_ENABLED) return;
-  if(!confirm('Excluir esta palestra?')) return;
+  if(!confirm('Excluir esta sessão?')) return;
   var _dt=findTalk(id);
-  for(var d=0;d<NDAYS;d++){
-    var slots=Object.keys(SCHEDULES[d]);
-    for(var si=0;si<slots.length;si++){
-      var slotObj=SCHEDULES[d][slots[si]], rooms=Object.keys(slotObj);
-      for(var ri=0;ri<rooms.length;ri++){
-        if(slotObj[rooms[ri]] && slotObj[rooms[ri]].id===id) delete slotObj[rooms[ri]];
+  function _removeLocal(){
+    for(var d=0;d<NDAYS;d++){
+      var slots=Object.keys(SCHEDULES[d]);
+      for(var si=0;si<slots.length;si++){
+        var slotObj=SCHEDULES[d][slots[si]], rooms=Object.keys(slotObj);
+        for(var ri=0;ri<rooms.length;ri++){
+          if(slotObj[rooms[ri]] && slotObj[rooms[ri]].id===id) delete slotObj[rooms[ri]];
+        }
       }
     }
   }
-  closeModal(); logAction('Excluiu a palestra', _dt&&_dt.talk?L(_dt.talk.title):''); if(window.SB&&SB.enabled){ SB.deleteTalk(id); } else { saveData(); } renderMain();
+  // Com backend: só remove da tela DEPOIS que o servidor confirma a exclusão.
+  // Antes a exclusão era disparada sem await e sem tratar erro — se falhasse,
+  // a sessão sumia localmente mas voltava ao recarregar (vinha do banco).
+  if(window.SB && SB.enabled){
+    SB.deleteTalk(id).then(function(){
+      _removeLocal();
+      closeModal();
+      logAction('Excluiu a sessão', _dt&&_dt.talk?L(_dt.talk.title):'');
+      renderMain();
+    }).catch(function(err){
+      alert('Não foi possível excluir a sessão: ' + ((err&&err.message)||String(err||'')));
+    });
+    return;
+  }
+  _removeLocal();
+  closeModal();
+  logAction('Excluiu a sessão', _dt&&_dt.talk?L(_dt.talk.title):'');
+  saveData();
+  renderMain();
 }
 function openAddTalk(){
   if(!WP_ENABLED) return;
   editTalkId=null; pickedSpks=[]; pickedSpk=null; pkQ='';
   _locImgData=null;
-  openModal('Nova Palestra',buildTalkForm(null),'<button class="btn" onclick="closeModal()">Cancelar</button><button class="btn btn-p" onclick="saveTalk()">Salvar Palestra</button>',true); renderPicker();
+  openModal('Nova Sessão',buildTalkForm(null),'<button class="btn" onclick="closeModal()">Cancelar</button><button class="btn btn-p" onclick="saveTalk()">Salvar Sessão</button>',true); renderPicker();
 }
 function openEditTalk(id){
   if(!WP_ENABLED) return;
   var found=findTalk(id); if(!found) return; var t=found.talk; editTalkId=id;
   pickedSpks=t.speakerIds&&t.speakerIds.length?t.speakerIds.slice():(t.speakerId?[t.speakerId]:[]);
   pickedSpk=pickedSpks[0]||null; pkQ=''; _locImgData=null;
-  openModal('Editar Palestra',buildTalkForm(t),'<button class="btn" onclick="closeModal()">Cancelar</button><button class="btn btn-p" onclick="saveTalk()">Salvar Palestra</button>',true); renderPicker();
+  openModal('Editar Sessão',buildTalkForm(t),'<button class="btn" onclick="closeModal()">Cancelar</button><button class="btn btn-p" onclick="saveTalk()">Salvar Sessão</button>',true); renderPicker();
 }
 
 var FORMATS = [
@@ -3956,7 +3976,7 @@ function updatePkPreview(){
 }
 
 function saveTalk(){
-  if(!WP_ENABLED && !confirm('Token WordPress não configurado. A palestra será salva apenas localmente e poderá ser perdida ao recarregar a página. Continuar?')) return;
+  if(!WP_ENABLED && !confirm('Token WordPress não configurado. A sessão será salva apenas localmente e poderá ser perdida ao recarregar a página. Continuar?')) return;
   var titleObj=_mlRead('evTitle'); var title=titleObj.pt||titleObj.en||titleObj.es;
   if(!title){ alert('Preencha o título (ao menos um idioma).'); return; }
 
@@ -3989,10 +4009,10 @@ function saveTalk(){
 
   for(var _d=0;_d<NDAYS;_d++){ if(!SCHEDULES[_d][time]) SCHEDULES[_d][time]={}; }
 
-  // Verifica conflito: outra palestra já nesse slot+sala (exceto ela mesma se for edição)
+  // Verifica conflito: outra sessão já nesse slot+sala (exceto ela mesma se for edição)
   var existing = SCHEDULES[day][time][room];
   if(existing && existing.id !== editTalkId){
-    if(!confirm('Já existe uma palestra neste horário e sala. Substituir?')) return;
+    if(!confirm('Já existe uma sessão neste horário e sala. Substituir?')) return;
   }
 
   // Monta nomes dos palestrantes
@@ -4005,7 +4025,7 @@ function saveTalk(){
   var locImg  = _locImgData || (document.getElementById('locImgPrev') && document.getElementById('locImgPrev').src && document.getElementById('locImgPrev').style.display!=='none' ? document.getElementById('locImgPrev').src : '');
   _locImgData = null; // reset
 
-  // Monta objeto da palestra — preserva id existente em edição
+  // Monta objeto da sessão — preserva id existente em edição
   var talkId = editTalkId || makeId('t');
   var obj = {
     id: talkId, title: titleObj, room: room, time: time, day: day,
@@ -4017,7 +4037,7 @@ function saveTalk(){
     locText: locText, locImg: locImg
   };
 
-  // Se for edição, remove a palestra do local ANTERIOR primeiro
+  // Se for edição, remove a sessão do local ANTERIOR primeiro
   // (pode ter mudado de dia/slot/sala)
   if(editTalkId){
     for(var d=0;d<NDAYS;d++){
@@ -4037,10 +4057,10 @@ function saveTalk(){
   // Garante que o slot destino existe
   if(!SCHEDULES[day][time]) SCHEDULES[day][time] = {};
 
-  // Insere palestra no novo local
+  // Insere sessão no novo local
   SCHEDULES[day][time][room] = obj;
 
-  // Muda para o dia da palestra e salva
+  // Muda para o dia da sessão e salva
   _setActiveDay(day);
 
   // Tira snapshot ANTES do closeModal
@@ -4050,7 +4070,7 @@ function saveTalk(){
   renderMain();
 
   if(window.SB && SB.enabled){ SB.upsertTalk(obj); } else { saveData(); }
-  logAction(editTalkId?'Editou a palestra':'Criou a palestra', title);
+  logAction(editTalkId?'Editou a sessão':'Criou a sessão', title);
 }
 
 // ════════════════════════════════════════
@@ -4096,7 +4116,7 @@ function renderPubSpkGrid(q){
     return;
   }
 
-  // Conta palestras por palestrante
+  // Conta sessões por palestrante
   function talksFor(sid){
     var n=0;
     for(var d=0;d<NDAYS;d++){
@@ -4127,8 +4147,8 @@ function renderPubSpkGrid(q){
       _lastCat=_cid;
     }
     var tc=talksFor(s.id);
-    var _adminActs = WP_ENABLED ? '<div class="pub-spk-acts"><button onclick="event.stopPropagation();openSpkForm(\''+s.id+'\')" title="Editar">✏️</button><button onclick="event.stopPropagation();delSpk(\''+s.id+'\')" title="Excluir">🗑</button></div>' : '';
-    var tcBadge=tc?'<span style="margin-left:6px;font-size:11px;font-weight:700;color:var(--blue);background:var(--blue-lt);padding:2px 7px;border-radius:10px;white-space:nowrap;">'+tc+' palestra'+(tc!==1?'s':'')+'</span>':'';
+    var _adminActs = WP_ENABLED ? '<div class="pub-spk-acts"><button onclick="event.stopPropagation();openSpkForm(\''+s.id+'\')" title="Editar">✏️</button><button onclick="event.stopPropagation();deleteSpk(\''+s.id+'\')" title="Excluir">🗑</button></div>' : '';
+    var tcBadge=tc?'<span style="margin-left:6px;font-size:11px;font-weight:700;color:var(--blue);background:var(--blue-lt);padding:2px 7px;border-radius:10px;white-space:nowrap;">'+tc+' sessão'+(tc!==1?'s':'')+'</span>':'';
 
     if(_spkView==='list'||_spkView==='wide'){
       // Lista e Wide: foto + info lado a lado
@@ -4142,7 +4162,7 @@ function renderPubSpkGrid(q){
           (s.role?'<div class="pub-spk-role" style="text-align:left;font-size:'+(sz===52?12:13)+'px;">'+esc(s.role)+'</div>':'')+
           (s.company?'<div class="pub-spk-co" style="text-align:left;font-size:'+(sz===52?11:13)+'px;">'+esc(s.company)+'</div>':'')+
         '</div>'+
-        (_spkView==='list'&&tc?'<div class="pub-spk-list-talks">'+tc+' palestra'+(tc!==1?'s':'')+'</div>':'')+
+        (_spkView==='list'&&tc?'<div class="pub-spk-list-talks">'+tc+' sessão'+(tc!==1?'s':'')+'</div>':'')+
       '</div>';
     } else {
       var avLg=s.photo
@@ -4214,10 +4234,26 @@ function _legacyRenderSpkGrid(){
 
 function deleteSpk(id){
   if(!WP_ENABLED) return;
-  if(!confirm('Excluir este palestrante?')) return;
-  var _dsp=findSpk(id); SPEAKERS=SPEAKERS.filter(function(s){return s.id!==id;}); logAction('Excluiu o palestrante', _dsp?_dsp.name:'');
-  for(var d=0;d<NDAYS;d++){ var dk=Object.keys(SCHEDULES[d]); for(var i=0;i<dk.length;i++){ var sl=SCHEDULES[d][dk[i]],rk=Object.keys(sl); for(var j=0;j<rk.length;j++) if(sl[rk[j]].speakerId===id){sl[rk[j]].speakerId=null;sl[rk[j]].speakerName='';} } }
-  renderSpkGrid(); if(window.SB&&SB.enabled){ SB.deleteSpeaker(id); } else { saveData(); } renderMain();
+  if(!confirm('Excluir este participante?')) return;
+  var _dsp=findSpk(id);
+  function _removeLocal(){
+    SPEAKERS=SPEAKERS.filter(function(s){return s.id!==id;});
+    for(var d=0;d<NDAYS;d++){ var dk=Object.keys(SCHEDULES[d]); for(var i=0;i<dk.length;i++){ var sl=SCHEDULES[d][dk[i]],rk=Object.keys(sl); for(var j=0;j<rk.length;j++) if(sl[rk[j]].speakerId===id){sl[rk[j]].speakerId=null;sl[rk[j]].speakerName='';} } }
+  }
+  // Com backend: confirma a exclusão no servidor antes de remover da tela.
+  if(window.SB && SB.enabled){
+    SB.deleteSpeaker(id).then(function(){
+      _removeLocal();
+      logAction('Excluiu o participante', _dsp?_dsp.name:'');
+      renderSpkGrid(); renderMain();
+    }).catch(function(err){
+      alert('Não foi possível excluir o participante: ' + ((err&&err.message)||String(err||'')));
+    });
+    return;
+  }
+  _removeLocal();
+  logAction('Excluiu o participante', _dsp?_dsp.name:'');
+  renderSpkGrid(); saveData(); renderMain();
 }
 
 function openSpkForm(id){
@@ -4612,7 +4648,7 @@ function findTalk(id){
 // WP PERSISTENCE
 // ════════════════════════════════════════
 
-// Conta palestras em um objeto schedules (aceita array ou objeto com chaves "0","1")
+// Conta sessões em um objeto schedules (aceita array ou objeto com chaves "0","1")
 function _countTalks(schedules){
   var total = 0;
   if(!schedules || typeof schedules !== 'object') return 0;
@@ -4844,7 +4880,7 @@ function _doSaveWP(snapshot, attempt){
   var sc0 = snapshot.schedules[0] || snapshot.schedules['0'] || {};
   var sc1 = snapshot.schedules[1] || snapshot.schedules['1'] || {};
 
-  // Conta palestras para log
+  // Conta sessões para log
   var talkCount = 0;
   var countDay = function(day){
     var slots = Object.keys(day||{});
@@ -4867,7 +4903,7 @@ function _doSaveWP(snapshot, attempt){
     rooms:     snapshot.rooms
   };
   var bodyStr = JSON.stringify(payload);
-  console.log('[Agenda] Enviando — palestrantes:'+snapshot.speakers.length+' palestras:'+talkCount+' bytes:'+bodyStr.length);
+  console.log('[Agenda] Enviando — palestrantes:'+snapshot.speakers.length+' sessões:'+talkCount+' bytes:'+bodyStr.length);
 
   return fetch(WP_API_BASE+'/wp-json/agenda/v1/save', {
     method:'POST',
@@ -4877,7 +4913,7 @@ function _doSaveWP(snapshot, attempt){
   .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
   .then(function(res){
     if(res.success){
-      console.log('[Agenda] ✅ Salvo — palestrantes:'+(res.speakers||'?')+' palestras:'+(res.talks||'?'));
+      console.log('[Agenda] ✅ Salvo — palestrantes:'+(res.speakers||'?')+' sessões:'+(res.talks||'?'));
 
       // Se o servidor retornou erros de foto, exibe na UI + console
       if(res.photo_errors && res.photo_errors.length > 0){
@@ -4923,7 +4959,7 @@ function openBackupModal(){
   var body = '<div style="display:flex;flex-direction:column;gap:14px;">'
     + '<div style="background:var(--bg);border-radius:10px;padding:16px;border:1px solid var(--border);">'
     +   '<div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:6px;">⬇️ Baixar Backup</div>'
-    +   '<div style="font-size:12px;color:var(--text2);margin-bottom:12px;">Exporta todos os dados (palestras, palestrantes, horários) em JSON. Guarde em lugar seguro.</div>'
+    +   '<div style="font-size:12px;color:var(--text2);margin-bottom:12px;">Exporta todos os dados (sessões, palestrantes, horários) em JSON. Guarde em lugar seguro.</div>'
     +   '<button class="btn btn-p" id="btnDoDownload">⬇️ Baixar '+filename+'</button>'
     + '</div>'
     + '<div style="background:var(--bg);border-radius:10px;padding:16px;border:1px solid var(--border);">'
@@ -5092,7 +5128,7 @@ function _accountHTML(){
     '<div><div style="font-size:17px;font-weight:600;letter-spacing:-.01em;">'+esc(profileName(p))+'</div>'+
     '<div style="font-size:12px;color:var(--brand);font-weight:600;text-transform:uppercase;letter-spacing:.04em;">'+roleLabel+'</div>'+
     (p.email?'<div style="font-size:12.5px;color:var(--text2);margin-top:2px;">'+esc(p.email)+'</div>':'')+'</div></div>'+
-    (isMaster()?'<div style="font-size:12.5px;color:var(--text2);background:var(--bg);border-radius:10px;padding:12px 14px;line-height:1.65;">Você é o <b style="color:var(--text);">admin master</b>: pode editar tudo, cadastrar perfis de edição e acompanhar o registro de atividades em tempo real.</div>':'<div style="font-size:12.5px;color:var(--text2);background:var(--bg);border-radius:10px;padding:12px 14px;line-height:1.65;">Você pode editar palestras, palestrantes, salas e horários.</div>');
+    (isMaster()?'<div style="font-size:12.5px;color:var(--text2);background:var(--bg);border-radius:10px;padding:12px 14px;line-height:1.65;">Você é o <b style="color:var(--text);">admin master</b>: pode editar tudo, cadastrar perfis de edição e acompanhar o registro de atividades em tempo real.</div>':'<div style="font-size:12.5px;color:var(--text2);background:var(--bg);border-radius:10px;padding:12px 14px;line-height:1.65;">Você pode editar sessões, palestrantes, salas e horários.</div>');
 }
 
 function _profilesHTML(){
@@ -5227,7 +5263,22 @@ function renderLogs(){
   }
   c.innerHTML=hh;
 }
-function clearLogs(){ if(!confirm('Limpar todo o registro de atividades?')) return; if(window.SB&&SB.enabled){ SB.clearLogs().then(function(){ renderLogs(); }); return; } _writeJSON(LOGS_KEY,[]); logAction('Limpou o registro'); renderLogs(); }
+function clearLogs(){
+  if(!confirm('Limpar todo o registro de atividades?')) return;
+  if(window.SB&&SB.enabled){
+    // Apaga no servidor E no espelho local, e avisa se faltar permissão.
+    SB.clearLogs().then(function(){
+      try{ _writeJSON(LOGS_KEY,[]); }catch(e){}
+      renderLogs();
+    }).catch(function(err){
+      var msg=(err&&err.message)||String(err||'');
+      if(/master/i.test(msg)) alert('Apenas o usuário master pode limpar o registro de atividades.');
+      else alert('Não foi possível limpar o registro: '+msg);
+    });
+    return;
+  }
+  _writeJSON(LOGS_KEY,[]); logAction('Limpou o registro'); renderLogs();
+}
 
 // ── Compressão de imagem → WebP < alvo (KB) no próprio navegador ──
 function compressToWebp(srcDataUrl, maxDim, targetKB, cb){
@@ -5288,7 +5339,7 @@ function _moveTalkTo(id, newSlot, newRoomId){
   SCHEDULES[curDay][newSlot][newRoomId] = talk;
   renderMain();
   if(window.SB&&SB.enabled){ SB.upsertTalk(talk); } else { clearTimeout(saveData._t); saveData(); }
-  logAction('Moveu a palestra', L(talk.title));
+  logAction('Moveu a sessão', L(talk.title));
   return true;
 }
 function onDrop(e,newSlot,newRoomId){
