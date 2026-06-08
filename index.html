@@ -4619,7 +4619,18 @@ function saveSpk(){
 // ════════════════════════════════════════
 function openModal(title,body,ftr,wide){ document.getElementById('mTitle').textContent=title; document.getElementById('mBody').innerHTML=body; document.getElementById('mFtr').innerHTML=ftr; document.getElementById('mdl').className='mdl'+(wide?' wide':''); document.getElementById('ov').className='ov on'; }
 function ovClick(e){ /* clicar fora NÃO fecha — só o X ou concluir a tarefa */ }
-function closeModal(){ document.getElementById('ov').className='ov'; }
+function closeModal(){
+  // Interrompe qualquer mídia (iframe do YouTube, vídeo, áudio) imediatamente,
+  // senão o som continua tocando em segundo plano após fechar o popup.
+  var mb=document.getElementById('mBody');
+  if(mb){
+    var ifr=mb.querySelectorAll('iframe');
+    for(var i=0;i<ifr.length;i++){ try{ ifr[i].src='about:blank'; }catch(e){} }
+    var med=mb.querySelectorAll('video,audio');
+    for(var j=0;j<med.length;j++){ try{ med[j].pause(); med[j].currentTime=0; }catch(e){} }
+  }
+  document.getElementById('ov').className='ov';
+}
 
 // ════════════════════════════════════════
 // EXPORT
