@@ -586,6 +586,14 @@ body[data-mode="edit"] .btile:hover .btile-edit{display:flex;}
 .pub-spk-card{position:relative;}
 .pub-spk-acts{position:absolute;top:8px;right:8px;display:none;gap:4px;z-index:3;}
 .pub-spk-card:hover .pub-spk-acts{display:flex;}
+/* Borda cinza visível nos cards de participantes (todos os modos), à
+   semelhança da borda dos cards da agenda — só que em cinza neutro. */
+.spk-card,
+.pub-spk-grid.view-wide .pub-spk-card,
+.pub-spk-grid.view-compact .pub-spk-card,
+.pub-spk-grid:not(.view-list) .pub-spk-card{ border:1px solid color-mix(in srgb,var(--text2) 34%,transparent); }
+.pub-spk-grid.view-list .pub-spk-card{ border-bottom-color:color-mix(in srgb,var(--text2) 34%,transparent); }
+.pub-spk-grid.view-list .pub-spk-card:first-child{ border-top-color:color-mix(in srgb,var(--text2) 34%,transparent); }
 .pub-spk-acts button{width:26px;height:26px;border-radius:7px;border:1px solid var(--border);background:var(--surface);cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 3px rgba(40,20,60,.12);padding:0;-webkit-tap-highlight-color:transparent;}
 .pub-spk-acts button:hover{background:var(--bg);}
 @media(hover:none){.pub-spk-acts{display:flex;}}
@@ -3248,7 +3256,43 @@ function renderGrid(sc,vis){
   setTimeout(function(){
     _gridInitPinch();
     _updateZoomControls();
+    _fitCardTitles();
   },0);
+}
+
+// Ajusta o nº de linhas do título de cada card da GRADE para nunca cortar
+// texto: clampa para as linhas que cabem na altura do card e adiciona "…".
+// Se o card for curto demais, oculta a linha de palestrantes para dar espaço.
+function _fitCardTitles(){
+  var cards=document.querySelectorAll('#agendaContent .card');
+  for(var i=0;i<cards.length;i++){
+    (function(card){
+      var title=card.querySelector('.ctitle');
+      if(!title) return;
+      var spk=card.querySelector('.cspk-row');
+      // reset
+      title.style.webkitLineClamp=''; title.style.display=''; title.style.maxHeight='';
+      if(spk) spk.style.display='';
+      var lh=parseFloat(getComputedStyle(title).lineHeight)||16;
+      function availForTitle(){
+        var cs=getComputedStyle(card);
+        var pad=(parseFloat(cs.paddingTop)||0)+(parseFloat(cs.paddingBottom)||0);
+        var gap=parseFloat(cs.rowGap||cs.gap||0)||0;
+        var others=0,n=0;
+        Array.prototype.forEach.call(card.children,function(ch){ n++; if(ch!==title && ch.offsetParent!==null) others+=ch.offsetHeight; });
+        return card.clientHeight - pad - others - gap*Math.max(0,(n-1));
+      }
+      var a=availForTitle();
+      var lines=Math.floor(a/lh);
+      if(lines<1 && spk){ spk.style.display='none'; a=availForTitle(); lines=Math.floor(a/lh); }
+      lines=Math.max(1,lines);
+      title.style.display='-webkit-box';
+      title.style.webkitBoxOrient='vertical';
+      title.style.webkitLineClamp=String(lines);
+      title.style.overflow='hidden';
+      title.style.maxHeight=(lines*lh)+'px';
+    })(cards[i]);
+  }
 }
 
 function _gridInitPinch(){
@@ -3300,7 +3344,7 @@ function renderCards(sc){
       if(spkIds.length>cgMax){
         spkAvatars+='<div class="cgrid-avini" style="background:rgba(0,0,0,.3);font-size:9px;">+' + (spkIds.length-cgMax) + '</div>';
       }
-      h+='<div class="cgrid-card '+ts.cls+'" style="background:'+ts.bg+';border-left-color:'+ts.color+';color:var(--text);--card-accent:color-mix(in srgb,'+ts.color+' 48%,var(--border));--card-tint:color-mix(in srgb,'+ts.color+' 9%,var(--surface));" onclick="openTalkDetail(\''+esc(t.id)+'\')">'+
+      h+='<div class="cgrid-card '+ts.cls+'" style="background:'+ts.bg+';border:1px solid color-mix(in srgb,'+ts.color+' 42%,transparent);border-left:4px solid '+ts.color+';box-sizing:border-box;color:var(--text);--card-accent:color-mix(in srgb,'+ts.color+' 48%,var(--border));--card-tint:color-mix(in srgb,'+ts.color+' 9%,var(--surface));" onclick="openTalkDetail(\''+esc(t.id)+'\')">'+
         '<div class="cgrid-room-tag" style="color:'+ts.color+'">'+esc(RN(room.name))+'</div>'+
         '<div class="cgrid-title">'+esc(L(t.title))+'</div>'+
         (t.speakerName?'<div class="cgrid-spk"><div style="display:flex;margin-right:4px">'+spkAvatars+'</div><span>'+esc(t.speakerName)+'</span></div>':'')+
@@ -3344,7 +3388,7 @@ function renderList(sc,vis){
       var av='<div style="display:flex;flex-direction:row;flex-shrink:0;">'+lavHtml+'</div>';
       var hi=(t.hub!==undefined&&t.hub!=='') ? parseInt(t.hub) : -1;
       var hubName=hi>=0&&HUBS[hi] ? L(HUBS[hi]) : '';
-      h+='<div class="lcard" style="border-left-color:'+ts.color+';--card-accent:color-mix(in srgb,'+ts.color+' 48%,var(--border));--card-tint:color-mix(in srgb,'+ts.color+' 9%,var(--surface));" onclick="openTalkDetail(\''+esc(t.id)+'\')">'+av+
+      h+='<div class="lcard" style="border:1px solid color-mix(in srgb,'+ts.color+' 42%,transparent);border-left:4px solid '+ts.color+';box-sizing:border-box;--card-accent:color-mix(in srgb,'+ts.color+' 48%,var(--border));--card-tint:color-mix(in srgb,'+ts.color+' 9%,var(--surface));" onclick="openTalkDetail(\''+esc(t.id)+'\')">'+av+
          '<div class="linfo"><div class="ltitle">'+esc(L(t.title))+'</div>'+
          '<div class="lmeta">'+(t.speakerName?'<span>🎤 '+esc(t.speakerName)+'</span>':'')+'<span>⏱ '+talkDur(t)+' min</span></div></div>'+
          '<div class="lcard-badges" style="display:flex;align-items:center;gap:6px;flex-shrink:0;">'+
