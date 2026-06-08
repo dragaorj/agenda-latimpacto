@@ -182,7 +182,11 @@ html,body{height:100%;overflow:hidden;margin:0;padding:0;}
 [data-theme="dark"] .b-hero{color:#1a1020;}
 [data-theme="dark"] .b-hero .dates{background:rgba(0,0,0,.16);}
 /* Countdown */
-.b-count{align-items:stretch;justify-content:flex-start;background:linear-gradient(160deg,var(--blue-lt),color-mix(in srgb,var(--brand) 8%,var(--surface)));border-color:transparent;min-height:230px;}
+.b-count{position:relative;overflow:hidden;align-items:stretch;justify-content:flex-start;background:linear-gradient(160deg,var(--blue-lt),color-mix(in srgb,var(--brand) 8%,var(--surface)));border-color:transparent;min-height:230px;}
+/* GIF de fundo bem suave — não ofusca números nem rótulos */
+.b-count::before{content:"";position:absolute;inset:0;background:url('assets/countdown-bg.gif') center center/cover no-repeat;opacity:.14;pointer-events:none;z-index:0;}
+[data-theme="dark"] .b-count::before{opacity:.20;}
+.b-count > *{position:relative;z-index:1;}
 .b-count .cd-wrap{width:100%;display:flex;flex-direction:column;flex:1;justify-content:center;gap:2px;}
 .b-count .cd-top{display:flex;align-items:baseline;gap:10px;}
 .b-count .big{font-size:clamp(48px,5vw,84px);font-weight:800;line-height:.9;color:var(--brand);font-variant-numeric:tabular-nums;letter-spacing:-.05em;}
@@ -1601,7 +1605,57 @@ function makeId(p){ return p+'-'+Date.now()+'-'+Math.random().toString(36).slice
 // ───────── i18n (PT / EN / ES) ─────────
 var LANG='pt';
 try{ var _sl=localStorage.getItem('latimpacto_lang'); if(_sl&&['pt','en','es'].indexOf(_sl)>-1) LANG=_sl; }catch(e){}
-function L(v){ if(v&&typeof v==='object'&&!Array.isArray(v)) return v[LANG]||v.pt||v.en||v.es||''; return (v==null?'':v); }
+// ── Camada de tradução em tempo de exibição (cache persistente) ──────────
+// Se o idioma atual não tiver texto, traduz a partir do idioma preenchido e
+// guarda em cache (localStorage). Conteúdo manual nunca é sobrescrito.
+var _trCache={}; try{ _trCache=JSON.parse(localStorage.getItem('latimpacto_trcache')||'{}')||{}; }catch(e){ _trCache={}; }
+var _trPending={}, _trSaveT=null, _trRerenderT=null;
+function _trPersist(){ clearTimeout(_trSaveT); _trSaveT=setTimeout(function(){ try{ localStorage.setItem('latimpacto_trcache', JSON.stringify(_trCache)); }catch(e){} }, 800); }
+function _trRerender(){ clearTimeout(_trRerenderT); _trRerenderT=setTimeout(function(){
+  try{ if(typeof renderLegend==='function') renderLegend(); }catch(e){}
+  try{
+    if(curPage==='agenda'){ if(typeof renderMain==='function') renderMain(); }
+    else if(curPage==='home'){ if(typeof renderBento==='function') renderBento(); }
+    else if(curPage==='spk'){ if(WP_ENABLED&&typeof renderSpkGrid==='function') renderSpkGrid(); else if(typeof renderPubSpkGrid==='function') renderPubSpkGrid(_pubSpkQ||''); }
+  }catch(e){}
+}, 350); }
+// Retorna tradução em cache, ou null enquanto busca (dispara o fetch 1x).
+function _trGet(text, src, tl){
+  text=(text==null?'':String(text)).trim(); if(!text) return '';
+  if(src!=='auto' && src===tl) return text;
+  var key=tl+'|'+text;
+  if(_trCache[key]!=null) return _trCache[key];
+  if(!_trPending[key]){
+    _trPending[key]=true;
+    _translateText(text, src, tl).then(function(tr){
+      delete _trPending[key];
+      if(tr && tr.trim()){
+        var diff = tr.trim()!==text;
+        _trCache[key]=tr; _trPersist();
+        if(diff) _trRerender();
+      }
+    }).catch(function(){ delete _trPending[key]; });
+  }
+  return null;
+}
+function L(v){
+  if(v&&typeof v==='object'&&!Array.isArray(v)){
+    if(v[LANG]&&String(v[LANG]).trim()) return v[LANG];
+    var src=(v.pt&&String(v.pt).trim())?'pt':((v.en&&String(v.en).trim())?'en':((v.es&&String(v.es).trim())?'es':null));
+    if(!src) return '';
+    if(src===LANG) return v[src];
+    var tr=_trGet(v[src], src, LANG);
+    return (tr!=null)?tr:v[src];
+  }
+  return (v==null?'':v);
+}
+// Nome de sala traduzido para o idioma atual (auto-detecta a língua de origem).
+function RN(name){
+  if(name==null) return '';
+  if(typeof name==='object') return L(name); // suporta nome multilíngue futuro
+  var tr=_trGet(String(name),'auto',LANG);
+  return ((tr!=null)?tr:String(name)).toUpperCase();
+}
 var I18N={
   pt:{ appTitle:'Agenda', tabAgenda:'Agenda', tabSpk:'Participantes', viewGrid:'Grade', viewCards:'Cards', viewList:'Lista',
        searchPh:'Buscar sessão ou palestrante…', searchSpkPh:'Buscar participante…', allHubs:'TODOS OS HUBS',
@@ -1705,6 +1759,7 @@ function _translateText(text, source, target){
     });
   }
   function viaMyMemory(){
+    if(source==='auto') return Promise.reject(0);
     var u='https://api.mymemory.translated.net/get?q='+encodeURIComponent(text)+'&langpair='+source+'|'+target;
     return fetch(u).then(function(r){ if(!r.ok) throw 0; return r.json(); }).then(function(j){
       var t=j&&j.responseData&&j.responseData.translatedText;
@@ -2941,7 +2996,7 @@ function renderRoomFilters(){
   var html='';
   for(var i=0;i<ROOMS.length;i++){
     var r=ROOMS[i],off=hiddenR[r.id];
-    html+='<div class="room-filter-btn'+(off?' off':'')+'" style="border-color:var(--border);color:var(--text2);background:var(--surface);" onclick="toggleRoomFilter(\''+r.id+'\')">'+esc(r.name)+'</div>';
+    html+='<div class="room-filter-btn'+(off?' off':'')+'" style="border-color:var(--border);color:var(--text2);background:var(--surface);" onclick="toggleRoomFilter(\''+r.id+'\')">'+esc(RN(r.name))+'</div>';
   }
   var el=document.getElementById('roomFilters'); if(el) el.innerHTML=html;
   renderDrawer();
@@ -2964,7 +3019,7 @@ function renderDrawer(){
     for(var i=0;i<ROOMS.length;i++){
       var r=ROOMS[i],off=hiddenR[r.id];
       rh+='<div class="filter-chip'+(off?' off':'')+'" onclick="toggleRoomFilter(\''+r.id+'\')" style="border-color:var(--border);color:var(--text2)">'+
-        '<div class="filter-chip-dot" style="background:var(--text2)"></div>'+esc(r.name)+'</div>';
+        '<div class="filter-chip-dot" style="background:var(--text2)"></div>'+esc(RN(r.name))+'</div>';
     }
     rc.innerHTML=rh;
   }
@@ -3084,11 +3139,11 @@ function renderGrid(sc,vis){
     var r=ROOMS[i];
     if(hiddenR[r.id]){
       // Sala oculta — coluna estreita com nome vertical e botão para reabrir
-      h+='<div class="rh-cell" style="width:28px;min-width:28px;flex-shrink:0;padding:3px 2px;overflow:hidden;cursor:pointer;" onclick="toggleRoomFilter(\''+r.id+'\')" title="Mostrar '+esc(r.name)+'">'+
-        '<div style="writing-mode:vertical-rl;white-space:nowrap;font-size:9px;color:var(--text2);opacity:.5;overflow:hidden;text-overflow:ellipsis;max-height:80px;">'+esc(r.name)+'</div></div>';
+      h+='<div class="rh-cell" style="width:28px;min-width:28px;flex-shrink:0;padding:3px 2px;overflow:hidden;cursor:pointer;" onclick="toggleRoomFilter(\''+r.id+'\')" title="Mostrar '+esc(RN(r.name))+'">'+
+        '<div style="writing-mode:vertical-rl;white-space:nowrap;font-size:9px;color:var(--text2);opacity:.5;overflow:hidden;text-overflow:ellipsis;max-height:80px;">'+esc(RN(r.name))+'</div></div>';
     } else {
       h+='<div class="rh-cell" style="flex:1;min-width:'+ROOM_W+'px;text-align:center;">'+
-        '<div class="rbadge" style="background:var(--bg);color:var(--text2)" onclick="toggleRoomFilter(\''+r.id+'\')" title="Ocultar '+esc(r.name)+'">'+esc(r.name)+'</div></div>';
+        '<div class="rbadge" style="background:var(--bg);color:var(--text2)" onclick="toggleRoomFilter(\''+r.id+'\')" title="Ocultar '+esc(RN(r.name))+'">'+esc(RN(r.name))+'</div></div>';
     }
   }
   h+='</div>';
@@ -3246,7 +3301,7 @@ function renderCards(sc){
         spkAvatars+='<div class="cgrid-avini" style="background:rgba(0,0,0,.3);font-size:9px;">+' + (spkIds.length-cgMax) + '</div>';
       }
       h+='<div class="cgrid-card '+ts.cls+'" style="background:'+ts.bg+';border-left-color:'+ts.color+';color:var(--text);--card-accent:color-mix(in srgb,'+ts.color+' 48%,var(--border));--card-tint:color-mix(in srgb,'+ts.color+' 9%,var(--surface));" onclick="openTalkDetail(\''+esc(t.id)+'\')">'+
-        '<div class="cgrid-room-tag" style="color:'+ts.color+'">'+esc(room.name)+'</div>'+
+        '<div class="cgrid-room-tag" style="color:'+ts.color+'">'+esc(RN(room.name))+'</div>'+
         '<div class="cgrid-title">'+esc(L(t.title))+'</div>'+
         (t.speakerName?'<div class="cgrid-spk"><div style="display:flex;margin-right:4px">'+spkAvatars+'</div><span>'+esc(t.speakerName)+'</span></div>':'')+
         (function(){ var b=''; if(t.format){for(var fi=0;fi<FORMATS.length;fi++) if(FORMATS[fi].val===t.format){b+='<span class="fmt-badge '+FORMATS[fi].cls+'" style="margin-top:5px;display:inline-block">'+esc(FORMATS[fi].label)+'</span> ';break;}} if(t.libras) b+='<span style="font-size:11px" title="Libras">🤟</span>'; if(t.traducao) b+='<span style="font-size:11px" title="Tradução">🌐</span>'; return b?'<div style="margin-top:4px;display:flex;align-items:center;gap:4px;flex-wrap:wrap">'+b+'</div>':''; })()+
@@ -3294,7 +3349,7 @@ function renderList(sc,vis){
          '<div class="lmeta">'+(t.speakerName?'<span>🎤 '+esc(t.speakerName)+'</span>':'')+'<span>⏱ '+talkDur(t)+' min</span></div></div>'+
          '<div class="lcard-badges" style="display:flex;align-items:center;gap:6px;flex-shrink:0;">'+
          (hubName?'<div class="lroom" style="background:'+ts.bg+';color:'+ts.color+'">'+esc(hubName)+'</div>':'')+
-         '<div class="lroom" style="background:var(--bg);color:var(--text2);border:1px solid var(--border);">'+esc(room.name)+'</div>'+
+         '<div class="lroom" style="background:var(--bg);color:var(--text2);border:1px solid var(--border);">'+esc(RN(room.name))+'</div>'+
          '<button class="btn btn-gcal" style="padding:4px 8px;font-size:11px;" onclick="event.stopPropagation();addToGoogleCalendar(\''+esc(t.id)+'\')" title="Google Agenda">📅</button>'+
          '</div></div>';
     }
@@ -3391,7 +3446,7 @@ function renderGantt(sc, vis){
     rowsHtml+='<div class="gantt-row">'+
       '<div class="gantt-label">'+
         '<span class="gantt-label-dot" style="background:var(--text2)"></span>'+
-        '<span class="gantt-label-name" style="color:var(--text2)">'+esc(room.name)+'</span>'+
+        '<span class="gantt-label-name" style="color:var(--text2)">'+esc(RN(room.name))+'</span>'+
       '</div>'+
       '<div class="gantt-track">'+trackTicksHtml+barsHtml+'</div>'+
       '</div>';
@@ -3635,7 +3690,7 @@ function buildSearchDrop(q, dropId){
       badge2.className = 'srch-badge';
       badge2.style.background = _ts.bg || '#eee';
       badge2.style.color = _ts.color || '#333';
-      badge2.textContent = r.room.name || '';
+      badge2.textContent = RN(r.room.name) || '';
 
       item2.appendChild(dot);
       item2.appendChild(info2);
@@ -3739,7 +3794,7 @@ function openTalkDetail(id){
   // Hub colorido em destaque + sala em neutro
   var body='';
   if(hubName) body+='<span class="ev-rbadge" style="background:'+ts.bg+';color:'+ts.color+';margin-right:6px;">'+esc(hubName)+'</span>';
-  body+='<span class="ev-rbadge" style="background:var(--bg);color:var(--text2);border:1px solid var(--border);">'+esc(room.name)+'</span>';
+  body+='<span class="ev-rbadge" style="background:var(--bg);color:var(--text2);border:1px solid var(--border);">'+esc(RN(room.name))+'</span>';
   // Badge de formato
   if(t.format){ var fmtObj=null; for(var fi=0;fi<FORMATS.length;fi++) if(FORMATS[fi].val===t.format){fmtObj=FORMATS[fi];break;} if(fmtObj) body+=' <span class="fmt-badge '+fmtObj.cls+'">'+esc(fmtObj.label)+'</span>'; }
   // Tags de acessibilidade
