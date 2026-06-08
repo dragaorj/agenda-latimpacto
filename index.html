@@ -3230,7 +3230,7 @@ function renderGrid(sc,vis){
       var ts=talkStyle(t,room);
       h+='<div class="card '+ts.cls+'" id="talk-'+t.id+'" data-talkid="'+esc(t.id)+'"'+dragAttrs+
          ' onclick="openTalkDetail(\''+esc(t.id)+'\')"'+
-         ' style="position:absolute;top:'+cardTop+'px;left:4px;right:4px;height:'+cardH+'px;min-height:20px;overflow:hidden;z-index:5;background:'+ts.bg+';border-left-color:'+ts.color+';color:var(--text);--card-accent:color-mix(in srgb,'+ts.color+' 48%,var(--border));--card-tint:color-mix(in srgb,'+ts.color+' 9%,var(--surface));">'+
+         ' style="position:absolute;top:'+cardTop+'px;left:4px;right:4px;height:'+cardH+'px;min-height:20px;overflow:hidden;z-index:5;background:'+ts.bg+';border:1px solid color-mix(in srgb,'+ts.color+' 42%,transparent);border-left:5px solid '+ts.color+';box-sizing:border-box;color:var(--text);--card-accent:color-mix(in srgb,'+ts.color+' 48%,var(--border));--card-tint:color-mix(in srgb,'+ts.color+' 9%,var(--surface));">'+
          metaHtml+
          '<span class="ctitle">'+esc(L(t.title))+'</span>'+
          spkHtml+
