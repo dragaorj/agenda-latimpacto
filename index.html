@@ -1688,6 +1688,46 @@ function _mlTab(base,lg){
 }
 function _mlRead(base){ var o={}; ['pt','en','es'].forEach(function(lg){ var el=document.getElementById(base+'_'+lg); o[lg]=el?el.value.trim():''; }); return o; }
 
+// ── Auto-tradução de campos multilíngues ──────────────────────────────
+// Quando o editor preenche só um idioma, os demais são traduzidos
+// automaticamente no momento de salvar e gravados no banco (ficam offline).
+// Usa endpoints públicos sem chave; se falhar, deixa vazio (o L() faz
+// fallback para o idioma preenchido).
+function _translateText(text, source, target){
+  text=(text||'').trim();
+  if(!text) return Promise.resolve('');
+  if(source===target) return Promise.resolve(text);
+  function viaGoogle(){
+    var u='https://translate.googleapis.com/translate_a/single?client=gtx&sl='+source+'&tl='+target+'&dt=t&q='+encodeURIComponent(text);
+    return fetch(u).then(function(r){ if(!r.ok) throw 0; return r.json(); }).then(function(j){
+      if(j && j[0]) return j[0].map(function(seg){ return seg[0]; }).join('');
+      throw 0;
+    });
+  }
+  function viaMyMemory(){
+    var u='https://api.mymemory.translated.net/get?q='+encodeURIComponent(text)+'&langpair='+source+'|'+target;
+    return fetch(u).then(function(r){ if(!r.ok) throw 0; return r.json(); }).then(function(j){
+      var t=j&&j.responseData&&j.responseData.translatedText;
+      if(t && j.responseStatus==200) return t;
+      throw 0;
+    });
+  }
+  return viaGoogle().catch(viaMyMemory).catch(function(){ return ''; });
+}
+// Preenche os idiomas vazios de um objeto {pt,en,es} a partir do idioma
+// preenchido (prioridade PT → EN → ES). Resolve com o próprio objeto.
+function _autoFillML(obj){
+  if(!obj || typeof obj!=='object') return Promise.resolve(obj);
+  var src = obj.pt?'pt':(obj.en?'en':(obj.es?'es':null));
+  if(!src) return Promise.resolve(obj);
+  var srcText=obj[src];
+  var targets=['pt','en','es'].filter(function(l){ return l!==src && !(obj[l]&&obj[l].trim()); });
+  if(!targets.length) return Promise.resolve(obj);
+  return Promise.all(targets.map(function(tl){
+    return _translateText(srcText, src, tl).then(function(tr){ if(tr) obj[tl]=tr; });
+  })).then(function(){ return obj; });
+}
+
 // Retorna {color, bg, cls} com base no Hub da sessão (se definido), senão usa a sala
 // Filetes de hub — cores suaves, harmônicas, ancoradas na marca Latimpacto.
 // No viewer aparecem APENAS como filete na borda esquerda do card.
@@ -4045,6 +4085,17 @@ function saveTalk(){
   var locImg  = _locImgData || (document.getElementById('locImgPrev') && document.getElementById('locImgPrev').src && document.getElementById('locImgPrev').style.display!=='none' ? document.getElementById('locImgPrev').src : '');
   _locImgData = null; // reset
 
+  // ── Auto-tradução: preenche idiomas vazios do título/descrição e só então
+  //    finaliza a gravação. Botão mostra "Traduzindo…" enquanto trabalha. ──
+  var _sb=document.querySelector('#mFtr .btn-p'); var _sbtxt=_sb?_sb.textContent:'';
+  if(_sb){ _sb.disabled=true; _sb.textContent='Traduzindo…'; }
+  Promise.all([_autoFillML(titleObj), _autoFillML(descObj)]).then(function(){
+    if(_sb){ _sb.disabled=false; _sb.textContent=_sbtxt; }
+    _finishSaveTalk(titleObj, title, descObj, day, time, room, hub, format, libras, traducao, duration, spkNames, locText, locImg);
+  });
+}
+
+function _finishSaveTalk(titleObj, title, descObj, day, time, room, hub, format, libras, traducao, duration, spkNames, locText, locImg){
   // Monta objeto da sessão — preserva id existente em edição
   var talkId = editTalkId || makeId('t');
   var obj = {
