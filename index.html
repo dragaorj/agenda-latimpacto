@@ -68,6 +68,8 @@ html,body{height:100%;overflow:hidden;margin:0;padding:0;}
 .rail-ic{position:relative;display:flex;align-items:center;gap:14px;width:100%;height:42px;border-radius:10px;border:none;background:transparent;color:var(--text2);cursor:pointer;padding:0 9px;white-space:nowrap;overflow:hidden;text-align:left;transition:background .15s,color .15s;-webkit-tap-highlight-color:transparent;}
 .rail-ic>svg{flex-shrink:0;width:22px;height:22px;}
 .rail-lbl{font-size:13.5px;font-weight:500;opacity:0;transform:translateX(-6px);transition:opacity .16s,transform .18s;}
+#rail #spkBadge{opacity:0;transition:opacity .16s;flex-shrink:0;}
+#rail:hover #spkBadge,#rail.pinned #spkBadge{opacity:1;}
 #rail:hover .rail-lbl,#rail.pinned .rail-lbl{opacity:1;transform:none;}
 .rail-ic:hover{background:var(--bg);color:var(--text);}
 .rail-ic.on{background:var(--blue-lt);color:var(--brand);font-weight:600;}
@@ -1292,6 +1294,7 @@ body[data-cardstyle="tint"] .lcard{
     <button class="rail-ic" id="railSpk" onclick="showPage('spk')" aria-label="Palestrantes">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7.5" r="3"/><path d="M3.4 19.5c0-3.1 2.5-5.3 5.6-5.3s5.6 2.2 5.6 5.3"/><path d="M16.5 4.6a3 3 0 0 1 0 5.8"/><path d="M18.2 14.4c2 .5 3.4 2.2 3.4 5.1"/></svg>
       <span class="rail-lbl" data-i18n="tabSpk">Palestrantes</span>
+      <span class="badge" id="spkBadge" style="margin-left:auto;">0</span>
     </button>
   </div>
   <div class="rail-bottom">
@@ -1900,6 +1903,16 @@ function applyMode(){
 // ════════════════════════════════════════
 function toggleToolsMenu(e){ if(e){ e.stopPropagation(); } var m=document.getElementById('toolsMenu'), b=document.getElementById('btnTools'); if(!m||!b) return; if(m.classList.contains('open')){ m.classList.remove('open'); return; } if(m.parentNode!==document.body) document.body.appendChild(m); var r=b.getBoundingClientRect(); m.style.top=(r.bottom+6)+'px'; m.classList.add('open'); var w=m.offsetWidth||200; var left=r.right-w; if(left<8) left=8; var maxL=window.innerWidth-w-8; if(left>maxL) left=maxL; m.style.left=left+'px'; }
 function closeToolsMenu(){ var m=document.getElementById('toolsMenu'); if(m) m.classList.remove('open'); var rail=document.getElementById('rail'); if(rail) rail.classList.remove('pinned'); }
+function _positionRailMenu(){
+  var m=document.getElementById('toolsMenu'), b=document.getElementById('railTools');
+  if(!m||!b||!m.classList.contains('open')) return;
+  var r=b.getBoundingClientRect();
+  var h=m.offsetHeight||220;
+  var left=r.right+8;
+  var top=r.top+r.height-h; if(top<8) top=8;
+  m.style.left=left+'px';
+  m.style.top=top+'px';
+}
 function toggleRailTools(e){
   if(e) e.stopPropagation();
   var m=document.getElementById('toolsMenu'), b=document.getElementById('railTools'), rail=document.getElementById('rail');
@@ -1911,13 +1924,17 @@ function toggleRailTools(e){
   if(rail) rail.classList.add('pinned');
   if(m.parentNode!==document.body) document.body.appendChild(m);
   m.classList.add('open');
-  var r=b.getBoundingClientRect();
-  var w=m.offsetWidth||200, h=m.offsetHeight||220;
-  var left=r.right+8;
-  var top=r.top+r.height-h; if(top<8) top=8;
-  m.style.left=left+'px';
-  m.style.top=top+'px';
+  _positionRailMenu();
 }
+// Rede de segurança: se o trilho mudar de largura (expandir/recolher) enquanto
+// o menu estiver aberto, reposiciona o popup para continuar colado ao botão.
+(function(){
+  var rail=document.getElementById('rail');
+  if(rail){
+    rail.addEventListener('mouseenter', _positionRailMenu);
+    rail.addEventListener('mouseleave', _positionRailMenu);
+  }
+})();
 document.addEventListener('click',function(e){ var dd=document.getElementById('toolsDd'); var mt=document.getElementById('mnTools'); var rt=document.getElementById('railTools'); var m=document.getElementById('toolsMenu'); if(!m||!m.classList.contains('open')) return; if((dd && dd.contains(e.target)) || (mt && mt.contains(e.target)) || (rt && rt.contains(e.target)) || m.contains(e.target)) return; closeToolsMenu(); });
 // O popup de Ferramentas é posicionado em coordenadas fixas relativas ao
 // botão que o abriu. Quando o layout muda (topbar ↔ rail lateral, rotação,
@@ -4055,7 +4072,7 @@ function setSpkView(v){
 function filterPubSpk(q){ _pubSpkQ=q.toLowerCase(); renderPubSpkGrid(_pubSpkQ); }
 
 function renderPubSpkGrid(q){
-  document.getElementById('spkBadge').textContent=SPEAKERS.length;
+  (function(){var _sb=document.getElementById('spkBadge'); if(_sb) _sb.textContent=SPEAKERS.length;})();
   var _pa=document.getElementById('pubAddSpk'); if(_pa) _pa.style.display=WP_ENABLED?'':'none';
   var list=q?SPEAKERS.filter(function(s){
     return (s.name||'').toLowerCase().indexOf(q)>-1||
@@ -4170,7 +4187,7 @@ function viewSpk(id){
 // ════════════════════════════════════════
 function renderSpkGrid(){ renderPubSpkGrid(_pubSpkQ||''); }
 function _legacyRenderSpkGrid(){
-  document.getElementById('spkBadge').textContent=SPEAKERS.length;
+  (function(){var _sb=document.getElementById('spkBadge'); if(_sb) _sb.textContent=SPEAKERS.length;})();
   var g=document.getElementById('spkGrid');
   if(!SPEAKERS.length){ g.innerHTML='<div class="spk-empty"><div style="font-size:44px;opacity:.3;margin-bottom:11px">🎤</div><div style="font-size:15px;font-weight:500;margin-bottom:7px">Nenhum participante cadastrado</div><button class="btn btn-p" onclick="openSpkForm(null)">+ Cadastrar Primeiro Participante</button></div>'; return; }
   var h='';
@@ -4553,7 +4570,7 @@ function saveSpk(){
   } else {
     SPEAKERS.push({id:makeId('spk'),name:name,role:role,company:co,bio:bio,photo:photoData||null,linkedin:linkedin,category:cat});
   }
-  document.getElementById('spkBadge').textContent=SPEAKERS.length;
+  (function(){var _sb=document.getElementById('spkBadge'); if(_sb) _sb.textContent=SPEAKERS.length;})();
   var _spkObj = editSpkId ? findSpk(editSpkId) : SPEAKERS[SPEAKERS.length-1];
   logAction(editSpkId?'Editou o palestrante':'Cadastrou o palestrante', name);
   closeModal();
@@ -4993,17 +5010,25 @@ function clearAllData(){
   if(!WP_ENABLED) return;
   if(!confirm('⚠️ Apagar TODOS os dados?')) return;
 
+  function _resetLocalAndRender(){
+    SPEAKERS=[];
+    SCHEDULES=(function(){var a=[];for(var i=0;i<NDAYS;i++)a.push(emptyDay());return a;})();
+    HIGHLIGHTS=_defaultHighlights();
+    try{ if(typeof renderLegend==='function') renderLegend(); }catch(e){}
+    try{ if(typeof renderMain==='function') renderMain(); }catch(e){}
+    try{ if(typeof renderSpkGrid==='function') renderSpkGrid(); }catch(e){}
+    try{ if(typeof renderBento==='function') renderBento(); }catch(e){}
+  }
+
   // ── Backend (Supabase) ──────────────────────────────────
-  // Espera o wipe CONCLUIR no servidor e só então recarrega a
-  // página, garantindo que o estado refletido é o do banco.
-  // Sem isso, a tela limpava localmente mas o reload buscava de
-  // novo os dados do servidor (que não tinham sido apagados).
+  // Apaga no servidor e, ao concluir, zera o estado local e re-renderiza
+  // SEM recarregar a página — assim o editor continua logado (WP_ENABLED)
+  // e o botão de adicionar participante permanece visível.
   if(window.SB && SB.enabled){
     SB.wipe().then(function(){
       try{ SB.log('Apagou TODOS os dados',''); }catch(e){}
-      try{ localStorage.removeItem(LS_KEY); localStorage.removeItem(DATA_KEY); }catch(e){}
+      _resetLocalAndRender();
       alert('Dados apagados.');
-      location.reload();
     }).catch(function(err){
       var msg = (err && err.message) ? err.message : String(err||'');
       if(/master/i.test(msg)){
@@ -5017,11 +5042,11 @@ function clearAllData(){
 
   // ── Modo local (sem backend) ────────────────────────────
   try{ localStorage.removeItem(LS_KEY); localStorage.removeItem(DATA_KEY); }catch(e){}
-  SPEAKERS=[]; SCHEDULES=(function(){var a=[];for(var i=0;i<NDAYS;i++)a.push(emptyDay());return a;})(); SLOTS=buildSlots();
-  HIGHLIGHTS=_defaultHighlights();
+  SLOTS=buildSlots();
+  _resetLocalAndRender();
   saveData();
   logAction('Apagou TODOS os dados');
-  renderLegend(); renderMain(); renderSpkGrid(); alert('Dados apagados.');
+  alert('Dados apagados.');
 }
 
 // ════════════════════════════════════════
