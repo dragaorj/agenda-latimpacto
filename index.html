@@ -3113,9 +3113,10 @@ function renderGrid(sc,vis){
       var avHtml='';
       for(var ai2=0;ai2<Math.min(spkIds2.length,2);ai2++){
         var sp2=findSpk(spkIds2[ai2]);
+        var _r2=sp2?catColor(sp2):'var(--border)';
         avHtml+=sp2&&sp2.photo
-          ?'<img class="cthumb" src="'+sp2.photo+'" alt="">'
-          :'<div class="cinit" style="background:'+avColor(sp2?sp2.name:(t.speakerName||''))+'">'+initials(sp2?sp2.name:(t.speakerName||''))+'</div>';
+          ?'<img class="cthumb" style="outline:2px solid '+_r2+';outline-offset:-1px;" src="'+sp2.photo+'" alt="">'
+          :'<div class="cinit" style="background:'+avColor(sp2?sp2.name:(t.speakerName||''))+';outline:2px solid '+_r2+';outline-offset:-1px;">'+initials(sp2?sp2.name:(t.speakerName||''))+'</div>';
       }
       if(spkIds2.length>2) avHtml+='<div class="cav-more">+'+(spkIds2.length-2)+'</div>';
       var av='<div class="cav-stack">'+avHtml+'</div>';
@@ -3198,7 +3199,8 @@ function renderCards(sc){
       var cgMax=2;
       for(var ai=0;ai<Math.min(spkIds.length,cgMax);ai++){
         var sp=findSpk(spkIds[ai]);
-        spkAvatars+=sp&&sp.photo?'<img class="cgrid-av" src="'+sp.photo+'" alt="">':'<div class="cgrid-avini" style="background:'+avColor(sp?sp.name:(t.speakerName||''))+'">'+initials(sp?sp.name:(t.speakerName||''))+'</div>';
+        var _rg=sp?catColor(sp):'var(--border)';
+        spkAvatars+=sp&&sp.photo?'<img class="cgrid-av" style="border:2px solid '+_rg+';box-sizing:border-box;" src="'+sp.photo+'" alt="">':'<div class="cgrid-avini" style="background:'+avColor(sp?sp.name:(t.speakerName||''))+';border:2px solid '+_rg+';box-sizing:border-box;">'+initials(sp?sp.name:(t.speakerName||''))+'</div>';
       }
       if(spkIds.length>cgMax){
         spkAvatars+='<div class="cgrid-avini" style="background:rgba(0,0,0,.3);font-size:9px;">+' + (spkIds.length-cgMax) + '</div>';
@@ -3241,7 +3243,8 @@ function renderList(sc,vis){
       var lavHtml='';
       for(var lai=0;lai<Math.min(lSpkIds.length,3);lai++){
         var lsp=findSpk(lSpkIds[lai]);
-        lavHtml+=lsp&&lsp.photo?'<img class="lav" src="'+lsp.photo+'" alt="" style="margin-right:'+(lai<Math.min(lSpkIds.length,3)-1?'-14px':'0')+';">':'<div class="lavinit" style="background:'+avColor(lsp?lsp.name:(t.speakerName||''))+';margin-right:'+(lai<Math.min(lSpkIds.length,3)-1?'-14px':'0')+';">'+initials(lsp?lsp.name:(t.speakerName||''))+'</div>';
+        var _rl=lsp?catColor(lsp):'var(--border)';
+        lavHtml+=lsp&&lsp.photo?'<img class="lav" src="'+lsp.photo+'" alt="" style="border:2px solid '+_rl+';box-sizing:border-box;margin-right:'+(lai<Math.min(lSpkIds.length,3)-1?'-14px':'0')+';">':'<div class="lavinit" style="background:'+avColor(lsp?lsp.name:(t.speakerName||''))+';border:2px solid '+_rl+';box-sizing:border-box;margin-right:'+(lai<Math.min(lSpkIds.length,3)-1?'-14px':'0')+';">'+initials(lsp?lsp.name:(t.speakerName||''))+'</div>';
       }
       var av='<div style="display:flex;flex-direction:row;flex-shrink:0;">'+lavHtml+'</div>';
       var hi=(t.hub!==undefined&&t.hub!=='') ? parseInt(t.hub) : -1;
@@ -3715,13 +3718,28 @@ function openTalkDetail(id){
   if(t.speakerIds&&t.speakerIds.length) spkIds=t.speakerIds;
   else if(t.speakerId) spkIds=[t.speakerId];
   if(spkIds.length>0){
-    body+='<div class="sec">'+(spkIds.length>1?t18('evSpeakers'):t18('evSpeaker'))+'</div>';
-    for(var si=0;si<spkIds.length;si++){
-      var spk=findSpk(spkIds[si]); if(!spk) continue;
-      var av=spk.photo?'<img class="ev-spkav photo-clickable" src="'+spk.photo+'" alt="" onclick="openPhotoLb(\''+spk.photo+'\',\''+esc(spk.name)+'\',\''+esc(spk.role||'')+'\',\''+esc(spk.company||'')+'\')">'  :'<div class="ev-spkini" style="background:'+avColor(spk.name)+'">'+initials(spk.name)+'</div>';
+    // Resolve participantes e agrupa por CATEGORIA (na ordem das categorias).
+    // O cabeçalho reflete as categorias presentes (Apresentadores, Curadores,
+    // Palestrantes, Convidados, ou quaisquer categorias personalizadas).
+    var _evSpks=[];
+    for(var _i=0;_i<spkIds.length;_i++){ var _sp=findSpk(spkIds[_i]); if(_sp){ _sp.__si=_i; _evSpks.push(_sp); } }
+    var _evCats=getCategories(); var _evOrd={}; _evCats.forEach(function(c,ix){ _evOrd[c.id]=ix; });
+    _evSpks.sort(function(a,b){ return (_evOrd[a.category]==null?99:_evOrd[a.category])-(_evOrd[b.category]==null?99:_evOrd[b.category]); });
+    var _evLastCat=null;
+    for(var si=0;si<_evSpks.length;si++){
+      var spk=_evSpks[si];
+      var _cid=spk.category||'speaker';
+      if(_cid!==_evLastCat){
+        _evLastCat=_cid;
+        body+='<div class="sec" style="display:flex;align-items:center;gap:7px;">'+
+          '<span style="width:9px;height:9px;border-radius:50%;background:'+catColor(spk)+';display:inline-block;flex-shrink:0;"></span>'+
+          esc(catName(_cid))+'</div>';
+      }
+      var _ring=catColor(spk);
+      var av=spk.photo?'<img class="ev-spkav photo-clickable" style="border:3px solid '+_ring+';box-sizing:border-box;" src="'+spk.photo+'" alt="" onclick="openPhotoLb(\''+spk.photo+'\',\''+esc(spk.name)+'\',\''+esc(spk.role||'')+'\',\''+esc(spk.company||'')+'\')">'  :'<div class="ev-spkini" style="background:'+avColor(spk.name)+';border:3px solid '+_ring+';box-sizing:border-box;">'+initials(spk.name)+'</div>';
       var bioHtml='';
       if(spk.bio){
-        var bioKey='bio-'+id+'-'+si;
+        var bioKey='bio-'+id+'-'+spk.__si;
         _bioStore[bioKey]=spk.bio;
         var bioShort=spk.bio.length>BIO_LIMIT?spk.bio.slice(0,BIO_LIMIT).trim()+'…':spk.bio;
         bioHtml='<div id="evBioText-'+bioKey+'" class="ev-spkbio">'+esc(bioShort)+'</div>'+
@@ -3952,7 +3970,8 @@ function renderPicker(){
   var h='';
   for(var i=0;i<f.length;i++){
     var s=f[i],sel=pickedSpks.indexOf(s.id)>-1;
-    var av=s.photo?'<img class="pkav" src="'+s.photo+'" alt="">':'<div class="pkavini" style="background:'+avColor(s.name)+'">'+initials(s.name)+'</div>';
+    var _rp=catColor(s);
+    var av=s.photo?'<img class="pkav" style="border:2px solid '+_rp+';box-sizing:border-box;" src="'+s.photo+'" alt="">':'<div class="pkavini" style="background:'+avColor(s.name)+';border:2px solid '+_rp+';box-sizing:border-box;">'+initials(s.name)+'</div>';
     h+='<div class="pkitem'+(sel?' sel':'')+'" onclick="pickSpk(\''+s.id+'\')">'+av+'<div class="pkinfo"><div class="pkname">'+esc(s.name)+'</div><div class="pkrole">'+esc(s.role||'')+(s.company?' · '+esc(s.company):'')+'</div></div><span class="pkchk">✓</span></div>';
   }
   list.innerHTML=h; updatePkPreview();
