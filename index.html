@@ -488,6 +488,10 @@ body[data-mode="edit"] .btile:hover .btile-edit{display:flex;}
 
 /* DAY TABS — integrado ao tbar, sem camada extra */
 .dtabs{display:flex;background:var(--nav-bg);padding:7px 18px;gap:5px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
+/* Linha única: dias à esquerda + controles (view/zoom) à direita */
+.dtabs-row{display:flex;align-items:center;justify-content:space-between;gap:14px;background:var(--nav-bg);padding-right:18px;border-bottom:1px solid var(--nav-border);}
+.dtabs-row .dtabs{flex:1 1 auto;min-width:0;background:none;}
+.dtabs-row .tbar{flex:0 0 auto;background:none;border-bottom:none;padding:7px 0;}
 .dtabs::-webkit-scrollbar{display:none;}
 .dtab{font-family:var(--font);cursor:pointer;border:1.5px solid transparent;border-radius:10px;color:var(--text2);transition:color .18s,border-color .18s,background .18s;user-select:none;letter-spacing:-.01em;flex-shrink:0;white-space:nowrap;display:grid;grid-template-columns:auto auto;grid-template-areas:'date count' 'wd wd';column-gap:7px;align-items:center;justify-items:start;padding:7px 14px;}
 .dtab-date{grid-area:date;font-size:14px;font-weight:600;line-height:1.1;}
@@ -1573,9 +1577,9 @@ body[data-cardstyle="tint"] .lcard{
     <h2 data-i18n="tabAgenda">Agenda</h2>
     <span class="agenda-head-sub" id="agendaHeadSub"></span>
   </div>
-  <div class="dtabs" id="dtabs"></div>
-  <div id="dayControls">
-  <div class="tbar">
+  <div class="dtabs-row">
+    <div class="dtabs" id="dtabs"></div>
+    <div class="tbar">
     <div class="spk-view-btns" style="flex-shrink:0;">
       <button class="spk-vbtn on" id="vGrid" onclick="setView('grid')" data-i18n-title="viewGrid" title="Grade" aria-label="Grade">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="18" rx="1"/><rect x="14" y="3" width="7" height="18" rx="1"/></svg>
@@ -1595,6 +1599,8 @@ body[data-cardstyle="tint"] .lcard{
       <button id="zoomPlus" onclick="_zoomIn()" style="width:28px;height:28px;border:none;background:var(--surface);color:var(--text);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;border-left:1px solid var(--border);-webkit-tap-highlight-color:transparent;" title="Zoom in">+</button>
     </div>
   </div>
+  </div><!-- /dtabs-row -->
+  <div id="dayControls">
   <div class="legend" id="legend"></div>
   <div class="room-filters" id="roomFilters"></div>
   <div class="mob-filter-bar" id="mobFilterBar">
