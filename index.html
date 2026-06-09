@@ -554,9 +554,8 @@ body[data-mode="edit"] .btile:hover .btile-edit{display:flex;}
 .pub-spk-card:hover{box-shadow:var(--sh);transform:translateY(-2px);}
 
 /* Lista */
-.pub-spk-grid.view-list{grid-template-columns:1fr;gap:0;padding:0 20px;}
-.pub-spk-grid.view-list .pub-spk-card{flex-direction:row;text-align:left;padding:12px 14px;border-radius:0;border-bottom:1px solid var(--border);border-left:none;border-right:none;border-top:none;gap:14px;align-items:center;transform:none;}
-.pub-spk-grid.view-list .pub-spk-card:first-child{border-top:1px solid var(--border);}
+.pub-spk-grid.view-list{grid-template-columns:1fr;gap:8px;padding:10px 20px;}
+.pub-spk-grid.view-list .pub-spk-card{flex-direction:row;text-align:left;padding:12px 14px;border-radius:12px;border:1px solid var(--border);gap:14px;align-items:center;transform:none;}
 .pub-spk-grid.view-list .pub-spk-card:hover{background:var(--bg);box-shadow:none;transform:none;}
 .pub-spk-grid.view-list .pub-spk-ph{width:48px;height:48px;min-width:48px;border-radius:50%;margin-bottom:0;object-fit:cover;object-position:center;}
 .pub-spk-grid.view-list .pub-spk-ini{width:48px;height:48px;min-width:48px;border-radius:50%;margin-bottom:0;font-size:16px;}
@@ -592,8 +591,7 @@ body[data-mode="edit"] .btile:hover .btile-edit{display:flex;}
 .pub-spk-grid.view-wide .pub-spk-card,
 .pub-spk-grid.view-compact .pub-spk-card,
 .pub-spk-grid:not(.view-list) .pub-spk-card{ border:1px solid color-mix(in srgb,var(--text2) 34%,transparent); }
-.pub-spk-grid.view-list .pub-spk-card{ border-bottom-color:color-mix(in srgb,var(--text2) 34%,transparent); }
-.pub-spk-grid.view-list .pub-spk-card:first-child{ border-top-color:color-mix(in srgb,var(--text2) 34%,transparent); }
+.pub-spk-grid.view-list .pub-spk-card{ border-color:color-mix(in srgb,var(--text2) 34%,transparent); }
 .pub-spk-acts button{width:26px;height:26px;border-radius:7px;border:1px solid var(--border);background:var(--surface);cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 3px rgba(40,20,60,.12);padding:0;-webkit-tap-highlight-color:transparent;}
 .pub-spk-acts button:hover{background:var(--bg);}
 @media(hover:none){.pub-spk-acts{display:flex;}}
