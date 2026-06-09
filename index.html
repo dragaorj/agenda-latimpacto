@@ -294,6 +294,17 @@ body[data-mode="edit"] #bentoGrid [data-block]:active{cursor:grabbing;}
 .b-spk .ava{width:clamp(50px,18cqi,100px);height:clamp(50px,18cqi,100px);border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:clamp(16px,6cqi,30px);}
 .b-spk .ava img{width:100%;height:100%;object-fit:cover;}
 .b-spk .nm{font-size:clamp(11px,3.6cqi,15px);color:var(--text2);text-align:center;line-height:1.2;max-height:2.5em;overflow:hidden;}
+/* Bloco estreito (mobile): 4 por linha, fotos menores para caber tudo */
+@container (max-width:480px){
+  .b-spk .row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px 6px;}
+  .b-spk .one{width:auto;gap:6px;}
+  .b-spk .ava{width:100%;max-width:62px;height:auto;aspect-ratio:1/1;margin:0 auto;font-size:18px;}
+  .b-spk .nm{font-size:10.5px;}
+}
+@container (max-width:330px){
+  .b-spk .ava{max-width:52px;}
+  .b-spk .nm{font-size:10px;}
+}
 /* Manual card */
 .b-card{border-left:4px solid var(--brand);cursor:default;}
 .b-card .ttl{font-size:16px;font-weight:600;line-height:1.2;letter-spacing:-.01em;}
