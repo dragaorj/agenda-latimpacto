@@ -50,7 +50,11 @@ html,body{height:100%;overflow:hidden;margin:0;padding:0;}
 #appShell{display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden;}
 #topFixed{flex-shrink:0;z-index:200;background:var(--nav-bg);border-bottom:1px solid var(--nav-border);line-height:0;}
 #topFixed>*{line-height:normal;}
-#scrollArea{flex:1;overflow-y:auto;overflow-x:auto;}
+#scrollArea{flex:1;overflow-y:auto;overflow-x:auto;display:flex;flex-direction:column;}
+/* A página visível cresce para preencher a área; o crédito fica logo após,
+   sempre encostado no rodapé mesmo com pouco conteúdo. */
+#scrollArea>div{flex:1 0 auto;}
+#scrollArea>.site-credit{flex:0 0 auto;}
 #scrollArea>#pgAgenda{padding-bottom:80px;}
 
 /* ===== SIDEBAR / RAIL (desktop) — expande no hover ===== */
@@ -1014,8 +1018,12 @@ body[data-guest="1"]:not([data-page="home"]) .guest-back{display:inline-flex;}
 
 /* BOTTOM NAV (mobile) — escondido no desktop */
 #mobileNav{display:none;}
-/* Crédito discreto (rodapé persistente em todas as páginas) */
-.site-credit{text-align:center;font-size:11.5px;color:var(--text2);opacity:.62;padding:18px 16px 20px;letter-spacing:.01em;transition:opacity .2s ease;}
+/* Crédito discreto: fixo no rodapé da área visível (mesmo com pouco conteúdo)
+   e exibido apenas em Home, Agenda e Participantes. */
+.site-credit{display:none;text-align:center;font-size:11.5px;color:var(--text2);opacity:.62;padding:18px 16px 20px;letter-spacing:.01em;transition:opacity .2s ease;}
+body[data-page="home"] .site-credit,
+body[data-page="agenda"] .site-credit,
+body[data-page="spk"] .site-credit{display:block;}
 .site-credit:hover{opacity:.92;}
 .site-credit a{color:inherit;font-weight:400;text-decoration:none;border-bottom:1px solid transparent;transition:color .18s ease,border-color .18s ease;}
 .site-credit a b{font-weight:700;}
