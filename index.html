@@ -175,6 +175,10 @@ body[data-page="home"] #dayControls{display:none!important;}
 .b-row.split>[data-block="now"]{flex-grow:1.6;}
 .b-row.split>[data-block="speakers"]{flex-grow:1.4;}
 [data-block]{position:relative;}
+/* Entrada suave escalonada dos blocos do Bento (transição: repouso = visível) */
+.b-band > .bento-trans{transition:opacity .55s cubic-bezier(.22,1,.36,1),transform .55s cubic-bezier(.22,1,.36,1);}
+.b-band > .bento-pre{opacity:0;transform:translateY(16px);}
+@media(prefers-reduced-motion:reduce){ .b-band > .bento-pre{opacity:1;transform:none;} }
 [data-block="hero"],[data-block="countdown"]{min-height:300px;}
 [data-block="now"],[data-block="speakers"]{min-height:280px;}
 [data-block="video"],[data-block="editions"]{min-height:210px;}
@@ -296,8 +300,10 @@ body[data-mode="edit"] #bentoGrid [data-block]:active{cursor:grabbing;}
 .b-ed{min-height:200px;}
 .b-ed .bed-chart{display:flex;align-items:flex-end;gap:18px;margin-top:auto;height:100%;min-height:120px;padding-top:8px;}
 .b-ed .bed-col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:6px;}
-.b-ed .bed-bar{width:100%;max-width:68px;border-radius:10px 10px 0 0;background:linear-gradient(180deg,var(--brand-2),var(--brand));min-height:8px;transition:height .5s cubic-bezier(.22,1,.36,1);}
-.b-ed .bed-v{font-size:14px;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums;}
+.b-ed .bed-bar{width:100%;max-width:68px;border-radius:10px 10px 0 0;background:linear-gradient(180deg,var(--brand-2),var(--brand));min-height:8px;transition:height .9s cubic-bezier(.22,1,.36,1);}
+.b-ed .bed-head{display:flex;flex-direction:column;align-items:center;gap:1px;line-height:1;}
+.b-ed .bed-v{font-size:24px;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums;letter-spacing:-.02em;}
+.b-ed .bed-cap{font-size:9.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--text2);}
 .b-ed .bed-y{font-size:11px;font-weight:600;color:var(--text2);}
 /* Speakers spotlight — escala conforme o tamanho do bloco (container query) */
 .b-spk{container-type:inline-size;transition:box-shadow .2s ease,border-color .2s ease;}
@@ -1395,7 +1401,7 @@ body[data-cardstyle="tint"] .lcard{
 })();
 </script>
 <aside id="rail" aria-label="Navegação principal">
-  <a class="rail-logo-row" href="https://impactmindsconference.com/" target="_blank" rel="noopener" aria-label="Latimpacto — Impact Minds: Connecting Us">
+  <a class="rail-logo-row" href="https://impactmindsconference.com/en/" target="_blank" rel="noopener" aria-label="Impact Minds Conference">
     <span class="rail-logo">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.1" stroke-linecap="round"><circle cx="12" cy="12" r="3.4"/><line x1="12" y1="2.5" x2="12" y2="5.5"/><line x1="12" y1="18.5" x2="12" y2="21.5"/><line x1="2.5" y1="12" x2="5.5" y2="12"/><line x1="18.5" y1="12" x2="21.5" y2="12"/><line x1="5.2" y1="5.2" x2="7.3" y2="7.3"/><line x1="16.7" y1="16.7" x2="18.8" y2="18.8"/><line x1="5.2" y1="18.8" x2="7.3" y2="16.7"/><line x1="16.7" y1="7.3" x2="18.8" y2="5.2"/></svg>
     </span>
@@ -1440,7 +1446,7 @@ body[data-cardstyle="tint"] .lcard{
 <!-- NAV -->
 <nav class="nav">
   <div class="logo" style="color:var(--logo);">
-    <a href="https://impactmindsconference.com/" onclick="showPage('home');return false;" title="Início — Impact Minds: Connecting Us" style="display:flex;align-items:center;flex-shrink:0;line-height:0;color:var(--logo);cursor:pointer;">
+    <a href="https://impactmindsconference.com/en/" target="_blank" rel="noopener" title="Impact Minds Conference" style="display:flex;align-items:center;flex-shrink:0;line-height:0;color:var(--logo);cursor:pointer;">
     <svg viewBox="0 0 192 42" height="21" width="96" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;display:block;">
 <path d="M75.147 13.4846C75.481 13.1089 75.7733 12.7749 76.1072 12.4409C77.7772 10.7292 79.8228 9.89428 82.2025 9.81079C83.7472 9.76904 85.2501 9.93603 86.6278 10.6458C90.0094 12.3574 92.0133 15.0711 92.0968 18.9536C92.1803 22.878 92.0968 26.8023 92.1386 30.7266C92.1386 32.0208 90.9279 32.8975 89.7589 32.6053C89.0492 32.4383 88.423 31.7286 88.3395 31.0189C88.2977 30.8101 88.2977 30.6014 88.2977 30.3926C88.2977 26.7606 88.2977 23.1702 88.2977 19.5381C88.2977 18.9536 88.256 18.3692 88.1307 17.7847C87.7132 15.8225 85.6258 13.6099 82.6617 13.6516C79.6141 13.6516 77.4849 16.073 77.1927 18.2439C77.1092 18.7031 77.1092 19.1206 77.1092 19.5799C77.1092 23.2537 77.1092 26.8858 77.1092 30.5596C77.1092 31.2276 76.9422 31.7703 76.4412 32.1878C75.8568 32.6888 75.1888 32.7723 74.5208 32.5218C73.8111 32.2296 73.3519 31.7286 73.3101 30.9354C73.3101 30.7266 73.3101 30.5596 73.3101 30.3509C73.3101 26.6353 73.3101 22.9615 73.3101 19.2459C73.3101 16.6992 71.5567 14.4448 69.0935 13.8604C65.1275 12.9419 62.4556 15.906 62.1633 18.5779C62.1216 18.8284 62.1216 19.1206 62.1216 19.3711C62.1216 23.1285 62.1216 26.8858 62.1216 30.6014C62.1216 31.3111 61.8711 31.8538 61.3284 32.2713C60.7439 32.6888 60.0759 32.7723 59.408 32.4801C58.74 32.1461 58.2808 31.6451 58.2808 30.8101C58.2808 30.1004 58.2808 29.4324 58.2808 28.7227C58.2808 25.5081 58.2808 22.3352 58.2808 19.1206C58.2808 15.2798 60.7022 11.7312 64.2508 10.3953C67.5906 9.14281 72.0994 9.60205 74.9383 13.1506C74.9383 13.2341 75.0635 13.3594 75.147 13.4846Z" fill="currentColor"></path>
 <path d="M98.1082 29.8499C98.1082 30.0587 98.1082 30.2257 98.1082 30.3927C98.1082 33.3568 98.1082 36.3209 98.1082 39.2433C98.1082 39.953 97.8577 40.5375 97.2315 40.9132C96.0208 41.7064 94.4343 40.9132 94.3091 39.452C94.3091 39.285 94.3091 39.1598 94.3091 38.9928C94.3091 33.0645 94.3091 27.178 94.3091 21.2498C94.3091 16.9497 96.2295 13.6934 99.7781 11.3972C101.699 10.1448 103.869 9.68555 106.166 9.76904C109.464 9.85254 112.136 11.2302 114.306 13.6516C116.561 16.1565 117.354 19.1206 117.062 22.4187C116.603 27.5955 112.553 31.0189 109.38 32.0208C105.498 33.1898 101.866 32.6471 98.6091 30.1422C98.4839 30.0587 98.3587 29.9334 98.2752 29.8499C98.2752 29.8917 98.2334 29.8917 98.1082 29.8499ZM113.305 21.1663C113.43 17.1167 109.839 13.5681 105.748 13.5681C101.657 13.5681 98.1082 16.9915 98.1082 21.1663C98.1082 25.3411 101.657 28.7645 105.706 28.7645C109.839 28.7645 113.43 25.1741 113.305 21.1663Z" fill="currentColor"></path>
@@ -1731,7 +1737,19 @@ function avColor(n){ var h=0,s=n||''; for(var i=0;i<s.length;i++) h=(h*31+s.char
 function makeId(p){ return p+'-'+Date.now()+'-'+Math.random().toString(36).slice(2,6); }
 
 // ───────── i18n (PT / EN / ES) ─────────
-var LANG='pt';
+// Detecta o idioma pelo navegador (PT/EN/ES). Qualquer outro idioma → Inglês.
+function _detectLang(){
+  try{
+    var list=(navigator.languages&&navigator.languages.length)?navigator.languages:[navigator.language||navigator.userLanguage||''];
+    for(var i=0;i<list.length;i++){
+      var code=String(list[i]||'').toLowerCase().slice(0,2);
+      if(code==='pt'||code==='en'||code==='es') return code;
+    }
+  }catch(e){}
+  return 'en';   // preferência de fallback: inglês
+}
+var LANG=_detectLang();
+// Preferência explícita salva pelo usuário tem prioridade sobre a detecção.
 try{ var _sl=localStorage.getItem('latimpacto_lang'); if(_sl&&['pt','en','es'].indexOf(_sl)>-1) LANG=_sl; }catch(e){}
 // ── Camada de tradução em tempo de exibição (cache persistente) ──────────
 // Se o idioma atual não tiver texto, traduz a partir do idioma preenchido e
@@ -2219,6 +2237,7 @@ function showPage(p, fromHistory){
   if(p==='home'){
     document.getElementById('pgHighlights').style.display='flex';
     var pth=document.getElementById('ptHome'); if(pth) pth.className='ptab on';
+    window._bentoAnimate=true;            // anima a entrada ao abrir a Home
     renderBento();
     _animIn(document.getElementById('pgHighlights'));
   } else if(p==='agenda'){
@@ -2389,9 +2408,14 @@ function renderBento(){
     var maxV=1; for(var e=0;e<H.editions.length;e++){ maxV=Math.max(maxV, +H.editions[e].value||0); }
     var bars='';
     for(var e2=0;e2<H.editions.length;e2++){ var ed2=H.editions[e2]; var pct=Math.round(((+ed2.value||0)/maxV)*100);
+      var rawV=String(ed2.value); var numV=parseFloat(rawV.replace(',','.'));
+      var dataAttr=isNaN(numV)?'':' data-target="'+numV+'" data-raw="'+esc(rawV)+'"';
       bars+='<div class="bed-col">'+
-        '<div class="bed-v">'+esc(String(ed2.value))+'</div>'+
-        '<div class="bed-bar" style="height:'+Math.max(pct,8)+'%"></div>'+
+        '<div class="bed-head">'+
+          '<div class="bed-v"'+dataAttr+'>'+esc(rawV)+'</div>'+
+          '<div class="bed-cap">'+t18('tabSpk')+'</div>'+
+        '</div>'+
+        '<div class="bed-bar" data-h="'+Math.max(pct,8)+'" style="height:0%"></div>'+
         '<div class="bed-y">'+esc(String(ed2.year))+'</div>'+
       '</div>';
     }
@@ -2578,6 +2602,8 @@ function renderBento(){
 
   c.innerHTML=html;
   _startCountdown();
+  _animEditions();
+  _animBentoEnter();
   renderNowChart();
   _startNowTicker();
   _bentoDnDInit();
@@ -2829,9 +2855,64 @@ function _tickCountdown(){
   var eS=document.getElementById('cdS'); if(eS) eS.textContent=p2(secs);
 }
 
-// ════════════════════════════════════════
-// DESTAQUES — editor (admin)
-// ════════════════════════════════════════
+// Entrada suave (fade + leve subida) escalonada dos blocos do Bento.
+// Só anima quando a Home é aberta (window._bentoAnimate) — não em re-renders
+// disparados por troca de idioma, edições ou tique do cronômetro.
+function _animBentoEnter(){
+  var doAnim = window._bentoAnimate !== false;   // 1ª carga (undefined) anima
+  window._bentoAnimate = false;
+  var c=document.getElementById('bentoGrid'); if(!c) return;
+  var tiles=c.querySelectorAll('.b-band > .btile, .b-band > .b-cardgroup');
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // Sem animação → estado natural (visível). Nunca deixamos blocos presos
+  // invisíveis: usamos transição CSS cujo valor de repouso é opacity:1, e o
+  // setTimeout (que dispara mesmo em segundo plano) revela cada bloco.
+  if(!doAnim || reduce){ return; }
+  tiles.forEach(function(t){ t.classList.add('bento-pre','bento-trans'); });
+  void c.offsetWidth;   // garante o estado inicial pintado antes de revelar
+  tiles.forEach(function(t,i){
+    setTimeout(function(){ t.classList.remove('bento-pre'); }, i*70 + 30);
+  });
+  // Segurança: remove AMBAS as classes — cancelar a transição faz a opacidade
+  // saltar para o valor final (1) sem depender do relógio de animação.
+  setTimeout(function(){ tiles.forEach(function(t){ t.classList.remove('bento-pre','bento-trans'); }); }, tiles.length*70 + 1200);
+}
+
+// Animação de entrada do gráfico "Edições anteriores": barras sobem e os
+// números contam de 0 até o valor final.
+function _animEditions(){
+  var chart=document.querySelector('.b-ed .bed-chart'); if(!chart) return;
+  var bars=chart.querySelectorAll('.bed-bar');
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // Sobe as barras (setTimeout é confiável mesmo se a aba estiver em segundo
+  // plano; a transição CSS cuida da suavidade quando a página fica visível)
+  function _raise(){ bars.forEach(function(b){ b.style.height=(b.getAttribute('data-h')||0)+'%'; }); }
+  if(reduce){ _raise(); }
+  else { setTimeout(_raise, 40); }
+  // Conta os números (só anima se a página estiver visível; caso contrário
+  // mantém o valor final já renderizado)
+  var canCount = !reduce && !document.hidden;
+  var nums=chart.querySelectorAll('.bed-v[data-target]');
+  nums.forEach(function(el){
+    var target=parseFloat(el.getAttribute('data-target'))||0;
+    var raw=el.getAttribute('data-raw')||String(target);
+    var decimals=(raw.split(/[.,]/)[1]||'').length;
+    if(!canCount){ el.textContent=raw; return; }
+    el.textContent='0';
+    var dur=900, t0=null;
+    function step(ts){
+      if(t0===null) t0=ts;
+      var p=Math.min(1,(ts-t0)/dur);
+      var eased=1-Math.pow(1-p,3);
+      var val=target*eased;
+      el.textContent=decimals?val.toFixed(decimals).replace('.',','):Math.round(val).toLocaleString('pt-BR');
+      if(p<1) requestAnimationFrame(step); else el.textContent=raw;
+    }
+    requestAnimationFrame(step);
+  });
+}
+
+
 var _hlDraft=null;
 function _deep(o){ return JSON.parse(JSON.stringify(o)); }
 function openHighlightsManager(){
