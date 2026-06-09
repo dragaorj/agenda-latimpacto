@@ -62,6 +62,12 @@ body[data-guest="1"] #mobileNav{display:none!important;}
 body[data-guest="1"] #appShell{margin-left:0!important;}
 body[data-guest="1"] #scrollArea{padding-bottom:24px!important;}
 body[data-guest="1"] #pgHighlights{padding-bottom:24px!important;}
+/* Enquanto a página é "home", esconde as seções de agenda/participantes.
+   Evita o flash dessas seções durante o carregamento assíncrono. */
+body[data-page="home"] #pgAgenda,
+body[data-page="home"] #pgAgendaHdr,
+body[data-page="home"] #pgSpk,
+body[data-page="home"] #dayControls{display:none!important;}
 #rail{display:none;position:fixed;top:0;left:0;z-index:60;flex-direction:column;width:66px;background:var(--surface);border-right:1px solid var(--border);padding:14px 13px 16px;gap:3px;height:100dvh;box-sizing:border-box;overflow:hidden;transition:width .22s cubic-bezier(.4,0,.2,1),box-shadow .22s;}
 #rail:hover,#rail.pinned{width:236px;box-shadow:8px 0 30px rgba(20,8,28,.10);}
 [data-theme="dark"] #rail:hover,[data-theme="dark"] #rail.pinned{box-shadow:8px 0 30px rgba(0,0,0,.5);}
@@ -177,15 +183,23 @@ body[data-guest="1"] #pgHighlights{padding-bottom:24px!important;}
 .b-agenda{transition:box-shadow .2s ease,border-color .2s ease,transform .16s ease;}
 .b-agenda:hover{border-color:color-mix(in srgb,var(--brand) 40%,var(--border));box-shadow:var(--sh);}
 .b-agenda .bag-all{cursor:pointer;color:var(--brand);text-transform:none;letter-spacing:0;font-weight:600;}
-.b-agenda .bag-list{display:flex;flex-direction:column;margin-top:4px;flex:1;}
-.b-agenda .bag-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);min-width:0;}
-.b-agenda .bag-row:last-child{border-bottom:none;}
-.b-agenda .bag-time{font-size:12.5px;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums;flex-shrink:0;width:42px;}
-.b-agenda .bag-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-.b-agenda .bag-title{font-size:13.5px;font-weight:500;color:var(--text);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.b-agenda .bag-room{font-size:11px;font-weight:600;color:var(--text2);flex-shrink:0;text-transform:uppercase;letter-spacing:.03em;max-width:34%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.b-agenda .bag-more{margin-top:9px;font-size:12px;font-weight:600;color:var(--brand);}
-@media(max-width:560px){ .b-agenda .bag-room{display:none;} }
+.b-agenda .bag-all:hover{text-decoration:underline;}
+.b-agenda .bag-list{display:flex;flex-direction:column;gap:10px;margin-top:8px;flex:1;}
+/* Cards de sessão dentro do bloco Agenda (estilo da lista) */
+.b-agenda .bag-card{border:1px solid var(--border);border-left:4px solid var(--brand);border-radius:12px;padding:11px 13px;cursor:pointer;background:var(--surface);transition:box-shadow .18s ease,border-color .18s ease,transform .14s ease;}
+.b-agenda .bag-card:hover{box-shadow:var(--sh);transform:translateY(-1px);}
+.b-agenda .bag-card-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:5px;}
+.b-agenda .bag-card-time{font-size:12.5px;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums;display:inline-flex;align-items:center;gap:5px;}
+.b-agenda .bag-card-hub{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:20px;text-transform:uppercase;letter-spacing:.03em;white-space:nowrap;flex-shrink:0;}
+.b-agenda .bag-card-title{font-size:14px;font-weight:600;color:var(--text);line-height:1.3;letter-spacing:-.01em;margin-bottom:8px;text-wrap:pretty;}
+.b-agenda .bag-card-spk{display:flex;align-items:center;gap:9px;min-width:0;}
+.b-agenda .bag-avs{display:inline-flex;align-items:center;flex-shrink:0;}
+.b-agenda .bag-av,.b-agenda .bag-avini{width:26px;height:26px;border-radius:50%;box-sizing:border-box;flex-shrink:0;object-fit:cover;}
+.b-agenda .bag-avini{display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;}
+.b-agenda .bag-avmore{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:var(--bg);border:2px solid var(--surface);font-size:10px;font-weight:700;color:var(--text2);margin-left:-12px;flex-shrink:0;}
+.b-agenda .bag-card-names{font-size:12.5px;color:var(--text2);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.b-agenda .bag-more{margin-top:2px;font-size:12px;font-weight:600;color:var(--brand);cursor:pointer;}
+.b-agenda .bag-more:hover{text-decoration:underline;}
 .b-cardgroup{display:flex;flex-wrap:wrap;gap:14px;align-content:flex-start;}
 .b-cardgroup>.b-card{flex:1 1 260px;min-height:170px;}
 .bento-edithint{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600;color:var(--brand);background:color-mix(in srgb,var(--brand) 8%,var(--surface));border:1px dashed color-mix(in srgb,var(--brand) 38%,transparent);border-radius:12px;padding:9px 13px;}
@@ -273,7 +287,8 @@ body[data-mode="edit"] #bentoGrid [data-block]:active{cursor:grabbing;}
 .b-ed .bed-v{font-size:14px;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums;}
 .b-ed .bed-y{font-size:11px;font-weight:600;color:var(--text2);}
 /* Speakers spotlight — escala conforme o tamanho do bloco (container query) */
-.b-spk{container-type:inline-size;}
+.b-spk{container-type:inline-size;transition:box-shadow .2s ease,border-color .2s ease;}
+.b-spk:hover{border-color:color-mix(in srgb,var(--brand) 40%,var(--border));box-shadow:var(--sh);}
 .b-spk .row{display:flex;flex-wrap:wrap;gap:clamp(12px,5cqi,30px);margin:auto 0;align-items:flex-start;justify-content:flex-start;}
 .b-spk .one{display:flex;flex-direction:column;align-items:center;gap:clamp(6px,2cqi,12px);width:clamp(64px,24cqi,120px);flex-shrink:0;}
 .b-spk .ava{width:clamp(50px,18cqi,100px);height:clamp(50px,18cqi,100px);border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:clamp(16px,6cqi,30px);}
@@ -1344,6 +1359,17 @@ body[data-cardstyle="tint"] .lcard{
 </style>
 </head>
 <body>
+<script>
+/* Evita o "flash" de trilho/agenda antes do app carregar: define já o estado
+   de visitante (sem token = sem menus) e a página inicial = home. */
+(function(){
+  try{
+    var t=localStorage.getItem('latimpacto_session_v1');
+    document.body.setAttribute('data-guest', t?'0':'1');
+  }catch(e){ document.body.setAttribute('data-guest','1'); }
+  document.body.setAttribute('data-page','home');
+})();
+</script>
 <aside id="rail" aria-label="Navegação principal">
   <a class="rail-logo-row" href="https://impactmindsconference.com/" target="_blank" rel="noopener" aria-label="Latimpacto — Impact Minds: Connecting Us">
     <span class="rail-logo">
@@ -2419,8 +2445,13 @@ function renderBento(){
         for(var r=0;r<rks.length;r++){
           var t=sl[rks[r]]; if(!t) continue;
           var room=_roomOf(rks[r]); var ts=talkStyle(t,room);
-          arr.push({ min:_toMinG(slots[s]), time:slots[s], title:String(L(t.title)||''), id:t.id,
-                     roomName:(room?RN(room.name):''), color:(ts&&ts.color)||'var(--brand)' });
+          var hi=(t.hub!==undefined&&t.hub!=='')?parseInt(t.hub):-1;
+          var hubName=(hi>=0&&HUBS[hi])?L(HUBS[hi]):'';
+          var spkIds=(t.speakerIds&&t.speakerIds.length)?t.speakerIds:(t.speakerId?[t.speakerId]:[]);
+          arr.push({ min:_toMinG(slots[s]), time:slots[s], end:addM(slots[s], talkDur(t)),
+                     title:String(L(t.title)||''), id:t.id,
+                     color:(ts&&ts.color)||'var(--brand)', bg:(ts&&ts.bg)||'var(--bg)',
+                     hub:hubName, spkIds:spkIds, spkName:String(t.speakerName||'') });
         }
       }
       arr.sort(function(a,b){ return a.min-b.min; });
@@ -2429,24 +2460,39 @@ function renderBento(){
     var day=(typeof curDay==='number'?curDay:0), evs=dayEvents(day);
     if(!evs.length){ for(var d=0;d<NDAYS;d++){ var e=dayEvents(d); if(e.length){ day=d; evs=e; break; } } }
     if(!evs.length) return; // sem sessões → bloco não aparece
-    var shown=evs.slice(0,5), rowsH='';
+    var shown=evs.slice(0,4), cardsH='';
     for(var i=0;i<shown.length;i++){ var ev=shown[i];
-      rowsH+='<div class="bag-row">'+
-        '<span class="bag-time">'+esc(ev.time)+'</span>'+
-        '<span class="bag-dot" style="background:'+ev.color+'"></span>'+
-        '<span class="bag-title">'+esc(ev.title)+'</span>'+
-        (ev.roomName?'<span class="bag-room">'+esc(ev.roomName)+'</span>':'')+
+      // avatares empilhados (até 3) + contador
+      var avs='';
+      var nshow=Math.min(ev.spkIds.length,3);
+      for(var a=0;a<nshow;a++){ var sp=findSpk(ev.spkIds[a]);
+        var rg=sp?catColor(sp):'var(--border)';
+        var mr=(a<nshow-1?'-12px':'0');
+        avs+=sp&&sp.photo
+          ?'<img class="bag-av" src="'+sp.photo+'" alt="" style="border:2px solid '+rg+';margin-right:'+mr+';">'
+          :'<span class="bag-avini" style="background:'+avColor(sp?sp.name:ev.spkName)+';border:2px solid '+rg+';margin-right:'+mr+';">'+initials(sp?sp.name:ev.spkName)+'</span>';
+      }
+      var extra=ev.spkIds.length-nshow;
+      if(extra>0) avs+='<span class="bag-avmore">+'+extra+'</span>';
+      var names=ev.spkName?esc(ev.spkName):'';
+      cardsH+='<div class="bag-card" style="border-left-color:'+ev.color+';" onclick="event.stopPropagation();openTalkDetail(\''+esc(ev.id)+'\')">'+
+        '<div class="bag-card-top">'+
+          '<span class="bag-card-time">🕐 '+esc(ev.time)+' – '+esc(ev.end)+'</span>'+
+          (ev.hub?'<span class="bag-card-hub" style="background:'+ev.bg+';color:'+ev.color+';">'+esc(ev.hub)+'</span>':'')+
+        '</div>'+
+        '<div class="bag-card-title">'+esc(ev.title)+'</div>'+
+        (avs||names?'<div class="bag-card-spk">'+(avs?'<span class="bag-avs">'+avs+'</span>':'')+(names?'<span class="bag-card-names">'+names+'</span>':'')+'</div>':'')+
       '</div>';
     }
     var moreN=evs.length-shown.length;
     var moreLbl=(LANG==='en'?'more sessions':(LANG==='es'?'sesiones más':'sessões a mais'));
-    agendaHtml='<div class="btile b-agenda" onclick="showPage(\'agenda\')" style="cursor:pointer;">'+
+    agendaHtml='<div class="btile b-agenda">'+
       '<div class="btile-h" style="justify-content:space-between;">'+
         '<span>'+t18('tabAgenda')+' · '+esc(DAY_SHORT[day]||DAY_LABELS[day]||'')+'</span>'+
-        '<span class="bag-all">'+t18('hlSeeAll')+' →</span>'+
+        '<span class="bag-all" onclick="event.stopPropagation();showPage(\'agenda\')">'+t18('hlSeeAll')+' →</span>'+
       '</div>'+
-      '<div class="bag-list">'+rowsH+'</div>'+
-      (moreN>0?'<div class="bag-more">+'+moreN+' '+moreLbl+'</div>':'')+
+      '<div class="bag-list">'+cardsH+'</div>'+
+      (moreN>0?'<div class="bag-more" onclick="event.stopPropagation();showPage(\'agenda\')">+'+moreN+' '+moreLbl+'</div>':'')+
     '</div>';
   })();
 
