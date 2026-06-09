@@ -887,12 +887,13 @@ img.phprev, img.spk-ph, img.sd-photo, img.pkav, img.lav, img.cgrid-av, img.pub-s
 .top-auth-btn.logged:hover{border-color:var(--muted);background:var(--bg);}
 .top-auth-btn .taa-av{width:24px;height:24px;border-radius:50%;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700;}
 .top-auth-btn .taa-av img{width:100%;height:100%;object-fit:cover;display:block;}
-/* Botão Voltar (só visitante, fora da Home) */
-.guest-back{display:none;align-items:center;gap:6px;background:none;border:1px solid var(--border);cursor:pointer;padding:6px 12px;border-radius:9px;color:var(--text);font-family:var(--font);font-size:13px;font-weight:600;transition:background .18s,border-color .18s,color .18s;flex-shrink:0;}
-.guest-back:hover{background:var(--bg);border-color:var(--brand);color:var(--brand);}
-.guest-back:active{transform:scale(.96);}
-.guest-back svg{flex-shrink:0;}
+/* Botão Voltar flutuante (só visitante, fora da Home) — redondo, canto inferior direito */
+.guest-back{display:none;position:fixed;right:22px;bottom:22px;z-index:400;width:52px;height:52px;align-items:center;justify-content:center;background:var(--surface);border:1px solid var(--border);border-radius:50%;color:var(--text);cursor:pointer;box-shadow:0 6px 20px rgba(40,20,60,.16);transition:background .18s,border-color .18s,color .18s,transform .14s;}
+.guest-back:hover{background:var(--brand);border-color:var(--brand);color:#fff;transform:translateY(-2px);box-shadow:0 10px 26px color-mix(in srgb,var(--brand) 36%,transparent);}
+.guest-back:active{transform:scale(.94);}
+.guest-back svg{width:22px;height:22px;display:block;}
 body[data-guest="1"]:not([data-page="home"]) .guest-back{display:inline-flex;}
+@media(max-width:680px){ .guest-back{right:16px;bottom:16px;width:48px;height:48px;} }
 
 /* FORMAT BADGES */
 .fmt-badge{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.3px;padding:2px 7px;border-radius:10px;white-space:nowrap;}
@@ -1407,10 +1408,6 @@ body[data-cardstyle="tint"] .lcard{
     <span class="logo-sep" style="width:1px;height:20px;background:var(--border);margin:0 2px;"></span>
     <span class="logo-title" style="color:var(--text);font-weight:600;letter-spacing:-.01em;">Impact Minds: <span style="color:var(--brand);font-weight:600;">Connecting Us</span></span>
   </div>
-  <button class="guest-back" id="guestBack" onclick="showPage('home')" title="Voltar para o início">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-    <span data-i18n="navBack">Voltar</span>
-  </button>
   <div class="nav-srch" id="navSrch">
     <svg class="nav-srch-ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
     <input id="srchInput" type="text" data-i18n-ph="searchPh" placeholder="Buscar sessão ou palestrante…" oninput="onSearch()" onfocus="showSearchDrop('srchDrop')" onblur="hideSearchDropDelayed('srchDrop')" autocomplete="off">
@@ -1566,6 +1563,11 @@ body[data-cardstyle="tint"] .lcard{
   </div>
 </div>
 </div><!-- /appShell -->
+
+<!-- Botão Voltar flutuante (visitante, fora da Home) -->
+<button class="guest-back" id="guestBack" onclick="showPage('home')" data-i18n-title="navBack" title="Back" aria-label="Back">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+</button>
 
 <!-- BOTTOM NAV (mobile) -->
 <nav id="mobileNav" aria-label="Navegação">
@@ -2144,7 +2146,7 @@ function openToolsMobile(e){
   m.style.left=left+'px';
   m.style.top=(r.top-h-8)+'px';
 }
-function showPage(p){
+function showPage(p, fromHistory){
   if(p==='admin') p='spk';            // gerenciar foi absorvido em Palestrantes
   if(p!=='home'&&p!=='agenda'&&p!=='spk') p='home';
   curPage = p;
@@ -2187,7 +2189,22 @@ function showPage(p){
   }
   _syncRail();
   _updatePtabAdd();
+  // Integra com o histórico do navegador para que os botões Voltar/Avançar
+  // (incluindo os botões laterais do mouse) naveguem entre as páginas.
+  if(!fromHistory){
+    try{
+      if(!history.state || history.state._pg===undefined){
+        history.replaceState({_pg:p}, '');      // primeira entrada (base)
+      } else if(history.state._pg !== p){
+        history.pushState({_pg:p}, '');          // só empilha ao mudar de página
+      }
+    }catch(e){}
+  }
 }
+window.addEventListener('popstate', function(e){
+  var p=(e.state && e.state._pg) ? e.state._pg : 'home';
+  showPage(p, true);
+});
 function _animIn(el){ if(!el) return; el.classList.remove('pg-anim'); void el.offsetWidth; el.classList.add('pg-anim'); }
 function _applyAgendaTab(){
   // Modelo de 3 páginas: Agenda mostra sempre a grade dos dias (sem aba Destaques).
