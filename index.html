@@ -718,8 +718,13 @@ body[data-mode="edit"] .btile:hover .btile-edit{display:flex;}
 .pub-spk-co{font-size:13px;color:var(--text2);margin-bottom:7px;}
 .pub-spk-bio{font-size:13px;color:var(--text2);line-height:1.45;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
 .pub-spk-empty{grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--text2);}
-.pub-spk-toolbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;padding:16px 20px 0;}
+.pub-spk-toolbar{display:flex;align-items:center;justify-content:flex-start;flex-wrap:wrap;gap:10px 18px;padding:16px 20px 0;}
 .pub-spk-toolbar h2{font-family:var(--font);font-size:20px;font-weight:500;}
+/* Título da página de Agenda (acima das abas de dias) */
+.agenda-head{padding:16px 20px 6px;}
+.agenda-head h2{font-family:var(--font);font-size:20px;font-weight:500;color:var(--text);}
+.agenda-head-sub{font-size:14px;color:var(--text2);display:block;margin-top:1px;}
+@media(max-width:680px){ .agenda-head{padding:12px 12px 4px;} }
 .pub-spk-count{font-size:14px;color:var(--text2);}
 .pub-spk-srch{position:relative;display:flex;align-items:center;}
 .pub-spk-srch input{font-family:'Roboto',sans-serif;font-size:14px;padding:7px 11px 7px 32px;border:1px solid var(--border);border-radius:22px;background:var(--bg);width:200px;outline:none;transition:width .3s,box-shadow .2s;}
@@ -1509,6 +1514,10 @@ body[data-cardstyle="tint"] .lcard{
 
 <!-- AGENDA HEADERS -->
 <div id="pgAgendaHdr" style="display:block;">
+  <div class="agenda-head">
+    <h2 data-i18n="tabAgenda">Agenda</h2>
+    <span class="agenda-head-sub" id="agendaHeadSub"></span>
+  </div>
   <div class="dtabs" id="dtabs"></div>
   <div id="dayControls">
   <div class="tbar">
@@ -1523,14 +1532,13 @@ body[data-cardstyle="tint"] .lcard{
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3.5" cy="6" r="1" fill="currentColor" stroke="none"/><circle cx="3.5" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="3.5" cy="18" r="1" fill="currentColor" stroke="none"/></svg>
       </button>
     </div>
-    <span class="tbar-title" id="tbarTitle" style="margin-left:14px;margin-right:auto;">20 de Maio de 2026</span>
+    <button class="add-sq" id="btnAddTalk" onclick="openAddTalk()" style="display:none;margin-left:8px;flex-shrink:0;" title="Adicionar Sessão" aria-label="Adicionar Sessão"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
     <!-- Zoom inline — compacto, só aparece em Grade/Gantt -->
-    <div id="zoomControls" style="display:none;align-items:center;gap:0;border:1px solid var(--border);border-radius:6px;overflow:hidden;margin-left:6px;flex-shrink:0;">
+    <div id="zoomControls" style="display:none;align-items:center;gap:0;border:1px solid var(--border);border-radius:6px;overflow:hidden;margin-left:auto;flex-shrink:0;">
       <button id="zoomMinus" onclick="_zoomOut()" style="width:28px;height:28px;border:none;background:var(--surface);color:var(--text);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;border-right:1px solid var(--border);-webkit-tap-highlight-color:transparent;" title="Zoom out">−</button>
       <span id="zoomLabel" style="font-size:11px;font-family:var(--mono);color:var(--text2);padding:0 6px;background:var(--surface);min-width:36px;text-align:center;line-height:28px;">100%</span>
       <button id="zoomPlus" onclick="_zoomIn()" style="width:28px;height:28px;border:none;background:var(--surface);color:var(--text);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;border-left:1px solid var(--border);-webkit-tap-highlight-color:transparent;" title="Zoom in">+</button>
     </div>
-    <button class="add-sq" id="btnAddTalk" onclick="openAddTalk()" style="display:none;margin-left:8px;flex-shrink:0;" title="Adicionar Sessão" aria-label="Adicionar Sessão"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
   </div>
   <div class="legend" id="legend"></div>
   <div class="room-filters" id="roomFilters"></div>
@@ -3978,6 +3986,7 @@ function _setActiveDay(day){
 }
 function renderDayTabs(){
   var c=document.getElementById('dtabs'); if(!c) return;
+  var ahs=document.getElementById('agendaHeadSub'); if(ahs){ try{ ahs.textContent=_heroDates(); }catch(e){} }
   var lng=(typeof LANG!=='undefined')?LANG:'pt';
   var hh='';
   for(var i=0;i<NDAYS;i++){
