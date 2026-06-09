@@ -1015,12 +1015,13 @@ body[data-guest="1"]:not([data-page="home"]) .guest-back{display:inline-flex;}
 /* BOTTOM NAV (mobile) — escondido no desktop */
 #mobileNav{display:none;}
 /* Crédito discreto (rodapé persistente em todas as páginas) */
-.site-credit{text-align:center;font-size:11.5px;color:var(--text2);opacity:.62;padding:26px 16px 30px;letter-spacing:.01em;transition:opacity .2s ease;}
+.site-credit{text-align:center;font-size:11.5px;color:var(--text2);opacity:.62;padding:18px 16px 20px;letter-spacing:.01em;transition:opacity .2s ease;}
 .site-credit:hover{opacity:.92;}
 .site-credit a{color:inherit;font-weight:400;text-decoration:none;border-bottom:1px solid transparent;transition:color .18s ease,border-color .18s ease;}
 .site-credit a b{font-weight:700;}
 .site-credit a:hover{color:var(--brand);border-bottom-color:color-mix(in srgb,var(--brand) 45%,transparent);}
-@media(max-width:680px){ .site-credit{padding-bottom:calc(30px + var(--mnav-h,64px));} }
+/* Folga extra só quando o menu inferior (mobile) está visível e o sobrepõe */
+@media(max-width:860px){ body:not([data-guest="1"]) .site-credit{padding-bottom:calc(20px + var(--mnav-h,64px));} }
 .mnav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:none;border:none;cursor:pointer;color:var(--text2);font-family:var(--font);font-size:10.5px;font-weight:600;padding:7px 2px 4px;border-radius:12px;-webkit-tap-highlight-color:transparent;transition:color .15s,background .15s;position:relative;}
 .mnav-item svg{width:23px;height:23px;}
 .mnav-item span{line-height:1;letter-spacing:-.01em;}
