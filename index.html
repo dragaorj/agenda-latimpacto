@@ -175,9 +175,14 @@ body[data-page="home"] #dayControls{display:none!important;}
 .b-row.split>[data-block="now"]{flex-grow:1.6;}
 .b-row.split>[data-block="speakers"]{flex-grow:1.4;}
 [data-block]{position:relative;}
+/* Entrada escalonada dos ITENS internos de cada bloco do Bento
+   (repouso = visível; nunca prende item invisível) */
+.b-band .bi-trans{transition:opacity .85s cubic-bezier(.16,1,.3,1),transform .85s cubic-bezier(.16,1,.3,1);}
+.b-band .bi-pre{opacity:0;transform:translateY(14px);}
+@media(prefers-reduced-motion:reduce){ .b-band .bi-pre{opacity:1;transform:none;} }
 /* Entrada suave escalonada dos blocos do Bento (transição: repouso = visível) */
-.b-band > .bento-trans{transition:opacity .55s cubic-bezier(.22,1,.36,1),transform .55s cubic-bezier(.22,1,.36,1);}
-.b-band > .bento-pre{opacity:0;transform:translateY(16px);}
+.b-band > .bento-trans{transition:opacity .9s cubic-bezier(.16,1,.3,1),transform .9s cubic-bezier(.16,1,.3,1);}
+.b-band > .bento-pre{opacity:0;transform:translateY(26px);}
 @media(prefers-reduced-motion:reduce){ .b-band > .bento-pre{opacity:1;transform:none;} }
 [data-block="hero"],[data-block="countdown"]{min-height:300px;}
 [data-block="now"],[data-block="speakers"]{min-height:280px;}
@@ -300,7 +305,7 @@ body[data-mode="edit"] #bentoGrid [data-block]:active{cursor:grabbing;}
 .b-ed{min-height:200px;}
 .b-ed .bed-chart{display:flex;align-items:flex-end;gap:18px;margin-top:auto;height:100%;min-height:120px;padding-top:8px;}
 .b-ed .bed-col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:6px;}
-.b-ed .bed-bar{width:100%;max-width:68px;border-radius:10px 10px 0 0;background:linear-gradient(180deg,var(--brand-2),var(--brand));min-height:8px;transition:height .9s cubic-bezier(.22,1,.36,1);}
+.b-ed .bed-bar{width:100%;max-width:68px;border-radius:10px 10px 0 0;background:linear-gradient(180deg,var(--brand-2),var(--brand));min-height:8px;transition:height 1.25s cubic-bezier(.16,1,.3,1);}
 .b-ed .bed-head{display:flex;flex-direction:column;align-items:center;gap:1px;line-height:1;}
 .b-ed .bed-v{font-size:24px;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums;letter-spacing:-.02em;}
 .b-ed .bed-cap{font-size:9.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--text2);}
@@ -1866,6 +1871,7 @@ function applyLang(){
   rebuildDayMeta();
   if(document.getElementById('dtabs')){ renderDayTabs(); _setActiveDay(curDay); }
   renderLegend(); updateLangBtn();
+  window._bentoAnimate=true;   // ao trocar de idioma, repete a animação de entrada
   if(curPage==='home'){ renderBento(); }
   else if(curPage==='spk'){ if(WP_ENABLED){ renderSpkGrid(); } else { renderPubSpkGrid(_pubSpkQ||''); } }
   else { renderMain(); }
@@ -2876,14 +2882,38 @@ function _animBentoEnter(){
   // invisíveis: usamos transição CSS cujo valor de repouso é opacity:1, e o
   // setTimeout (que dispara mesmo em segundo plano) revela cada bloco.
   if(!doAnim || reduce){ return; }
+  // 1) Blocos entram em cascata
   tiles.forEach(function(t){ t.classList.add('bento-pre','bento-trans'); });
   void c.offsetWidth;   // garante o estado inicial pintado antes de revelar
   tiles.forEach(function(t,i){
-    setTimeout(function(){ t.classList.remove('bento-pre'); }, i*70 + 30);
+    setTimeout(function(){ t.classList.remove('bento-pre'); }, i*120 + 40);
   });
   // Segurança: remove AMBAS as classes — cancelar a transição faz a opacidade
   // saltar para o valor final (1) sem depender do relógio de animação.
-  setTimeout(function(){ tiles.forEach(function(t){ t.classList.remove('bento-pre','bento-trans'); }); }, tiles.length*70 + 1200);
+  setTimeout(function(){ tiles.forEach(function(t){ t.classList.remove('bento-pre','bento-trans'); }); }, tiles.length*120 + 1800);
+
+  // 2) Itens internos de cada bloco entram em cascata, logo após o bloco surgir
+  //    (mesma técnica robusta: estado de repouso é visível).
+  var ITEM_SEL='.bn-item, .one, .bag-card, .b-card,'+
+               '.b-hero .eyebrow, .b-hero h1, .b-hero p, .b-hero .hero-cd,'+
+               '.b-hero .b-hero-actions, .b-hero .hero-more';
+  var sched=[];  // {el, delay}
+  tiles.forEach(function(t,i){
+    var items=t.querySelectorAll(ITEM_SEL);
+    var base=i*120 + 240;   // arranca logo depois do bloco aparecer
+    for(var j=0;j<items.length;j++){
+      items[j].classList.add('bi-pre','bi-trans');
+      sched.push({el:items[j], delay:base + j*85});
+    }
+  });
+  if(sched.length){
+    void c.offsetWidth;   // pinta o estado inicial (opacity:0) antes de revelar
+    sched.forEach(function(s){
+      setTimeout(function(){ s.el.classList.remove('bi-pre'); }, s.delay);
+    });
+    // Segurança: garante visibilidade final independentemente do relógio
+    setTimeout(function(){ sched.forEach(function(s){ s.el.classList.remove('bi-pre','bi-trans'); }); }, tiles.length*120 + 240 + 12*85 + 1800);
+  }
 }
 
 // Animação de entrada do gráfico "Edições anteriores": barras sobem e os
@@ -2907,11 +2937,11 @@ function _animEditions(){
     var decimals=(raw.split(/[.,]/)[1]||'').length;
     if(!canCount){ el.textContent=raw; return; }
     el.textContent='0';
-    var dur=900, t0=null;
+    var dur=1500, t0=null;
     function step(ts){
       if(t0===null) t0=ts;
       var p=Math.min(1,(ts-t0)/dur);
-      var eased=1-Math.pow(1-p,3);
+      var eased=1-Math.pow(1-p,4);
       var val=target*eased;
       el.textContent=decimals?val.toFixed(decimals).replace('.',','):Math.round(val).toLocaleString('pt-BR');
       if(p<1) requestAnimationFrame(step); else el.textContent=raw;
