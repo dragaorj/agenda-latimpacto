@@ -3566,14 +3566,20 @@ var activeHubs = {};
 
 function _anyHubActive(){ for(var k in activeHubs) if(activeHubs[k]) return true; return false; }
 
-// SALAS — mesmo modelo dos hubs: activeRooms vazio = TODAS; chaves = salas
-// selecionadas (multi-seleção). hiddenR é DERIVADO disso para que toda a
-// renderização existente (grade/lista/cards) continue funcionando igual.
-var activeRooms = {};
+// SALAS — comportamento depende do modo de visualização:
+//  • GRADE: modelo de OCULTAR (clicar fecha a coluna). Fonte: roomHidden.
+//  • CARDS/LISTA: modelo de SELEÇÃO como os hubs (clicar mostra só aquela,
+//    multi-seleção soma). Fonte: activeRooms.
+// hiddenR (usado pela renderização) é DERIVADO via _syncHiddenR() conforme o modo.
+var activeRooms = {}; // seleção (Cards/Lista)
+var roomHidden  = {}; // ocultas (Grade)
 function _anyRoomActive(){ for(var k in activeRooms) if(activeRooms[k]) return true; return false; }
+function _anyRoomHidden(){ for(var i=0;i<ROOMS.length;i++){ if(roomHidden[ROOMS[i].id]) return true; } return false; }
 function _syncHiddenR(){
   hiddenR = {};
-  if(_anyRoomActive()){
+  if(curView==='grid'){
+    for(var k in roomHidden) if(roomHidden[k]) hiddenR[k]=true;
+  } else if(_anyRoomActive()){
     for(var i=0;i<ROOMS.length;i++){ if(!activeRooms[ROOMS[i].id]) hiddenR[ROOMS[i].id]=true; }
   }
 }
@@ -3621,13 +3627,14 @@ function drawerToggleHub(idx){
 
 function renderRoomFilters(){
   var html='';
-  var todasOn = !_anyRoomActive();
+  var isGrid = (curView==='grid');
+  var todasOn = isGrid ? !_anyRoomHidden() : !_anyRoomActive();
   // Botão TODAS AS SALAS
   html+='<div class="room-filter-btn'+(todasOn?'':' off')+'" id="legr-todas" onclick="toggleRoomFilter(-1)" style="'+(todasOn?'border-color:var(--blue);color:var(--blue);font-weight:700;background:var(--surface);':'border-color:var(--border);color:var(--text2);background:var(--surface);')+'">'+t18('allRooms')+'</div>';
-  // Salas individuais (sem cor própria — estado ativo usa o roxo padrão)
+  // Salas individuais (grade: on=visível; cards/lista: on=selecionada)
   for(var i=0;i<ROOMS.length;i++){
     var r=ROOMS[i];
-    var isOn=!!activeRooms[r.id];
+    var isOn = isGrid ? !roomHidden[r.id] : !!activeRooms[r.id];
     html+='<div class="room-filter-btn'+(isOn?'':' off')+'" onclick="toggleRoomFilter(\''+r.id+'\')" style="'+(isOn?'border-color:var(--blue);color:var(--blue);background:var(--surface);font-weight:700;':'border-color:var(--border);color:var(--text2);background:var(--surface);')+'">'+esc(RN(r.name))+'</div>';
   }
   var el=document.getElementById('roomFilters'); if(el) el.innerHTML=html;
@@ -3635,13 +3642,14 @@ function renderRoomFilters(){
 }
 
 function toggleRoomFilter(id){
-  if(id===-1){
-    // TODAS: limpa a seleção de salas
-    activeRooms={};
+  if(curView==='grid'){
+    // GRADE: ocultar/reexibir a sala clicada
+    if(id===-1){ roomHidden={}; }
+    else { if(roomHidden[id]) delete roomHidden[id]; else roomHidden[id]=true; }
   } else {
-    // Liga/desliga esta sala; TODAS some automaticamente
-    if(activeRooms[id]) delete activeRooms[id];
-    else activeRooms[id]=true;
+    // CARDS/LISTA: seleção como os hubs
+    if(id===-1){ activeRooms={}; }
+    else { if(activeRooms[id]) delete activeRooms[id]; else activeRooms[id]=true; }
   }
   _syncHiddenR();
   renderRoomFilters(); renderDrawer(); renderMain();
@@ -3649,7 +3657,7 @@ function toggleRoomFilter(id){
 function openFilterDrawer(){ renderDrawer(); document.getElementById('filterOverlay').classList.add('open'); document.getElementById('filterDrawer').classList.add('open'); }
 function closeFilterDrawer(){ document.getElementById('filterOverlay').classList.remove('open'); document.getElementById('filterDrawer').classList.remove('open'); }
 function resetFilters(){
-  hiddenR={}; hiddenH={}; activeHubs={}; activeRooms={};
+  hiddenR={}; hiddenH={}; activeHubs={}; activeRooms={}; roomHidden={};
   renderLegend();
   renderRoomFilters();
   renderDrawer(); renderMain();
@@ -3709,12 +3717,13 @@ function renderDrawer(){
   if(roomRow){
     var rh='';
     // ── SALAS (linha de baixo; sem cor própria) ──
-    var todasR=!_anyRoomActive();
+    var _isGrid=(curView==='grid');
+    var todasR= _isGrid ? !_anyRoomHidden() : !_anyRoomActive();
     rh+='<div class="mob-room-pill'+(todasR?'':' off')+'" '+
       'style="border-color:var(--blue);color:var(--blue);background:'+(todasR?'var(--blue-lt)':'var(--surface)')+';" '+
       'onclick="toggleRoomFilter(-1)">'+t18('allRooms')+'</div>';
     for(var ri=0;ri<ROOMS.length;ri++){
-      var rOn=!!activeRooms[ROOMS[ri].id];
+      var rOn= _isGrid ? !roomHidden[ROOMS[ri].id] : !!activeRooms[ROOMS[ri].id];
       rh+='<div class="mob-room-pill'+(rOn?'':' off')+'" '+
         'style="border-color:'+(rOn?'var(--blue)':'var(--border)')+';color:'+(rOn?'var(--blue)':'var(--text2)')+';background:'+(rOn?'var(--blue-lt)':'var(--surface)')+';" '+
         'onclick="toggleRoomFilter(\''+ROOMS[ri].id+'\')">'+esc(RN(ROOMS[ri].name))+'</div>';
@@ -3744,6 +3753,7 @@ function gridSetZoom(z){
 // RENDER
 // ════════════════════════════════════════
 function renderMain(){
+  if(typeof _syncHiddenR==='function') _syncHiddenR();
   var sc=SCHEDULES[curDay];
   var vis=ROOMS.filter(function(r){return !hiddenR[r.id];});
   if(curView==='grid') renderGrid(sc,vis);
