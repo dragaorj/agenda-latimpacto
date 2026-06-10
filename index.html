@@ -497,6 +497,10 @@ body[data-mode="edit"] .btile:hover .btile-edit{display:flex;}
 .dtabs-row{display:flex;align-items:center;justify-content:space-between;gap:14px;background:var(--nav-bg);padding-right:18px;border-bottom:1px solid var(--nav-border);}
 .dtabs-row .dtabs{flex:1 1 auto;min-width:0;background:none;}
 .dtabs-row .tbar{flex:0 0 auto;background:none;border-bottom:none;padding:7px 0;}
+/* Banda branca da página de Participantes — mesma posição da linha de dias da Agenda */
+.spk-hdr-row{display:flex;align-items:center;justify-content:space-between;gap:14px;background:var(--nav-bg);border-bottom:1px solid var(--nav-border);padding:7px 18px 7px 20px;}
+.spk-hdr-row .spk-view-btns{flex-shrink:0;}
+.spk-hdr-row .add-sq{flex-shrink:0;}
 .dtabs::-webkit-scrollbar{display:none;}
 .dtab{font-family:var(--font);cursor:pointer;border:1.5px solid transparent;border-radius:10px;color:var(--text2);transition:color .18s,border-color .18s,background .18s;user-select:none;letter-spacing:-.01em;flex-shrink:0;white-space:nowrap;display:grid;grid-template-columns:auto auto;grid-template-areas:'date count' 'wd wd';column-gap:7px;align-items:center;justify-items:start;padding:0 14px;height:var(--ctl-h);box-sizing:border-box;}
 .dtab-date{grid-area:date;font-size:14px;font-weight:600;line-height:1.1;}
@@ -548,7 +552,7 @@ body[data-mode="edit"] .btile:hover .btile-edit{display:flex;}
 .room-filters{display:flex;flex-wrap:wrap;gap:5px;padding:6px 20px;background:var(--bg);border-bottom:1px solid var(--border);}
 .room-filter-btn{font-family:var(--font);font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;border:1.5px solid transparent;cursor:pointer;transition:all .15s;white-space:nowrap;background:var(--surface);}
 .room-filter-btn:hover{filter:brightness(.96);}
-.room-filter-btn.off{opacity:.3;text-decoration:line-through;}
+.room-filter-btn.off{opacity:.42;}
 
 /* CARD-GRID VIEW */
 .cgrid-wrap{padding:14px 20px;display:flex;flex-direction:column;gap:0;max-width:1200px;}
@@ -978,7 +982,7 @@ body[data-guest="1"] .guest-tabs{display:flex;}
 .gtab-sub{font-size:12px;color:var(--text2);font-variant-numeric:tabular-nums;white-space:nowrap;}
 /* Para visitante, as abas substituem os títulos próprios das páginas */
 body[data-guest="1"] .agenda-head{display:none;}
-body[data-guest="1"] #pgSpk .pub-spk-toolbar>div:first-child{display:none;}
+body[data-guest="1"] #pgSpk .pub-spk-toolbar{display:none;}
 @media(max-width:680px){ .guest-tabs{padding:12px 12px 18px;} .gtab{min-width:0;flex:1;padding:9px 14px;} .gtab-title{font-size:16px;} }
 @media(max-width:680px){ .guest-back{right:16px;bottom:16px;width:48px;height:48px;} }
 
@@ -1028,21 +1032,30 @@ body[data-guest="1"] #pgSpk .pub-spk-toolbar>div:first-child{display:none;}
 /* MOBILE FILTER BAR */
 .mob-filter-bar{
   display:none;
-  flex-direction:row;
+  flex-direction:column;
   gap:6px;
   padding:7px 12px;
   background:var(--bg);
   border-bottom:1px solid var(--border);
+}
+.mob-filter-bar::-webkit-scrollbar{display:none;}
+/* Cada linha (Hubs / Salas) rola horizontalmente de forma independente */
+.mob-filter-row{
+  display:flex;
+  flex-direction:row;
+  gap:6px;
   overflow-x:auto;
   overflow-y:visible;
   -webkit-overflow-scrolling:touch;
   scrollbar-width:none;
   align-items:center;
 }
-.mob-filter-bar::-webkit-scrollbar{display:none;}
+.mob-filter-row::-webkit-scrollbar{display:none;}
+/* No modo Grade as salas já são colunas → oculta a linha de filtro de salas */
+body[data-view="grid"] #mobRoomRow{display:none;}
 /* Pills de sala no mobile — clicáveis, scroll horizontal */
 .mob-room-pill{font-family:var(--font);font-size:11px;font-weight:700;padding:4px 11px;border-radius:13px;border:2px solid transparent;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:opacity .15s,filter .15s;}
-.mob-room-pill.off{opacity:.35;text-decoration:line-through;}
+.mob-room-pill.off{opacity:.4;}
 
 /* BOTTOM NAV (mobile) — escondido no desktop */
 #mobileNav{display:none;}
@@ -1166,7 +1179,6 @@ body[data-page="spk"] .site-credit{display:block;}
   .legend{display:none!important;}
   .room-filters{display:none!important;}
   .mob-filter-bar{display:flex;}
-
   /* GRID: time column sticky */
   #stickyRoomHdr{overflow-x:auto;}
   .grid{min-width:0;width:100%;}
@@ -1582,6 +1594,26 @@ body[data-cardstyle="tint"] .lcard{
     <span class="gtab-sub" id="gtabSpkSub"></span>
   </button>
 </div>
+<!-- Banda da página de Participantes: modos de visualização (mesma posição das abas de dias) -->
+<div id="pgSpkHdr" style="display:none;">
+  <div class="spk-hdr-row">
+    <div class="spk-view-btns">
+      <button class="spk-vbtn" id="spkVCards" onclick="setSpkView('cards')" title="Cards">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      </button>
+      <button class="spk-vbtn on" id="spkVWide" onclick="setSpkView('wide')" title="Tabela (máx palestrantes)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="4" rx="1"/><rect x="3" y="10" width="18" height="4" rx="1"/><rect x="3" y="16" width="18" height="4" rx="1"/></svg>
+      </button>
+      <button class="spk-vbtn" id="spkVList" onclick="setSpkView('list')" title="Lista">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3" cy="6" r="1" fill="currentColor"/><circle cx="3" cy="12" r="1" fill="currentColor"/><circle cx="3" cy="18" r="1" fill="currentColor"/></svg>
+      </button>
+      <button class="spk-vbtn" id="spkVCompact" onclick="setSpkView('compact')" title="Compacto">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="4" height="4" rx="1"/><rect x="10" y="3" width="4" height="4" rx="1"/><rect x="17" y="3" width="4" height="4" rx="1"/><rect x="3" y="10" width="4" height="4" rx="1"/><rect x="10" y="10" width="4" height="4" rx="1"/><rect x="17" y="10" width="4" height="4" rx="1"/><rect x="3" y="17" width="4" height="4" rx="1"/><rect x="10" y="17" width="4" height="4" rx="1"/><rect x="17" y="17" width="4" height="4" rx="1"/></svg>
+      </button>
+    </div>
+    <button class="add-sq" id="pubAddSpk" onclick="openSpkForm(null)" style="display:none" title="Novo Participante" aria-label="Novo Participante"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+  </div>
+</div>
 <div id="pgAgendaHdr" style="display:block;">
   <div class="agenda-head">
     <h2 data-i18n="tabAgenda">Agenda</h2>
@@ -1614,7 +1646,8 @@ body[data-cardstyle="tint"] .lcard{
   <div class="legend" id="legend"></div>
   <div class="room-filters" id="roomFilters"></div>
   <div class="mob-filter-bar" id="mobFilterBar">
-    <!-- Pills populados via JS em renderDrawer() -->
+    <div class="mob-filter-row" id="mobHubRow"></div>
+    <div class="mob-filter-row" id="mobRoomRow"></div>
   </div>
   <div id="stickyRoomHdr" style="display:none;background:var(--surface);border-bottom:2px solid var(--border);box-shadow:0 2px 5px rgba(0,0,0,.08);overflow-x:auto;"></div>
   </div><!-- /dayControls -->
@@ -1663,24 +1696,6 @@ body[data-cardstyle="tint"] .lcard{
       <div>
         <h2 data-i18n="speakers">Palestrantes</h2>
         <span class="pub-spk-count" id="pubSpkCount"></span>
-      </div>
-      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end;">
-        <!-- Botões de view -->
-        <div class="spk-view-btns">
-          <button class="spk-vbtn" id="spkVCards" onclick="setSpkView('cards')" title="Cards">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-          </button>
-          <button class="spk-vbtn on" id="spkVWide" onclick="setSpkView('wide')" title="Tabela (máx palestrantes)">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="4" rx="1"/><rect x="3" y="10" width="18" height="4" rx="1"/><rect x="3" y="16" width="18" height="4" rx="1"/></svg>
-          </button>
-          <button class="spk-vbtn" id="spkVList" onclick="setSpkView('list')" title="Lista">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3" cy="6" r="1" fill="currentColor"/><circle cx="3" cy="12" r="1" fill="currentColor"/><circle cx="3" cy="18" r="1" fill="currentColor"/></svg>
-          </button>
-          <button class="spk-vbtn" id="spkVCompact" onclick="setSpkView('compact')" title="Compacto">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="4" height="4" rx="1"/><rect x="10" y="3" width="4" height="4" rx="1"/><rect x="17" y="3" width="4" height="4" rx="1"/><rect x="3" y="10" width="4" height="4" rx="1"/><rect x="10" y="10" width="4" height="4" rx="1"/><rect x="17" y="10" width="4" height="4" rx="1"/><rect x="3" y="17" width="4" height="4" rx="1"/><rect x="10" y="17" width="4" height="4" rx="1"/><rect x="17" y="17" width="4" height="4" rx="1"/></svg>
-          </button>
-        </div>
-        <button class="add-sq" id="pubAddSpk" onclick="openSpkForm(null)" style="display:none" title="Novo Participante" aria-label="Novo Participante"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
       </div>
     </div>
     <div class="pub-spk-grid" id="pubSpkGrid"></div>
@@ -1899,17 +1914,17 @@ function RN(name){
 }
 var I18N={
   pt:{ appTitle:'Agenda', tabAgenda:'Agenda Acadêmica', tabSpk:'Participantes', viewGrid:'Grade', viewCards:'Cards', viewList:'Lista',
-       searchPh:'Buscar sessão ou palestrante…', searchSpkPh:'Buscar participante…', allHubs:'TODOS OS HUBS',
+       searchPh:'Buscar sessão ou palestrante…', searchSpkPh:'Buscar participante…', allHubs:'TODOS OS HUBS', allRooms:'TODAS AS SALAS',
        talks:'sessões', rooms:'salas', speakers:'Participantes', filters:'Filtros', clearF:'Limpar',
        roomsPhys:'Salas Físicas', hubsThemes:'Hubs / Temas', descLabel:'Descrição', noResults:'Nenhuma sessão encontrada.', noSearchResults:'Nenhum resultado para "%s"', newSpeaker:'Novo Participante', nowTitle:'Agora no evento', nowLive:'AO VIVO', nowNext:'A seguir', nowEnded:'Encerrado por hoje', nowSoon:'Começa em breve', nowFree:'Intervalo',
        tabHighlights:'Destaques', navHome:'Início', navBack:'Voltar', hlRegister:'Inscreva-se', hlAboutLink:'Sobre o evento', hlVideo:'Vídeo do evento', hlAboutLbl:'Sobre o evento', hlVideoLbl:'Vídeo (YouTube)', hlRegUrlLbl:'Link de inscrição', hlShowVideo:'Vídeo do evento', hlAboutTitleLbl:'Título', hlAboutTextLbl:'Texto', hlVideoUrlLbl:'URL do YouTube', spkSpeakers:'Palestrantes', spkCurators:'Curadores', catLabel:'Categoria', catSpeaker:'Palestrante', catCurator:'Curador', manageCats:'Gerenciar categorias', daysTab:'Dias', daysSaveBtn:'Salvar dias', fmtsTab:'Formatos', fmtsSaveBtn:'Salvar formatos', fmtsHint:'Defina o nome de cada formato nos 3 idiomas.', slotAddTitle:'Adicionar novo horário', slotAddHint:'Digite HH:MM — ex: 09:30, 14:00', slotAddBtn:'Adicionar', daysDate:'Data', daysWeekday:'Dia da semana (auto)', daysAdd:'Adicionar dia', daysEmpty:'Nenhum dia. Adicione ao menos um.', daysDelConfirm:'Excluir este dia? As sessões deste dia serão removidas.', daysMin:'Mantenha ao menos um dia.', catMgrTitle:'Categorias de participantes', addCat:'Adicionar categoria', catNamePh:'Nome da categoria', catColorLbl:'Cor', catSave:'Salvar categorias', catEmpty:'Defina ao menos uma categoria.', navManage:'Gerenciar', navEditHl:'Editar Destaques', navTheme:'Tema', navLogin:'Entrar', navAccount:'Minha conta', hlCountdown:'Contagem regressiva', hlDays:'dias', hlHours:'horas', hlToGo:'para o evento', hlLive:'Acontecendo agora', hlNumbers:'O evento em números', hlSpeakers:'Vozes do palco', hlSeeAll:'Ver todos', hlOpening:'Abertura', hlNext:'Em destaque', hlEditTitle:'Editar Destaques', hlHero:'Capa (hero)', hlCoverImg:'Imagem da capa', hlChooseImg:'Escolher imagem', hlRemoveImg:'Remover', hlImgHint:'JPG/PNG · convertida p/ WebP < 100 KB', hlTitleLbl:'Título', hlSubtitleLbl:'Subtítulo', hlAutoLbl:'Blocos automáticos', hlManualLbl:'Blocos personalizados', hlAddCard:'Adicionar bloco', hlLinkTalk:'Vincular a uma sessão (opcional)', hlNoLink:'— Nenhuma —', hlAccent:'Cor do filete', hlSave:'Salvar', hlCancel:'Cancelar', hlShowCountdown:'Contagem regressiva', hlShowStats:'Números do evento', hlShowOpening:'Abertura do evento', hlShowSpeakers:'Participantes em destaque', hlEmptyManual:'Nenhum bloco ainda.', hlEditions:'Edições anteriores', hlShowNumbers:'Números do evento', hlShowEditions:'Edições anteriores', hlNumbersLbl:'Números gerais do evento', hlEditionsLbl:'Edições anteriores (gráfico)', hlAddNumber:'Adicionar número', hlAddEdition:'Adicionar edição', hlValueLbl:'Valor', hlYearLbl:'Ano', hlEditionsTitleLbl:'Título do gráfico', btnAddTalk:'+ Adicionar Sessão', toolsBtn:'Ferramentas', toolHours:'Horários', toolTags:'Gerenciar', toolExport:'Exportar CSV', toolBackup:'Backup', toolClear:'Apagar tudo', evLibras:'Libras', evTrad:'Tradução', evLocation:'Localização da sala', evSpeaker:'Palestrante', evSpeakers:'Palestrantes', evSeeMore:'Ver mais', evSeeLess:'Ver menos', btnClose:'Fechar', btnGcal:'Google Agenda', evTitle:'Detalhes da Sessão', btnEdit:'Editar', btnDelete:'Excluir' },
   en:{ appTitle:'Agenda', tabAgenda:'Academic Agenda', tabSpk:'Participants', viewGrid:'Grid', viewCards:'Cards', viewList:'List',
-       searchPh:'Search a session or speaker…', searchSpkPh:'Search participant…', allHubs:'ALL HUBS',
+       searchPh:'Search a session or speaker…', searchSpkPh:'Search participant…', allHubs:'ALL HUBS', allRooms:'ALL ROOMS',
        talks:'sessions', rooms:'rooms', speakers:'Participants', filters:'Filters', clearF:'Clear',
        roomsPhys:'Rooms', hubsThemes:'Hubs / Themes', descLabel:'Description', noResults:'No sessions found.', noSearchResults:'No results for "%s"', newSpeaker:'New Participant', nowTitle:'Live schedule', nowLive:'LIVE', nowNext:'Up next', nowEnded:'Done for today', nowSoon:'Starting soon', nowFree:'Break',
        tabHighlights:'Highlights', navHome:'Home', navBack:'Back', hlRegister:'Register now', hlAboutLink:'About the event', hlVideo:'Event video', hlAboutLbl:'About the event', hlVideoLbl:'Video (YouTube)', hlRegUrlLbl:'Registration link', hlShowVideo:'Event video', hlAboutTitleLbl:'Title', hlAboutTextLbl:'Text', hlVideoUrlLbl:'YouTube URL', spkSpeakers:'Speakers', spkCurators:'Curators', catLabel:'Category', catSpeaker:'Speaker', catCurator:'Curator', manageCats:'Manage categories', daysTab:'Days', daysSaveBtn:'Save days', fmtsTab:'Formats', fmtsSaveBtn:'Save formats', fmtsHint:'Set each format name in the 3 languages.', slotAddTitle:'Add new time slot', slotAddHint:'Type HH:MM — e.g. 09:30, 14:00', slotAddBtn:'Add', daysDate:'Date', daysWeekday:'Weekday (auto)', daysAdd:'Add day', daysEmpty:'No days. Add at least one.', daysDelConfirm:'Delete this day? Its sessions will be removed.', daysMin:'Keep at least one day.', catMgrTitle:'Participant categories', addCat:'Add category', catNamePh:'Category name', catColorLbl:'Color', catSave:'Save categories', catEmpty:'Define at least one category.', navManage:'Manage', navEditHl:'Edit Highlights', navTheme:'Theme', navLogin:'Sign in', navAccount:'My account', hlCountdown:'Countdown', hlDays:'days', hlHours:'hours', hlToGo:'to the event', hlLive:'Happening now', hlNumbers:'The event in numbers', hlSpeakers:'Voices on stage', hlSeeAll:'See all', hlOpening:'Opening', hlNext:'Featured', hlEditTitle:'Edit Highlights', hlHero:'Hero', hlCoverImg:'Cover image', hlChooseImg:'Choose image', hlRemoveImg:'Remove', hlImgHint:'JPG/PNG · converted to WebP < 100 KB', hlTitleLbl:'Title', hlSubtitleLbl:'Subtitle', hlAutoLbl:'Automatic blocks', hlManualLbl:'Custom blocks', hlAddCard:'Add block', hlLinkTalk:'Link to a session (optional)', hlNoLink:'— None —', hlAccent:'Accent color', hlSave:'Save', hlCancel:'Cancel', hlShowCountdown:'Countdown', hlShowStats:'Event numbers', hlShowOpening:'Event opening', hlShowSpeakers:'Featured participants', hlEmptyManual:'No blocks yet.', hlEditions:'Previous editions', hlShowNumbers:'Event numbers', hlShowEditions:'Previous editions', hlNumbersLbl:'General event numbers', hlEditionsLbl:'Previous editions (chart)', hlAddNumber:'Add number', hlAddEdition:'Add edition', hlValueLbl:'Value', hlYearLbl:'Year', hlEditionsTitleLbl:'Chart title', btnAddTalk:'+ Add Session', toolsBtn:'Tools', toolHours:'Time slots', toolTags:'Manage', toolExport:'Export CSV', toolBackup:'Backup', toolClear:'Clear all', evLibras:'Sign lang.', evTrad:'Translation', evLocation:'Room location', evSpeaker:'Speaker', evSpeakers:'Speakers', evSeeMore:'See more', evSeeLess:'See less', btnClose:'Close', btnGcal:'Google Calendar', evTitle:'Session details', btnEdit:'Edit', btnDelete:'Delete' },
   es:{ appTitle:'Agenda', tabAgenda:'Agenda Académica', tabSpk:'Participantes', viewGrid:'Cuadrícula', viewCards:'Tarjetas', viewList:'Lista',
-       searchPh:'Buscar sesión o ponente…', searchSpkPh:'Buscar participante…', allHubs:'TODOS LOS HUBS',
+       searchPh:'Buscar sesión o ponente…', searchSpkPh:'Buscar participante…', allHubs:'TODOS LOS HUBS', allRooms:'TODAS LAS SALAS',
        talks:'sesiones', rooms:'salas', speakers:'Participantes', filters:'Filtros', clearF:'Limpiar',
        roomsPhys:'Salas', hubsThemes:'Hubs / Temas', descLabel:'Descripción', noResults:'No se encontraron sesiones.', noSearchResults:'Sin resultados para "%s"', newSpeaker:'Nuevo Participante', nowTitle:'En vivo', nowLive:'EN VIVO', nowNext:'A seguir', nowEnded:'Terminado por hoy', nowSoon:'Empieza pronto', nowFree:'Intervalo',
        tabHighlights:'Destacados', navHome:'Inicio', navBack:'Volver', hlRegister:'Inscríbete ya', hlAboutLink:'Sobre el evento', hlVideo:'Video del evento', hlAboutLbl:'Sobre el evento', hlVideoLbl:'Video (YouTube)', hlRegUrlLbl:'Enlace de inscripción', hlShowVideo:'Video del evento', hlAboutTitleLbl:'Título', hlAboutTextLbl:'Texto', hlVideoUrlLbl:'URL de YouTube', spkSpeakers:'Ponentes', spkCurators:'Curadores', catLabel:'Categoría', catSpeaker:'Ponente', catCurator:'Curador', manageCats:'Gestionar categorías', daysTab:'Días', daysSaveBtn:'Guardar días', fmtsTab:'Formatos', fmtsSaveBtn:'Guardar formatos', fmtsHint:'Define el nombre de cada formato en los 3 idiomas.', slotAddTitle:'Agregar nuevo horario', slotAddHint:'Escribe HH:MM — ej: 09:30, 14:00', slotAddBtn:'Agregar', daysDate:'Fecha', daysWeekday:'Día de la semana (auto)', daysAdd:'Agregar día', daysEmpty:'Ningún día. Agrega al menos uno.', daysDelConfirm:'¿Eliminar este día? Sus sesiones se eliminarán.', daysMin:'Mantén al menos un día.', catMgrTitle:'Categorías de participantes', addCat:'Agregar categoría', catNamePh:'Nombre de la categoría', catColorLbl:'Color', catSave:'Guardar categorías', catEmpty:'Define al menos una categoría.', navManage:'Gestionar', navEditHl:'Editar Destacados', navTheme:'Tema', navLogin:'Entrar', navAccount:'Mi cuenta', hlCountdown:'Cuenta regresiva', hlDays:'días', hlHours:'horas', hlToGo:'para el evento', hlLive:'Sucediendo ahora', hlNumbers:'El evento en números', hlSpeakers:'Voces del escenario', hlSeeAll:'Ver todos', hlOpening:'Apertura', hlNext:'Destacado', hlEditTitle:'Editar Destacados', hlHero:'Portada', hlCoverImg:'Imagen de portada', hlChooseImg:'Elegir imagen', hlRemoveImg:'Quitar', hlImgHint:'JPG/PNG · convertida a WebP < 100 KB', hlTitleLbl:'Título', hlSubtitleLbl:'Subtítulo', hlAutoLbl:'Bloques automáticos', hlManualLbl:'Bloques personalizados', hlAddCard:'Agregar bloque', hlLinkTalk:'Vincular a una sesión (opcional)', hlNoLink:'— Ninguna —', hlAccent:'Color de acento', hlSave:'Guardar', hlCancel:'Cancelar', hlShowCountdown:'Cuenta regresiva', hlShowStats:'Números del evento', hlShowOpening:'Apertura del evento', hlShowSpeakers:'Participantes destacados', hlEmptyManual:'Aún no hay bloques.', hlEditions:'Ediciones anteriores', hlShowNumbers:'Números del evento', hlShowEditions:'Ediciones anteriores', hlNumbersLbl:'Números generales del evento', hlEditionsLbl:'Ediciones anteriores (gráfico)', hlAddNumber:'Agregar número', hlAddEdition:'Agregar edición', hlValueLbl:'Valor', hlYearLbl:'Año', hlEditionsTitleLbl:'Título del gráfico', btnAddTalk:'+ Agregar Sesión', toolsBtn:'Herramientas', toolHours:'Horarios', toolTags:'Gestionar', toolExport:'Exportar CSV', toolBackup:'Backup', toolClear:'Borrar todo', evLibras:'Lengua de señas', evTrad:'Traducción', evLocation:'Ubicación de la sala', evSpeaker:'Ponente', evSpeakers:'Ponentes', evSeeMore:'Ver más', evSeeLess:'Ver menos', btnClose:'Cerrar', btnGcal:'Google Calendar', evTitle:'Detalles de la sesión', btnEdit:'Editar', btnDelete:'Eliminar' }
@@ -2344,6 +2359,7 @@ function showPage(p, fromHistory){
   document.getElementById('pgAgenda').style.display     = 'none';
   document.getElementById('pgAgendaHdr').style.display  = 'none';
   document.getElementById('pgSpk').style.display        = 'none';
+  var psh=document.getElementById('pgSpkHdr'); if(psh) psh.style.display='none';
   document.getElementById('pgAdmin').style.display      = 'none';
   var dc=document.getElementById('dayControls'); if(dc) dc.style.display='none';
 
@@ -2370,6 +2386,7 @@ function showPage(p, fromHistory){
     _animIn(document.getElementById('pgAgenda'));
   } else if(p==='spk'){
     document.getElementById('pgSpk').style.display='block';
+    var psh2=document.getElementById('pgSpkHdr'); if(psh2) psh2.style.display='block';
     if(mab){ mab.style.display='none'; }
     renderPubSpkGrid(_pubSpkQ||'');
     _animIn(document.getElementById('pgSpk'));
@@ -3549,6 +3566,18 @@ var activeHubs = {};
 
 function _anyHubActive(){ for(var k in activeHubs) if(activeHubs[k]) return true; return false; }
 
+// SALAS — mesmo modelo dos hubs: activeRooms vazio = TODAS; chaves = salas
+// selecionadas (multi-seleção). hiddenR é DERIVADO disso para que toda a
+// renderização existente (grade/lista/cards) continue funcionando igual.
+var activeRooms = {};
+function _anyRoomActive(){ for(var k in activeRooms) if(activeRooms[k]) return true; return false; }
+function _syncHiddenR(){
+  hiddenR = {};
+  if(_anyRoomActive()){
+    for(var i=0;i<ROOMS.length;i++){ if(!activeRooms[ROOMS[i].id]) hiddenR[ROOMS[i].id]=true; }
+  }
+}
+
 function renderLegend(){
   var html='';
   var todosOn = !_anyHubActive();
@@ -3592,19 +3621,35 @@ function drawerToggleHub(idx){
 
 function renderRoomFilters(){
   var html='';
+  var todasOn = !_anyRoomActive();
+  // Botão TODAS AS SALAS
+  html+='<div class="room-filter-btn'+(todasOn?'':' off')+'" id="legr-todas" onclick="toggleRoomFilter(-1)" style="'+(todasOn?'border-color:var(--blue);color:var(--blue);font-weight:700;background:var(--surface);':'border-color:var(--border);color:var(--text2);background:var(--surface);')+'">'+t18('allRooms')+'</div>';
+  // Salas individuais (sem cor própria — estado ativo usa o roxo padrão)
   for(var i=0;i<ROOMS.length;i++){
-    var r=ROOMS[i],off=hiddenR[r.id];
-    html+='<div class="room-filter-btn'+(off?' off':'')+'" style="border-color:var(--border);color:var(--text2);background:var(--surface);" onclick="toggleRoomFilter(\''+r.id+'\')">'+esc(RN(r.name))+'</div>';
+    var r=ROOMS[i];
+    var isOn=!!activeRooms[r.id];
+    html+='<div class="room-filter-btn'+(isOn?'':' off')+'" onclick="toggleRoomFilter(\''+r.id+'\')" style="'+(isOn?'border-color:var(--blue);color:var(--blue);background:var(--surface);font-weight:700;':'border-color:var(--border);color:var(--text2);background:var(--surface);')+'">'+esc(RN(r.name))+'</div>';
   }
   var el=document.getElementById('roomFilters'); if(el) el.innerHTML=html;
   renderDrawer();
 }
 
-function toggleRoomFilter(id){ hiddenR[id]=!hiddenR[id]; renderRoomFilters(); renderDrawer(); renderMain(); }
+function toggleRoomFilter(id){
+  if(id===-1){
+    // TODAS: limpa a seleção de salas
+    activeRooms={};
+  } else {
+    // Liga/desliga esta sala; TODAS some automaticamente
+    if(activeRooms[id]) delete activeRooms[id];
+    else activeRooms[id]=true;
+  }
+  _syncHiddenR();
+  renderRoomFilters(); renderDrawer(); renderMain();
+}
 function openFilterDrawer(){ renderDrawer(); document.getElementById('filterOverlay').classList.add('open'); document.getElementById('filterDrawer').classList.add('open'); }
 function closeFilterDrawer(){ document.getElementById('filterOverlay').classList.remove('open'); document.getElementById('filterDrawer').classList.remove('open'); }
 function resetFilters(){
-  hiddenR={}; hiddenH={}; activeHubs={};
+  hiddenR={}; hiddenH={}; activeHubs={}; activeRooms={};
   renderLegend();
   renderRoomFilters();
   renderDrawer(); renderMain();
@@ -3638,26 +3683,43 @@ function renderDrawer(){
   var af=0; for(var k in hiddenR) if(hiddenR[k]) af++; for(var k in activeHubs) if(activeHubs[k]) af++;
   var badge=document.getElementById('mobFilterCount'); if(badge){ badge.textContent=af; badge.style.display=af>0?'inline':'none'; }
 
-  // Pills de Hub na barra mobile
-  var bar=document.getElementById('mobFilterBar');
-  if(bar){
-    var ph='';
+  // Barra mobile em DUAS linhas: Hubs (cima) + Salas (baixo)
+  var hubRow=document.getElementById('mobHubRow');
+  var roomRow=document.getElementById('mobRoomRow');
+  if(hubRow){
+    var hh2='';
+    // ── HUBS (linha de cima) ──
     var tOn2=!_anyHubActive();
-    ph+='<div class="mob-room-pill'+(tOn2?'':' off')+'" '+
+    hh2+='<div class="mob-room-pill'+(tOn2?'':' off')+'" '+
       'style="border-color:var(--blue);color:var(--blue);background:'+(tOn2?'var(--blue-lt)':'var(--surface)')+';" '+
       'onclick="drawerToggleHub(-1)">'+
-      '<div style="width:7px;height:7px;border-radius:50%;background:var(--blue);display:inline-block;margin-right:5px;flex-shrink:0;"></div>TODOS</div>';
+      '<div style="width:7px;height:7px;border-radius:50%;background:var(--blue);display:inline-block;margin-right:5px;flex-shrink:0;"></div>'+t18('allHubs')+'</div>';
     for(var i=0;i<HUBS.length;i++){
       var hcolor=HUB_COLORS[i]?HUB_COLORS[i].color:'#9e9e9e';
       var hbg=HUB_COLORS[i]?HUB_COLORS[i].bg:'#f5f5f5';
       var hOn=!!activeHubs[i];
-      ph+='<div class="mob-room-pill'+(hOn?'':' off')+'" '+
+      hh2+='<div class="mob-room-pill'+(hOn?'':' off')+'" '+
         'style="border-color:'+hcolor+';color:'+hcolor+';background:'+(hOn?hbg:'var(--surface)')+';" '+
         'onclick="drawerToggleHub('+i+')">'+
         '<div style="width:7px;height:7px;border-radius:50%;background:'+hcolor+';display:inline-block;margin-right:5px;flex-shrink:0;"></div>'+
         esc(L(HUBS[i]))+'</div>';
     }
-    bar.innerHTML=ph;
+    hubRow.innerHTML=hh2;
+  }
+  if(roomRow){
+    var rh='';
+    // ── SALAS (linha de baixo; sem cor própria) ──
+    var todasR=!_anyRoomActive();
+    rh+='<div class="mob-room-pill'+(todasR?'':' off')+'" '+
+      'style="border-color:var(--blue);color:var(--blue);background:'+(todasR?'var(--blue-lt)':'var(--surface)')+';" '+
+      'onclick="toggleRoomFilter(-1)">'+t18('allRooms')+'</div>';
+    for(var ri=0;ri<ROOMS.length;ri++){
+      var rOn=!!activeRooms[ROOMS[ri].id];
+      rh+='<div class="mob-room-pill'+(rOn?'':' off')+'" '+
+        'style="border-color:'+(rOn?'var(--blue)':'var(--border)')+';color:'+(rOn?'var(--blue)':'var(--text2)')+';background:'+(rOn?'var(--blue-lt)':'var(--surface)')+';" '+
+        'onclick="toggleRoomFilter(\''+ROOMS[ri].id+'\')">'+esc(RN(ROOMS[ri].name))+'</div>';
+    }
+    roomRow.innerHTML=rh;
   }
 }
 
@@ -4197,7 +4259,7 @@ function updateDayTabs(){
 }
 function _persistUI(){ try{localStorage.setItem('agenda_ui_state',JSON.stringify({day:curDay,view:curView,page:curPage}));}catch(e){} }
 function switchDay(i){ _setActiveDay(i); updateDayTabs(); _persistUI(); renderMain(); _animIn(document.getElementById('pgAgenda')); var sa=document.getElementById('scrollArea'); if(sa) sa.scrollTop=0; }
-function setView(v){ curView=v; document.getElementById('vGrid').className='spk-vbtn'+(v==='grid'?' on':''); document.getElementById('vCards').className='spk-vbtn'+(v==='cards'?' on':''); document.getElementById('vList').className='spk-vbtn'+(v==='list'?' on':''); _updateZoomControls(); _persistUI(); renderMain(); }
+function setView(v){ curView=v; document.body.setAttribute('data-view', v); document.getElementById('vGrid').className='spk-vbtn'+(v==='grid'?' on':''); document.getElementById('vCards').className='spk-vbtn'+(v==='cards'?' on':''); document.getElementById('vList').className='spk-vbtn'+(v==='list'?' on':''); _updateZoomControls(); _persistUI(); renderMain(); }
 function _zoomIn(){
   if(curView==='grid') gridSetZoom(_gridZoom + _gridZoomStep);
   else if(curView==='gantt') ganttSetZoom(_ganttZoom + _ganttZoomStep);
@@ -4224,7 +4286,7 @@ function _updateZoomControls(){
     bar.style.display='none';
   }
 }
-function setView(v){ curView=v; document.getElementById('vGrid').className='spk-vbtn'+(v==='grid'?' on':''); document.getElementById('vCards').className='spk-vbtn'+(v==='cards'?' on':''); document.getElementById('vList').className='spk-vbtn'+(v==='list'?' on':''); _updateZoomControls(); _persistUI(); renderMain(); }
+function setView(v){ curView=v; document.body.setAttribute('data-view', v); document.getElementById('vGrid').className='spk-vbtn'+(v==='grid'?' on':''); document.getElementById('vCards').className='spk-vbtn'+(v==='cards'?' on':''); document.getElementById('vList').className='spk-vbtn'+(v==='list'?' on':''); _updateZoomControls(); _persistUI(); renderMain(); }
 function onSearch(){
   var v = document.getElementById('srchInput').value.trim().toLowerCase();
   searchQ = v;
