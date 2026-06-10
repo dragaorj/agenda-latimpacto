@@ -131,6 +131,25 @@ body[data-page="home"] #dayControls{display:none!important;}
   #pgHighlights{padding-bottom:calc(78px + env(safe-area-inset-bottom));}
 }
 
+/* ===== BOOT GATE — "tudo aparece junto" =====
+   Segura a revelação do app até os dados carregarem e a 1ª renderização
+   terminar, então faz um fade suave de tudo ao mesmo tempo (evita o flash de
+   "cabeçalho primeiro, conteúdo depois"). Só opacidade — não usa transform
+   para não quebrar o header, modais fixos nem a animação de margem do trilho. */
+#appShell,#rail{transition:opacity .6s cubic-bezier(.22,1,.36,1);}
+body[data-booting] #appShell,body[data-booting] #rail{opacity:0;}
+body[data-booted] #appShell,body[data-booted] #rail{opacity:1;}
+@media (prefers-reduced-motion: reduce){
+  #appShell,#rail{transition:none;}
+  body[data-booting] #appShell,body[data-booting] #rail{opacity:1;}
+}
+/* Entrada sutil dos itens no 1º carregamento (rise suave escalonado).
+   Só TRANSFORM (sem opacity) → compõe limpo com o fade do shell, sem fade
+   duplo; o item nunca fica invisível preso. */
+.fr-tr{transition:transform .6s cubic-bezier(.22,1,.36,1)!important;}
+.fr-pre{transform:translateY(14px);animation:none!important;}
+@media (prefers-reduced-motion: reduce){ .fr-pre{transform:none;} }
+
 /* ===== ANIMAÇÕES SUAVES (globais) ===== */
 @media (prefers-reduced-motion: no-preference){
   /* transição de tema (claro/escuro) e estados */
@@ -1475,6 +1494,11 @@ body[data-cardstyle="tint"] .lcard{
     document.body.setAttribute('data-guest', t?'0':'1');
   }catch(e){ document.body.setAttribute('data-guest','1'); }
   document.body.setAttribute('data-page','agenda');
+  // Segura a revelação até os dados carregarem (ver BOOT GATE no CSS).
+  document.body.setAttribute('data-booting','1');
+  // Rede de segurança: revela de qualquer forma após 3.5s, caso o carregamento
+  // demore ou falhe — nunca deixa a tela em branco presa.
+  setTimeout(function(){ try{ if(!document.body.hasAttribute('data-booted')){ document.body.removeAttribute('data-booting'); document.body.setAttribute('data-booted','1'); ['appShell','rail'].forEach(function(id){ var el=document.getElementById(id); if(el){ el.style.transition='none'; el.style.opacity='1'; } }); } }catch(_e){} }, 3500);
 })();
 </script>
 <aside id="rail" aria-label="Navegação principal">
@@ -6447,8 +6471,51 @@ loadData(function(){
   applyLang();        // idioma + abas de dia + legenda + grade + botão de idioma
   setView(curView);
   _updateZoomControls();
-  showPage('agenda');   // a plataforma sempre abre na Agenda (Home só p/ logados)
+  window._freshBoot = true;
+  showPage('agenda');   // a plataforma sempre abre na Agenda (renderiza síncrono)
+  // Revela TUDO junto logo após a 1ª renderização pintar. Usa setTimeout (não
+  // rAF) porque timers disparam mesmo com o relógio de animação throttled.
+  setTimeout(function(){ _revealApp(); _animFreshItems(); }, 30);
 });
+
+// Revela o app (fade suave de tudo junto). Robusto: se a transição não rodar
+// (aba em 2º plano / relógio de animação pausado), faz um snap para visível —
+// nunca deixa a tela presa em branco.
+function _revealApp(){
+  if(window.__revealed) return; window.__revealed = true;
+  document.body.removeAttribute('data-booting');
+  document.body.setAttribute('data-booted','1');
+  setTimeout(function(){
+    ['appShell','rail'].forEach(function(id){
+      var el=document.getElementById(id); if(!el) return;
+      if(+getComputedStyle(el).opacity < 0.99){
+        el.style.transition='none'; el.style.opacity='1'; void el.offsetWidth;
+        el.style.opacity=''; setTimeout(function(){ el.style.transition=''; }, 30);
+      }
+    });
+  }, 720);
+}
+
+// Entrada sutil e escalonada dos itens da agenda no 1º carregamento.
+// Apenas TRANSFORM (sem opacity) → compõe limpo com o fade do shell, sem
+// "fade duplo", e nunca prende item invisível. setTimeout cancela a transição
+// garantindo o estado final mesmo com o relógio de animação pausado.
+function _animFreshItems(){
+  if(!window._freshBoot) return;
+  window._freshBoot = false;
+  try{
+    if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var cont = document.getElementById('agendaContent') || document.getElementById('pgAgenda');
+    if(!cont) return;
+    var nodes = cont.querySelectorAll('.card, .cgrid-card, .lcard');
+    if(!nodes.length) return;
+    var arr = [];
+    for(var i=0;i<nodes.length && i<26;i++){ nodes[i].classList.add('fr-pre','fr-tr'); arr.push(nodes[i]); }
+    void cont.offsetWidth;   // pinta o estado inicial antes de revelar
+    arr.forEach(function(el,i){ setTimeout(function(){ el.classList.remove('fr-pre'); }, 50 + i*40); });
+    setTimeout(function(){ arr.forEach(function(el){ el.classList.remove('fr-pre','fr-tr'); }); }, 50 + arr.length*40 + 1200);
+  }catch(e){}
+}
 
 // ── Polling em tempo real — atualiza a cada 30s para todos os usuários ──
 var _pollLastHash = '';
