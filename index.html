@@ -1156,7 +1156,11 @@ body[data-page="spk"] .site-credit{display:block;}
   .tbar-title{display:none;}
   .vbtns{flex:1;min-width:0;}
   .vbtns .btn{flex:1;text-align:center;}
-  #zoomControls{flex-shrink:0;}
+  /* Mobile: sem zoom — o menu de modos de visualização fica onde estava o zoom
+     (à direita) e os dias ganham espaço, evitando o corte do 11/09. */
+  #zoomControls{display:none!important;}
+  .dtabs-row{gap:8px;padding-right:10px;}
+  .dtabs-row .dtabs{padding-right:2px;}
 
   .stats{padding:4px 10px;gap:8px;font-size:11px;}
   .legend{display:none!important;}
@@ -1399,6 +1403,8 @@ body{letter-spacing:-.005em;}
 .lang-opt{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:none;border:none;color:var(--text);font-family:var(--font);font-size:13px;font-weight:500;padding:8px 10px;border-radius:8px;cursor:pointer;}
 .lang-opt:hover{background:var(--bg);}
 .lang-opt.on{color:var(--brand);font-weight:600;}
+.lang-opt-code{display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:22px;padding:0 6px;border:1px solid var(--border);border-radius:6px;font-size:11px;font-weight:700;letter-spacing:.04em;color:var(--text2);flex-shrink:0;}
+.lang-opt.on .lang-opt-code{color:var(--brand);border-color:color-mix(in srgb,var(--brand) 40%,var(--border));background:color-mix(in srgb,var(--brand) 8%,transparent);}
 .lang-opt.on::after{content:'✓';margin-left:auto;color:var(--brand);font-weight:700;font-size:13px;}
 /* abas do painel de conta */
 .auth-tabs{display:flex;gap:4px;border-bottom:1px solid var(--border);margin:-4px -2px 16px;padding-bottom:0;}
@@ -1542,14 +1548,13 @@ body[data-cardstyle="tint"] .lcard{
     </div>
     <div class="lang-dd" id="langSwitch">
       <button class="lang-trigger" id="langTrigger" onclick="toggleLangMenu(event)" aria-haspopup="true" title="Idioma / Language / Idioma">
-        <span class="lang-flag" id="langCurFlag"></span>
         <span class="lang-code" id="langCurCode">PT</span>
         <svg class="lang-caret" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
       </button>
       <div class="lang-menu" id="langMenu">
-        <button class="lang-opt" data-lang="pt" onclick="pickLang('pt')"><span class="lang-flag"></span><span>Português</span></button>
-        <button class="lang-opt" data-lang="en" onclick="pickLang('en')"><span class="lang-flag"></span><span>English</span></button>
-        <button class="lang-opt" data-lang="es" onclick="pickLang('es')"><span class="lang-flag"></span><span>Español</span></button>
+        <button class="lang-opt" data-lang="pt" onclick="pickLang('pt')"><span class="lang-opt-code">PT</span><span class="lang-opt-name">Português</span></button>
+        <button class="lang-opt" data-lang="en" onclick="pickLang('en')"><span class="lang-opt-code">EN</span><span class="lang-opt-name">English</span></button>
+        <button class="lang-opt" data-lang="es" onclick="pickLang('es')"><span class="lang-opt-code">ES</span><span class="lang-opt-name">Español</span></button>
       </div>
     </div>
     <!-- Botão Entrar / conta (modo edição) -->
@@ -1932,11 +1937,16 @@ function pickLang(l){ closeLangMenu(); setLang(l); }
 document.addEventListener('click', function(e){ var d=document.getElementById('langSwitch'); if(d && !d.contains(e.target)) closeLangMenu(); });
 function updateLangBtn(){
   var codes={pt:'PT',en:'EN',es:'ES'};
-  var cf=document.getElementById('langCurFlag'); if(cf) cf.innerHTML=LANG_FLAGS[LANG]||'';
+  var names={
+    pt:{pt:'Português',en:'Inglês',es:'Espanhol'},
+    en:{pt:'Portuguese',en:'English',es:'Spanish'},
+    es:{pt:'Portugués',en:'Inglés',es:'Español'}
+  };
+  var nm=names[LANG]||names.pt;
   var cc=document.getElementById('langCurCode'); if(cc) cc.textContent=codes[LANG]||'';
   var opts=document.querySelectorAll('#langMenu .lang-opt');
   for(var i=0;i<opts.length;i++){ var lg=opts[i].getAttribute('data-lang');
-    var fl=opts[i].querySelector('.lang-flag'); if(fl) fl.innerHTML=LANG_FLAGS[lg]||'';
+    var lbl=opts[i].querySelector('.lang-opt-name'); if(lbl) lbl.textContent=nm[lg]||lg;
     opts[i].classList.toggle('on', lg===LANG);
   }
 }
@@ -3679,6 +3689,31 @@ function renderMain(){
   else if(curView==='gantt') renderGantt(sc,vis);
   else renderList(sc,vis);
   updateStats(sc);
+  _preloadLocImgs();
+}
+
+// Pré-carrega (e decodifica) as imagens de localização das salas de TODOS os
+// dias, para que ao abrir o popup da sessão a imagem apareça instantaneamente
+// (sem o atraso de decodificação do data-URL). Deduplica por src.
+var _locImgWarm = {};
+function _preloadLocImgs(){
+  try{
+    for(var d=0; d<NDAYS; d++){
+      var sc=SCHEDULES[d]; if(!sc) continue;
+      for(var slot in sc){
+        var rooms=sc[slot]; if(!rooms) continue;
+        for(var r in rooms){
+          var t=rooms[r];
+          if(t && t.locImg && !_locImgWarm[t.locImg]){
+            _locImgWarm[t.locImg]=1;
+            var im=new Image();
+            im.src=t.locImg;
+            if(im.decode){ im.decode().catch(function(){}); }
+          }
+        }
+      }
+    }
+  }catch(e){}
 }
 
 function renderGrid(sc,vis){
@@ -4431,7 +4466,7 @@ function openTalkDetail(id){
   // Localização da sala
   if(t.locText||t.locImg){
     body+='<div class="sec">📍 '+t18('evLocation')+'</div>';
-    if(t.locImg) body+='<img src="'+t.locImg+'" class="map-img-clickable" style="border-radius:8px;margin-bottom:6px;" alt="" onclick="openMapLb(this.src,\''+esc(t.locText||'')+'\')">';
+    if(t.locImg) body+='<img src="'+t.locImg+'" class="map-img-clickable" decoding="sync" loading="eager" style="border-radius:8px;margin-bottom:6px;" alt="" onclick="openMapLb(this.src,\''+esc(t.locText||'')+'\')">';
     if(t.locText) body+='<div style="font-size:13px;color:var(--text2);background:var(--bg);border-radius:7px;padding:10px 13px;">'+esc(t.locText)+'</div>';
   }
   var spkIds=[];
