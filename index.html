@@ -4915,11 +4915,17 @@ function saveTalk(){
   if(_sb){ _sb.disabled=true; _sb.textContent='Traduzindo…'; }
   Promise.all([_autoFillML(titleObj), _autoFillML(descObj)]).then(function(){
     if(_sb){ _sb.disabled=false; _sb.textContent=_sbtxt; }
-    _finishSaveTalk(titleObj, title, descObj, day, time, room, hub, format, libras, traducao, duration, spkNames, locText, locImg);
+    _finishSaveTalk(titleObj, title, descObj, day, time, room, hub, format, langs, duration, spkNames, locText, locImg);
+  }).catch(function(err){
+    // Nunca deixa a gravação morrer em silêncio: restaura o botão, avisa e
+    // ainda assim tenta finalizar com os textos como estão.
+    if(_sb){ _sb.disabled=false; _sb.textContent=_sbtxt; }
+    try{ _finishSaveTalk(titleObj, title, descObj, day, time, room, hub, format, langs, duration, spkNames, locText, locImg); }
+    catch(e){ alert('Não foi possível salvar a sessão: '+((e&&e.message)||String(e||err||''))); }
   });
 }
 
-function _finishSaveTalk(titleObj, title, descObj, day, time, room, hub, format, libras, traducao, duration, spkNames, locText, locImg){
+function _finishSaveTalk(titleObj, title, descObj, day, time, room, hub, format, langs, duration, spkNames, locText, locImg){
   // Monta objeto da sessão — preserva id existente em edição
   var talkId = editTalkId || makeId('t');
   var obj = {
@@ -5943,7 +5949,8 @@ function doDownloadBackup(filename){
     rooms: ROOMS,
     days: DAYS,
     highlights: HIGHLIGHTS,
-    categories: getCategories()
+    categories: getCategories(),
+    formats: FORMATS
   };
   var blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
   var url  = URL.createObjectURL(blob);
