@@ -1695,7 +1695,7 @@ body[data-cardstyle="tint"] .lcard{
       <div class="filter-section-title">🏛 <span data-i18n="roomsPhys">Salas Físicas</span></div>
       <div class="filter-chips" id="drawerRoomChips"></div>
     </div>
-    <div>
+    <div id="drawerHubSection">
       <div class="filter-section-title">🏷 <span data-i18n="hubsThemes">Hubs / Temas</span></div>
       <div class="filter-chips" id="drawerHubChips"></div>
     </div>
@@ -3621,6 +3621,17 @@ function _syncHiddenR(){
 }
 
 function renderLegend(){
+  var el=document.getElementById('legend');
+  // Sem nenhum Hub cadastrado → some a linha inteira (nada para filtrar)
+  if(!HUBS.length){
+    if(el){ el.innerHTML=''; el.style.display='none'; }
+    var badge0=document.getElementById('spkBadge');
+    if(badge0) badge0.textContent=SPEAKERS.length;
+    renderRoomFilters();
+    renderDrawer();
+    return;
+  }
+  if(el) el.style.display='';
   var html='';
   var todosOn = !_anyHubActive();
   // Botão TODOS OS HUBS (opcional — controlado por SHOW_ALL_HUBS_BTN)
@@ -3713,7 +3724,13 @@ function renderDrawer(){
     rc.innerHTML=rh;
   }
   var hc=document.getElementById('drawerHubChips');
-  if(hc){
+  var drawerHubSection=document.getElementById('drawerHubSection');
+  if(!HUBS.length){
+    if(drawerHubSection) drawerHubSection.style.display='none';
+  } else {
+    if(drawerHubSection) drawerHubSection.style.display='';
+  }
+  if(hc && HUBS.length){
     var hh='';
     var todosOn=!_anyHubActive();
     if(SHOW_ALL_HUBS_BTN){
@@ -3735,6 +3752,9 @@ function renderDrawer(){
   var hubRow=document.getElementById('mobHubRow');
   var roomRow=document.getElementById('mobRoomRow');
   if(hubRow){
+    if(!HUBS.length){ hubRow.innerHTML=''; hubRow.style.display='none'; }
+    else {
+    hubRow.style.display='';
     var hh2='';
     // ── HUBS (linha de cima) ──
     var tOn2=!_anyHubActive();
@@ -3755,6 +3775,7 @@ function renderDrawer(){
         esc(L(HUBS[i]))+'</div>';
     }
     hubRow.innerHTML=hh2;
+    }
   }
   if(roomRow){
     var rh='';
@@ -5802,11 +5823,11 @@ function _applySBData(d){
   (d.talks||[]).forEach(function(t){ var day=t.day||0; if(day<0||day>=NDAYS) return; if(!sched[day][t.time]) sched[day][t.time]={}; sched[day][t.time][t.room]=t; });
   SCHEDULES = sched;
   var c=d.config||{};
-  if(c.rooms&&c.rooms.length) ROOMS=c.rooms;
-  if(c.hubs&&c.hubs.length) HUBS=c.hubs;
-  if(c.hubColors&&c.hubColors.length) HUB_COLORS=c.hubColors;
-  if(c.slots&&c.slots.length) SLOTS=c.slots;
-  if(c.days&&c.days.length){ DAYS=c.days; NDAYS=DAYS.length; rebuildDayMeta(); }
+  if(Array.isArray(c.rooms)) ROOMS=c.rooms;
+  if(Array.isArray(c.hubs)) HUBS=c.hubs;
+  if(Array.isArray(c.hubColors)) HUB_COLORS=c.hubColors;
+  if(Array.isArray(c.slots)) SLOTS=c.slots;
+  if(Array.isArray(c.days) && c.days.length){ DAYS=c.days; NDAYS=DAYS.length; rebuildDayMeta(); }
   HIGHLIGHTS = (c.highlights && c.highlights.hero) ? c.highlights : (HIGHLIGHTS || _defaultHighlights());
   if(Array.isArray(c.categories) && c.categories.length) SPK_CATEGORIES=c.categories;
   if(Array.isArray(c.formats) && c.formats.length) FORMATS=c.formats;
