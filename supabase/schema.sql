@@ -38,6 +38,7 @@ create table if not exists public.speakers (
   bio        text default '',
   photo      text default '',                 -- URL no Storage
   linkedin   text default '',
+  category   text default 'speaker',           -- 'speaker' | 'curator'
   sort       int default 0,
   updated_at timestamptz default now()
 );
@@ -68,6 +69,9 @@ create table if not exists public.config (
   slots      jsonb default '[]'::jsonb,
   days       jsonb default '[]'::jsonb,
   highlights jsonb default '{}'::jsonb,
+  categories jsonb default '[]'::jsonb,
+  formats    jsonb default '[]'::jsonb,
+  show_all_hubs_btn boolean default true,
   updated_at timestamptz default now(),
   constraint config_singleton check (id = 1)
 );
@@ -180,6 +184,9 @@ begin
     slots      = coalesce(p_config->'slots', slots),
     days       = coalesce(p_config->'days', days),
     highlights = coalesce(p_config->'highlights', highlights),
+    categories = coalesce(p_config->'categories', categories),
+    formats    = coalesce(p_config->'formats', formats),
+    show_all_hubs_btn = coalesce((p_config->>'showAllHubsBtn')::boolean, show_all_hubs_btn),
     updated_at = now()
   where id = 1;
 end; $$;
@@ -201,15 +208,16 @@ declare pr public.profiles;
 begin
   pr := public._profile_by_token(p_token);
   if pr.id is null then raise exception 'token inválido'; end if;
-  insert into public.speakers(id,name,"role",company,bio,photo,linkedin,sort,updated_at)
+  insert into public.speakers(id,name,"role",company,bio,photo,linkedin,category,sort,updated_at)
   values (
     coalesce(p_s->>'id', gen_random_uuid()::text),
     coalesce(p_s->>'name',''), coalesce(p_s->>'role',''), coalesce(p_s->>'company',''),
     coalesce(p_s->>'bio',''),  coalesce(p_s->>'photo',''), coalesce(p_s->>'linkedin',''),
+    coalesce(p_s->>'category','speaker'),
     coalesce((p_s->>'sort')::int,0), now())
   on conflict (id) do update set
     name=excluded.name, "role"=excluded."role", company=excluded.company, bio=excluded.bio,
-    photo=excluded.photo, linkedin=excluded.linkedin, sort=excluded.sort, updated_at=now();
+    photo=excluded.photo, linkedin=excluded.linkedin, category=excluded.category, sort=excluded.sort, updated_at=now();
 end; $$;
 
 create or replace function public.sb_delete_speaker(p_token text, p_id text)
