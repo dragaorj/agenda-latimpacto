@@ -799,7 +799,7 @@ body[data-mode="edit"] .btile:hover .btile-edit{display:flex;}
 }
 .mdl.wide{max-width:660px;}
 /* Alças de redimensionamento estilo Windows (arrastar borda/canto) */
-.mdl-resize{position:absolute;z-index:30;-webkit-tap-highlight-color:transparent;}
+.mdl-resize{position:absolute;z-index:30;-webkit-tap-highlight-color:transparent;touch-action:none;}
 .mdl-resize.rz-n{top:-5px;left:14px;right:14px;height:9px;cursor:ns-resize;}
 .mdl-resize.rz-s{bottom:-5px;left:14px;right:14px;height:9px;cursor:ns-resize;}
 .mdl-resize.rz-e{top:14px;bottom:14px;right:-5px;width:9px;cursor:ew-resize;}
@@ -5691,15 +5691,12 @@ function ovClick(e){ /* clicar fora NÃO fecha — só o X ou concluir a tarefa 
 (function(){
   var mode=null, mdl=null, startX=0,startY=0,startW=0,startH=0,startL=0,startT=0;
   var MINW=340, MINH=220;
-  function onDown(e){
-    var h=e.target && e.target.closest && e.target.closest('.mdl-resize');
-    if(!h) return;
-    if(window.innerWidth<=760) return; // desativado no mobile (modal já é full-width)
-    mdl=document.getElementById('mdl'); if(!mdl) return;
-    mode=h.getAttribute('data-rz');
+  function beginResize(handle, clientX, clientY){
+    mdl=document.getElementById('mdl'); if(!mdl) return false;
+    mode=handle.getAttribute('data-rz');
     var r=mdl.getBoundingClientRect();
     startW=r.width; startH=r.height; startL=r.left; startT=r.top;
-    startX=e.clientX; startY=e.clientY;
+    startX=clientX; startY=clientY;
     mdl.style.position='fixed';
     mdl.style.margin='0';
     mdl.style.left=startL+'px';
@@ -5708,14 +5705,19 @@ function ovClick(e){ /* clicar fora NÃO fecha — só o X ou concluir a tarefa 
     mdl.style.height=startH+'px';
     mdl.style.maxWidth='calc(100vw - 16px)';
     mdl.style.maxHeight='calc(100vh - 16px)';
+    // Desarma PERMANENTEMENTE (inline, não via classe) a animação de entrada
+    // do popup: removê-la só durante o drag (via classe) fazia o "mIn" ser
+    // rearmado e reiniciar (scale .96 → 1) assim que soltava o mouse — o
+    // "pisca e volta" relatado. Definindo inline, nunca mais é reativada
+    // nesta instância do popup (só volta ao normal quando openModal() reabre).
+    mdl.style.animation='none';
     mdl.classList.add('mdl-resizing');
     document.body.style.userSelect='none';
-    try{ h.setPointerCapture(e.pointerId); }catch(err){}
-    e.preventDefault();
+    return true;
   }
-  function onMove(e){
+  function doResize(clientX, clientY){
     if(!mode||!mdl) return;
-    var dx=e.clientX-startX, dy=e.clientY-startY;
+    var dx=clientX-startX, dy=clientY-startY;
     var w=startW, hgt=startH, l=startL, t=startT;
     if(mode.indexOf('e')>-1) w=startW+dx;
     if(mode.indexOf('s')>-1) hgt=startH+dy;
@@ -5724,7 +5726,6 @@ function ovClick(e){ /* clicar fora NÃO fecha — só o X ou concluir a tarefa 
     w=Math.max(MINW,w); hgt=Math.max(MINH,hgt);
     if(mode.indexOf('w')>-1) l=startL+(startW-w);
     if(mode.indexOf('n')>-1) t=startT+(startH-hgt);
-    // não deixa sair da área visível
     if(l<4){ w=w-(4-l); l=4; }
     if(t<4){ hgt=hgt-(4-t); t=4; }
     var maxW=window.innerWidth-l-4, maxH=window.innerHeight-t-4;
@@ -5734,16 +5735,37 @@ function ovClick(e){ /* clicar fora NÃO fecha — só o X ou concluir a tarefa 
     mdl.style.left=l+'px';
     mdl.style.top=t+'px';
   }
-  function onUp(){
+  function endResize(){
     if(!mode) return;
     mode=null;
     if(mdl) mdl.classList.remove('mdl-resizing');
     document.body.style.userSelect='';
   }
-  document.addEventListener('pointerdown', onDown);
-  document.addEventListener('pointermove', onMove);
-  document.addEventListener('pointerup', onUp);
-  document.addEventListener('pointercancel', onUp);
+  // Mouse (desktop) — padrão mais robusto entre navegadores que Pointer Capture
+  document.addEventListener('mousedown', function(e){
+    var h=e.target && e.target.closest && e.target.closest('.mdl-resize');
+    if(!h) return;
+    if(window.innerWidth<=760) return;
+    if(beginResize(h, e.clientX, e.clientY)) e.preventDefault();
+  });
+  document.addEventListener('mousemove', function(e){ if(mode) doResize(e.clientX, e.clientY); });
+  document.addEventListener('mouseup', endResize);
+  // Touch (tablets maiores, fora do breakpoint mobile) — fallback simples
+  document.addEventListener('touchstart', function(e){
+    var t=e.touches&&e.touches[0]; if(!t) return;
+    var h=t.target && t.target.closest && t.target.closest('.mdl-resize');
+    if(!h) return;
+    if(window.innerWidth<=760) return;
+    if(beginResize(h, t.clientX, t.clientY)) e.preventDefault();
+  }, {passive:false});
+  document.addEventListener('touchmove', function(e){
+    if(!mode) return;
+    var t=e.touches&&e.touches[0]; if(!t) return;
+    doResize(t.clientX, t.clientY);
+    e.preventDefault();
+  }, {passive:false});
+  document.addEventListener('touchend', endResize);
+  document.addEventListener('touchcancel', endResize);
 })();
 function closeModal(){
   // Interrompe qualquer mídia (iframe do YouTube, vídeo, áudio) imediatamente,
