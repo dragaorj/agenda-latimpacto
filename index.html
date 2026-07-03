@@ -84,6 +84,17 @@ body[data-page="home"] #dayControls{display:none!important;}
 #rail:hover .rail-wordmark,#rail.pinned .rail-wordmark{opacity:1;transform:none;}
 .rail-nav{display:flex;flex-direction:column;gap:3px;}
 .rail-bottom{margin-top:auto;display:flex;flex-direction:column;gap:3px;}
+/* Presença online: avatares circulares de quem está logado agora (tempo real) */
+.rail-online{display:none;flex-direction:column;align-items:center;gap:5px;padding:8px 6px 2px;}
+.rail-online-stack{display:flex;align-items:center;justify-content:center;}
+.rail-online-av{width:26px;height:26px;border-radius:50%;border:2px solid var(--surface);background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;overflow:hidden;flex-shrink:0;box-shadow:0 0 0 1px var(--border);margin-left:-8px;}
+.rail-online-stack .rail-online-av:first-child{margin-left:0;}
+.rail-online-av img{width:100%;height:100%;object-fit:cover;display:block;}
+.rail-online-more{background:var(--bg);color:var(--text2);font-size:9px;}
+.rail-online-lbl{font-size:10px;color:var(--text2);white-space:nowrap;display:none;}
+#rail:hover .rail-online-lbl,#rail.pinned .rail-online-lbl{display:block;}
+#rail:hover .rail-online,#rail.pinned .rail-online{align-items:flex-start;padding-left:12px;}
+#rail:hover .rail-online-stack,#rail.pinned .rail-online-stack{align-self:flex-start;}
 .rail-sep{height:1px;background:var(--border);margin:10px 6px;flex-shrink:0;}
 .rail-ic{position:relative;display:flex;align-items:center;gap:14px;width:100%;height:42px;border-radius:10px;border:none;background:transparent;color:var(--text2);cursor:pointer;padding:0 9px;white-space:nowrap;overflow:hidden;text-align:left;transition:background .15s,color .15s;-webkit-tap-highlight-color:transparent;}
 .rail-ic>svg{flex-shrink:0;width:22px;height:22px;}
@@ -1565,6 +1576,7 @@ body[data-cardstyle="tint"] .lcard{
     </button>
   </div>
   <div class="rail-bottom">
+    <div class="rail-online" id="railOnline" style="display:none;"></div>
     <div class="rail-sep"></div>
     <button class="rail-ic" id="railTools" onclick="toggleRailTools(event)" aria-label="Ferramentas" style="display:none">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.2 5.2L3 18l3 3 6.5-6.5a4 4 0 0 0 5.2-5.2l-2.5 2.5-2.5-.7-.7-2.5z"/></svg>
@@ -2183,6 +2195,40 @@ var HIGHLIGHTS = null; // preenchido no load (default ou salvo)
 // Aviso/disclaimer editável (3 idiomas) — mostrado ao lado das abas do
 // visitante ("Agenda Acadêmica" / "Palestrantes"). Desligado por padrão.
 var DISCLAIMER = {enabled:false, pt:'', en:'', es:''};
+// ── Presença online (avatares de quem está logado agora, em tempo real) ──
+var ONLINE_USERS = [];
+var _presenceTimer = null;
+function _presencePoll(){
+  if(!(window.SB && SB.enabled && SB.onlineProfiles)) return;
+  SB.heartbeat();
+  SB.onlineProfiles().then(function(list){ ONLINE_USERS=list||[]; _renderOnlineAvatars(); }).catch(function(){});
+}
+function _presenceEnter(){
+  if(!(window.SB && SB.enabled) || !AUTH) return;
+  if(_presenceTimer) clearInterval(_presenceTimer);
+  _presencePoll();
+  _presenceTimer=setInterval(_presencePoll, 15000);
+}
+function _presenceLeave(){
+  if(_presenceTimer){ clearInterval(_presenceTimer); _presenceTimer=null; }
+  ONLINE_USERS=[]; _renderOnlineAvatars();
+}
+function _renderOnlineAvatars(){
+  var el=document.getElementById('railOnline'); if(!el) return;
+  if(!ONLINE_USERS.length){ el.style.display='none'; el.innerHTML=''; return; }
+  var MAXAV=4;
+  var shown=ONLINE_USERS.slice(0,MAXAV);
+  var html='<div class="rail-online-stack">';
+  shown.forEach(function(u){
+    var nm=((u.first||'')+' '+(u.last||'')).trim()||'Usuário';
+    if(u.photo){ html+='<span class="rail-online-av" title="'+esc(nm)+'"><img src="'+u.photo+'" alt=""></span>'; }
+    else { html+='<span class="rail-online-av" title="'+esc(nm)+'" style="background:'+avColor(nm)+'">'+esc(initials(nm))+'</span>'; }
+  });
+  if(ONLINE_USERS.length>MAXAV){ html+='<span class="rail-online-av rail-online-more">+'+(ONLINE_USERS.length-MAXAV)+'</span>'; }
+  html+='</div><div class="rail-online-lbl">'+ONLINE_USERS.length+' online</div>';
+  el.innerHTML=html;
+  el.style.display='flex';
+}
 // Link FIXO do botão "Inscreva-se". Forçado aqui para sempre apontar para a
 // inscrição oficial, independentemente do que estiver salvo no banco/Destaques.
 var REGISTER_URL = 'https://fd.eventos.tmp.br/latimpacto2026/visitantes/inicio.php?lang=pt';
@@ -2259,7 +2305,7 @@ function initWP(){
     var tok = localStorage.getItem(SESSION_KEY);
     if(tok){
       if(window.SB && SB.enabled){
-        SB.login(tok).then(function(p){ if(p){ AUTH={id:p.id,first:p.first,last:p.last,email:p.email,phone:p.phone,photo:p.photo,role:p.role,token:tok}; WP_ENABLED=true; WP_USER=profileName(AUTH); SB.setToken(tok); applyMode(); _persistAutoFormatColors(); } }).catch(function(){});
+        SB.login(tok).then(function(p){ if(p){ AUTH={id:p.id,first:p.first,last:p.last,email:p.email,phone:p.phone,photo:p.photo,role:p.role,token:tok}; WP_ENABLED=true; WP_USER=profileName(AUTH); SB.setToken(tok); applyMode(); _persistAutoFormatColors(); _presenceEnter(); } }).catch(function(){});
       } else {
         var p=profileByToken(tok); if(p){ AUTH=p; WP_ENABLED=true; WP_USER=profileName(p); }
       }
@@ -2269,7 +2315,7 @@ function initWP(){
 
 function doLogin(tok, cb){
   tok=(tok||'').trim();
-  function ok(p){ AUTH=p; WP_ENABLED=true; WP_USER=profileName(p); try{ localStorage.setItem(SESSION_KEY, tok); }catch(e){} if(window.SB&&SB.enabled){ SB.setToken(tok); } logAction('Entrou no modo edição'); applyMode(); _persistAutoFormatColors(); if(cb) cb(true); return true; }
+  function ok(p){ AUTH=p; WP_ENABLED=true; WP_USER=profileName(p); try{ localStorage.setItem(SESSION_KEY, tok); }catch(e){} if(window.SB&&SB.enabled){ SB.setToken(tok); } logAction('Entrou no modo edição'); applyMode(); _persistAutoFormatColors(); _presenceEnter(); if(cb) cb(true); return true; }
   function fail(){ if(cb) cb(false); return false; }
   if(window.SB && SB.enabled){
     SB.login(tok).then(function(p){ if(p){ ok({id:p.id,first:p.first,last:p.last,email:p.email,phone:p.phone,photo:p.photo,role:p.role,token:tok}); } else { fail(); } }).catch(function(){ fail(); });
@@ -2282,6 +2328,7 @@ function doLogin(tok, cb){
 function logoutWP(){
   logAction('Saiu do modo edição');
   closeModal();
+  _presenceLeave();
   AUTH=null; WP_ENABLED=false; WP_USER='';
   try{ localStorage.removeItem(SESSION_KEY); }catch(e){}
   applyMode(); showPage('home');

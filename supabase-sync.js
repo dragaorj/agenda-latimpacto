@@ -180,7 +180,9 @@
         .on('postgres_changes',{event:'*',schema:'public',table:'config'},  function(p){ onChange({table:'config',eventType:p.eventType}); })
         .subscribe();
       return ch;
-    }
+    },
+    heartbeat: function(){ return enabled ? _rpc('sb_heartbeat',{p_token:token}).catch(function(){}) : Promise.resolve(); },
+    onlineProfiles: function(){ return enabled ? _rpc('sb_online_profiles',{p_token:token}) : Promise.resolve([]); }
   };
 
   window.SB = SB;
