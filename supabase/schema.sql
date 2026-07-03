@@ -26,6 +26,7 @@ create table if not exists public.profiles (
   photo      text default '',                 -- URL no Storage
   token      text not null unique,
   role       text not null default 'editor',  -- 'master' | 'editor'
+  last_seen  timestamptz default null,         -- presença: atualizado a cada "batimento" enquanto logado
   created_at timestamptz default now()
 );
 
@@ -296,6 +297,28 @@ begin
     photo=excluded.photo, token=excluded.token, "role"=excluded."role";
 end; $$;
 
+-- PRESENÇA: "batimento" (chamado periodicamente pelo cliente logado)
+create or replace function public.sb_heartbeat(p_token text)
+returns void language plpgsql security definer set search_path=public as $$
+declare pr public.profiles;
+begin
+  pr := public._profile_by_token(p_token);
+  if pr.id is null then raise exception 'token inválido'; end if;
+  update public.profiles set last_seen = now() where id = pr.id;
+end; $$;
+
+-- PRESENÇA: lista de quem está logado agora (ativo nos últimos 45s)
+create or replace function public.sb_online_profiles(p_token text)
+returns table(id text, first text, last text, photo text) language plpgsql stable security definer set search_path=public as $$
+declare pr public.profiles;
+begin
+  pr := public._profile_by_token(p_token);
+  if pr.id is null then raise exception 'token inválido'; end if;
+  return query select p.id, p.first, p.last, p.photo from public.profiles p
+    where p.last_seen is not null and p.last_seen > now() - interval '45 seconds'
+    order by p.last_seen desc;
+end; $$;
+
 create or replace function public.sb_delete_profile(p_token text, p_id text)
 returns void language plpgsql security definer set search_path=public as $$
 declare pr public.profiles;
@@ -334,6 +357,8 @@ grant execute on function
   public.sb_delete_talk(text,text),
   public.sb_list_profiles(text),
   public.sb_upsert_profile(text,jsonb),
+  public.sb_heartbeat(text),
+  public.sb_online_profiles(text),
   public.sb_delete_profile(text,text),
   public.sb_wipe(text)
 to anon, authenticated;
