@@ -1013,6 +1013,10 @@ body[data-guest="1"] .guest-tabs{display:flex;}
 .gtab-title{font-size:18px;font-weight:600;color:var(--text);letter-spacing:-.01em;}
 .gtab.on .gtab-title{color:var(--brand);}
 .gtab-sub{font-size:12px;color:var(--text2);font-variant-numeric:tabular-nums;white-space:nowrap;}
+/* Aviso/disclaimer editável (3 idiomas) — mostrado ao lado das abas do visitante */
+.guest-disclaimer{flex:1 1 260px;min-width:200px;display:flex;align-items:center;background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:12px 20px;font-size:18px;font-weight:500;color:var(--text);line-height:1.35;text-wrap:pretty;position:relative;}
+.guest-disclaimer .disc-edit-btn{position:absolute;top:8px;right:8px;width:26px;height:26px;border-radius:50%;border:none;background:var(--bg);color:var(--text2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;}
+.guest-disclaimer .disc-edit-btn:hover{background:var(--border);color:var(--text);}
 /* Para visitante, as abas substituem os títulos próprios das páginas */
 body[data-guest="1"] .agenda-head{display:none;}
 body[data-guest="1"] #pgSpk .pub-spk-toolbar{display:none;}
@@ -1634,6 +1638,7 @@ body[data-cardstyle="tint"] .lcard{
     <span class="gtab-title" data-i18n="tabSpk">Participantes</span>
     <span class="gtab-sub" id="gtabSpkSub"></span>
   </button>
+  <div class="guest-disclaimer" id="guestDisclaimer" style="display:none;"></div>
 </div>
 <!-- Banda da página de Participantes: modos de visualização (mesma posição das abas de dias) -->
 <div id="pgSpkHdr" style="display:none;">
@@ -1919,6 +1924,7 @@ var _trPending={}, _trSaveT=null, _trRerenderT=null;
 function _trPersist(){ clearTimeout(_trSaveT); _trSaveT=setTimeout(function(){ try{ localStorage.setItem('latimpacto_trcache', JSON.stringify(_trCache)); }catch(e){} }, 800); }
 function _trRerender(){ clearTimeout(_trRerenderT); _trRerenderT=setTimeout(function(){
   try{ if(typeof renderLegend==='function') renderLegend(); }catch(e){}
+  try{ if(typeof _renderDisclaimerBanner==='function') _renderDisclaimerBanner(); }catch(e){}
   try{
     if(curPage==='agenda'){ if(typeof renderMain==='function') renderMain(); }
     else if(curPage==='home'){ if(typeof renderBento==='function') renderBento(); }
@@ -1967,17 +1973,17 @@ var I18N={
        searchPh:'Buscar sessão ou palestrante…', searchSpkPh:'Buscar participante…', allHubs:'TODOS OS HUBS', allRooms:'TODAS AS SALAS',
        talks:'sessões', rooms:'salas', speakers:'Palestrantes', filters:'Filtros', clearF:'Limpar',
        roomsPhys:'Salas Físicas', hubsThemes:'Hubs / Temas', descLabel:'Descrição', noResults:'Nenhuma sessão encontrada.', noSearchResults:'Nenhum resultado para "%s"', newSpeaker:'Novo Participante', nowTitle:'Agora no evento', nowLive:'AO VIVO', nowNext:'A seguir', nowEnded:'Encerrado por hoje', nowSoon:'Começa em breve', nowFree:'Intervalo',
-       tabHighlights:'Destaques', navHome:'Início', navBack:'Voltar', hlRegister:'Inscreva-se', hlAboutLink:'Sobre o evento', hlVideo:'Vídeo do evento', hlAboutLbl:'Sobre o evento', hlVideoLbl:'Vídeo (YouTube)', hlRegUrlLbl:'Link de inscrição', hlShowVideo:'Vídeo do evento', hlAboutTitleLbl:'Título', hlAboutTextLbl:'Texto', hlVideoUrlLbl:'URL do YouTube', spkSpeakers:'Palestrantes', spkCurators:'Curadores', catLabel:'Categoria', catSpeaker:'Palestrante', catCurator:'Curador', manageCats:'Gerenciar categorias', daysTab:'Dias', daysSaveBtn:'Salvar dias', fmtsTab:'Formatos', fmtsSaveBtn:'Salvar formatos', fmtsHint:'Defina o nome de cada formato nos 3 idiomas.', slotAddTitle:'Adicionar novo horário', slotAddHint:'Digite HH:MM — ex: 09:30, 14:00', slotAddBtn:'Adicionar', showAllHubsBtnLabel:'Exibir botão "Todos os Hubs" na Agenda', daysDate:'Data', daysWeekday:'Dia da semana (auto)', daysAdd:'Adicionar dia', daysEmpty:'Nenhum dia. Adicione ao menos um.', daysDelConfirm:'Excluir este dia? As sessões deste dia serão removidas.', daysMin:'Mantenha ao menos um dia.', catMgrTitle:'Categorias de participantes', addCat:'Adicionar categoria', catNamePh:'Nome da categoria', catColorLbl:'Cor', catSave:'Salvar categorias', catEmpty:'Defina ao menos uma categoria.', navManage:'Gerenciar', navEditHl:'Editar Destaques', navTheme:'Tema', navLogin:'Entrar', navAccount:'Minha conta', hlCountdown:'Contagem regressiva', hlDays:'dias', hlHours:'horas', hlToGo:'para o evento', hlLive:'Acontecendo agora', hlNumbers:'O evento em números', hlSpeakers:'Vozes do palco', hlSeeAll:'Ver todos', hlOpening:'Abertura', hlNext:'Em destaque', hlEditTitle:'Editar Destaques', hlHero:'Capa (hero)', hlCoverImg:'Imagem da capa', hlChooseImg:'Escolher imagem', hlRemoveImg:'Remover', hlImgHint:'JPG/PNG · convertida p/ WebP < 100 KB', hlTitleLbl:'Título', hlSubtitleLbl:'Subtítulo', hlAutoLbl:'Blocos automáticos', hlManualLbl:'Blocos personalizados', hlAddCard:'Adicionar bloco', hlLinkTalk:'Vincular a uma sessão (opcional)', hlNoLink:'— Nenhuma —', hlAccent:'Cor do filete', hlSave:'Salvar', hlCancel:'Cancelar', hlShowCountdown:'Contagem regressiva', hlShowStats:'Números do evento', hlShowOpening:'Abertura do evento', hlShowSpeakers:'Participantes em destaque', hlEmptyManual:'Nenhum bloco ainda.', hlEditions:'Edições anteriores', hlShowNumbers:'Números do evento', hlShowEditions:'Edições anteriores', hlNumbersLbl:'Números gerais do evento', hlEditionsLbl:'Edições anteriores (gráfico)', hlAddNumber:'Adicionar número', hlAddEdition:'Adicionar edição', hlValueLbl:'Valor', hlYearLbl:'Ano', hlEditionsTitleLbl:'Título do gráfico', btnAddTalk:'+ Adicionar Sessão', toolsBtn:'Ferramentas', toolHours:'Horários', toolTags:'Gerenciar', toolExport:'Exportar CSV', toolBackup:'Backup', toolClear:'Apagar tudo', evLibras:'Libras', evTrad:'Tradução', evLocation:'Localização da sala', evSpeaker:'Palestrante', evSpeakers:'Palestrantes', evSeeMore:'Ver mais', evSeeLess:'Ver menos', btnClose:'Fechar', btnGcal:'Google Agenda', evTitle:'Detalhes da Sessão', btnEdit:'Editar', btnDelete:'Excluir' },
+       tabHighlights:'Destaques', navHome:'Início', navBack:'Voltar', hlRegister:'Inscreva-se', hlAboutLink:'Sobre o evento', hlVideo:'Vídeo do evento', hlAboutLbl:'Sobre o evento', hlVideoLbl:'Vídeo (YouTube)', hlRegUrlLbl:'Link de inscrição', hlShowVideo:'Vídeo do evento', hlAboutTitleLbl:'Título', hlAboutTextLbl:'Texto', hlVideoUrlLbl:'URL do YouTube', spkSpeakers:'Palestrantes', spkCurators:'Curadores', catLabel:'Categoria', catSpeaker:'Palestrante', catCurator:'Curador', manageCats:'Gerenciar categorias', daysTab:'Dias', daysSaveBtn:'Salvar dias', fmtsTab:'Formatos', fmtsSaveBtn:'Salvar formatos', fmtsHint:'Defina o nome de cada formato nos 3 idiomas.', discTab:'Aviso', discHint:'Defina uma mensagem para quem estiver visualizando a plataforma (nos 3 idiomas). Deixe em branco o(s) idioma(s) que quiser traduzir automaticamente.', discEnableLabel:'Exibir aviso aos visitantes', discSaveBtn:'Salvar aviso', slotAddTitle:'Adicionar novo horário', slotAddHint:'Digite HH:MM — ex: 09:30, 14:00', slotAddBtn:'Adicionar', showAllHubsBtnLabel:'Exibir botão "Todos os Hubs" na Agenda', daysDate:'Data', daysWeekday:'Dia da semana (auto)', daysAdd:'Adicionar dia', daysEmpty:'Nenhum dia. Adicione ao menos um.', daysDelConfirm:'Excluir este dia? As sessões deste dia serão removidas.', daysMin:'Mantenha ao menos um dia.', catMgrTitle:'Categorias de participantes', addCat:'Adicionar categoria', catNamePh:'Nome da categoria', catColorLbl:'Cor', catSave:'Salvar categorias', catEmpty:'Defina ao menos uma categoria.', navManage:'Gerenciar', navEditHl:'Editar Destaques', navTheme:'Tema', navLogin:'Entrar', navAccount:'Minha conta', hlCountdown:'Contagem regressiva', hlDays:'dias', hlHours:'horas', hlToGo:'para o evento', hlLive:'Acontecendo agora', hlNumbers:'O evento em números', hlSpeakers:'Vozes do palco', hlSeeAll:'Ver todos', hlOpening:'Abertura', hlNext:'Em destaque', hlEditTitle:'Editar Destaques', hlHero:'Capa (hero)', hlCoverImg:'Imagem da capa', hlChooseImg:'Escolher imagem', hlRemoveImg:'Remover', hlImgHint:'JPG/PNG · convertida p/ WebP < 100 KB', hlTitleLbl:'Título', hlSubtitleLbl:'Subtítulo', hlAutoLbl:'Blocos automáticos', hlManualLbl:'Blocos personalizados', hlAddCard:'Adicionar bloco', hlLinkTalk:'Vincular a uma sessão (opcional)', hlNoLink:'— Nenhuma —', hlAccent:'Cor do filete', hlSave:'Salvar', hlCancel:'Cancelar', hlShowCountdown:'Contagem regressiva', hlShowStats:'Números do evento', hlShowOpening:'Abertura do evento', hlShowSpeakers:'Participantes em destaque', hlEmptyManual:'Nenhum bloco ainda.', hlEditions:'Edições anteriores', hlShowNumbers:'Números do evento', hlShowEditions:'Edições anteriores', hlNumbersLbl:'Números gerais do evento', hlEditionsLbl:'Edições anteriores (gráfico)', hlAddNumber:'Adicionar número', hlAddEdition:'Adicionar edição', hlValueLbl:'Valor', hlYearLbl:'Ano', hlEditionsTitleLbl:'Título do gráfico', btnAddTalk:'+ Adicionar Sessão', toolsBtn:'Ferramentas', toolHours:'Horários', toolTags:'Gerenciar', toolExport:'Exportar CSV', toolBackup:'Backup', toolClear:'Apagar tudo', evLibras:'Libras', evTrad:'Tradução', evLocation:'Localização da sala', evSpeaker:'Palestrante', evSpeakers:'Palestrantes', evSeeMore:'Ver mais', evSeeLess:'Ver menos', btnClose:'Fechar', btnGcal:'Google Agenda', evTitle:'Detalhes da Sessão', btnEdit:'Editar', btnDelete:'Excluir' },
   en:{ appTitle:'Agenda', tabAgenda:'Academic Agenda', tabSpk:'Speakers', viewGrid:'Grid', viewCards:'Cards', viewList:'List',
        searchPh:'Search a session or speaker…', searchSpkPh:'Search participant…', allHubs:'ALL HUBS', allRooms:'ALL ROOMS',
        talks:'sessions', rooms:'rooms', speakers:'Speakers', filters:'Filters', clearF:'Clear',
        roomsPhys:'Rooms', hubsThemes:'Hubs / Themes', descLabel:'Description', noResults:'No sessions found.', noSearchResults:'No results for "%s"', newSpeaker:'New Participant', nowTitle:'Live schedule', nowLive:'LIVE', nowNext:'Up next', nowEnded:'Done for today', nowSoon:'Starting soon', nowFree:'Break',
-       tabHighlights:'Highlights', navHome:'Home', navBack:'Back', hlRegister:'Register now', hlAboutLink:'About the event', hlVideo:'Event video', hlAboutLbl:'About the event', hlVideoLbl:'Video (YouTube)', hlRegUrlLbl:'Registration link', hlShowVideo:'Event video', hlAboutTitleLbl:'Title', hlAboutTextLbl:'Text', hlVideoUrlLbl:'YouTube URL', spkSpeakers:'Speakers', spkCurators:'Curators', catLabel:'Category', catSpeaker:'Speaker', catCurator:'Curator', manageCats:'Manage categories', daysTab:'Days', daysSaveBtn:'Save days', fmtsTab:'Formats', fmtsSaveBtn:'Save formats', fmtsHint:'Set each format name in the 3 languages.', slotAddTitle:'Add new time slot', slotAddHint:'Type HH:MM — e.g. 09:30, 14:00', slotAddBtn:'Add', showAllHubsBtnLabel:'Show "All Hubs" button on the Agenda', daysDate:'Date', daysWeekday:'Weekday (auto)', daysAdd:'Add day', daysEmpty:'No days. Add at least one.', daysDelConfirm:'Delete this day? Its sessions will be removed.', daysMin:'Keep at least one day.', catMgrTitle:'Participant categories', addCat:'Add category', catNamePh:'Category name', catColorLbl:'Color', catSave:'Save categories', catEmpty:'Define at least one category.', navManage:'Manage', navEditHl:'Edit Highlights', navTheme:'Theme', navLogin:'Sign in', navAccount:'My account', hlCountdown:'Countdown', hlDays:'days', hlHours:'hours', hlToGo:'to the event', hlLive:'Happening now', hlNumbers:'The event in numbers', hlSpeakers:'Voices on stage', hlSeeAll:'See all', hlOpening:'Opening', hlNext:'Featured', hlEditTitle:'Edit Highlights', hlHero:'Hero', hlCoverImg:'Cover image', hlChooseImg:'Choose image', hlRemoveImg:'Remove', hlImgHint:'JPG/PNG · converted to WebP < 100 KB', hlTitleLbl:'Title', hlSubtitleLbl:'Subtitle', hlAutoLbl:'Automatic blocks', hlManualLbl:'Custom blocks', hlAddCard:'Add block', hlLinkTalk:'Link to a session (optional)', hlNoLink:'— None —', hlAccent:'Accent color', hlSave:'Save', hlCancel:'Cancel', hlShowCountdown:'Countdown', hlShowStats:'Event numbers', hlShowOpening:'Event opening', hlShowSpeakers:'Featured participants', hlEmptyManual:'No blocks yet.', hlEditions:'Previous editions', hlShowNumbers:'Event numbers', hlShowEditions:'Previous editions', hlNumbersLbl:'General event numbers', hlEditionsLbl:'Previous editions (chart)', hlAddNumber:'Add number', hlAddEdition:'Add edition', hlValueLbl:'Value', hlYearLbl:'Year', hlEditionsTitleLbl:'Chart title', btnAddTalk:'+ Add Session', toolsBtn:'Tools', toolHours:'Time slots', toolTags:'Manage', toolExport:'Export CSV', toolBackup:'Backup', toolClear:'Clear all', evLibras:'Sign lang.', evTrad:'Translation', evLocation:'Room location', evSpeaker:'Speaker', evSpeakers:'Speakers', evSeeMore:'See more', evSeeLess:'See less', btnClose:'Close', btnGcal:'Google Calendar', evTitle:'Session details', btnEdit:'Edit', btnDelete:'Delete' },
+       tabHighlights:'Highlights', navHome:'Home', navBack:'Back', hlRegister:'Register now', hlAboutLink:'About the event', hlVideo:'Event video', hlAboutLbl:'About the event', hlVideoLbl:'Video (YouTube)', hlRegUrlLbl:'Registration link', hlShowVideo:'Event video', hlAboutTitleLbl:'Title', hlAboutTextLbl:'Text', hlVideoUrlLbl:'YouTube URL', spkSpeakers:'Speakers', spkCurators:'Curators', catLabel:'Category', catSpeaker:'Speaker', catCurator:'Curator', manageCats:'Manage categories', daysTab:'Days', daysSaveBtn:'Save days', fmtsTab:'Formats', fmtsSaveBtn:'Save formats', fmtsHint:'Set each format name in the 3 languages.', discTab:'Notice', discHint:'Set a message for anyone viewing the platform (in all 3 languages). Leave a language blank to auto-translate it.', discEnableLabel:'Show notice to visitors', discSaveBtn:'Save notice', slotAddTitle:'Add new time slot', slotAddHint:'Type HH:MM — e.g. 09:30, 14:00', slotAddBtn:'Add', showAllHubsBtnLabel:'Show "All Hubs" button on the Agenda', daysDate:'Date', daysWeekday:'Weekday (auto)', daysAdd:'Add day', daysEmpty:'No days. Add at least one.', daysDelConfirm:'Delete this day? Its sessions will be removed.', daysMin:'Keep at least one day.', catMgrTitle:'Participant categories', addCat:'Add category', catNamePh:'Category name', catColorLbl:'Color', catSave:'Save categories', catEmpty:'Define at least one category.', navManage:'Manage', navEditHl:'Edit Highlights', navTheme:'Theme', navLogin:'Sign in', navAccount:'My account', hlCountdown:'Countdown', hlDays:'days', hlHours:'hours', hlToGo:'to the event', hlLive:'Happening now', hlNumbers:'The event in numbers', hlSpeakers:'Voices on stage', hlSeeAll:'See all', hlOpening:'Opening', hlNext:'Featured', hlEditTitle:'Edit Highlights', hlHero:'Hero', hlCoverImg:'Cover image', hlChooseImg:'Choose image', hlRemoveImg:'Remove', hlImgHint:'JPG/PNG · converted to WebP < 100 KB', hlTitleLbl:'Title', hlSubtitleLbl:'Subtitle', hlAutoLbl:'Automatic blocks', hlManualLbl:'Custom blocks', hlAddCard:'Add block', hlLinkTalk:'Link to a session (optional)', hlNoLink:'— None —', hlAccent:'Accent color', hlSave:'Save', hlCancel:'Cancel', hlShowCountdown:'Countdown', hlShowStats:'Event numbers', hlShowOpening:'Event opening', hlShowSpeakers:'Featured participants', hlEmptyManual:'No blocks yet.', hlEditions:'Previous editions', hlShowNumbers:'Event numbers', hlShowEditions:'Previous editions', hlNumbersLbl:'General event numbers', hlEditionsLbl:'Previous editions (chart)', hlAddNumber:'Add number', hlAddEdition:'Add edition', hlValueLbl:'Value', hlYearLbl:'Year', hlEditionsTitleLbl:'Chart title', btnAddTalk:'+ Add Session', toolsBtn:'Tools', toolHours:'Time slots', toolTags:'Manage', toolExport:'Export CSV', toolBackup:'Backup', toolClear:'Clear all', evLibras:'Sign lang.', evTrad:'Translation', evLocation:'Room location', evSpeaker:'Speaker', evSpeakers:'Speakers', evSeeMore:'See more', evSeeLess:'See less', btnClose:'Close', btnGcal:'Google Calendar', evTitle:'Session details', btnEdit:'Edit', btnDelete:'Delete' },
   es:{ appTitle:'Agenda', tabAgenda:'Agenda Académica', tabSpk:'Ponentes', viewGrid:'Cuadrícula', viewCards:'Tarjetas', viewList:'Lista',
        searchPh:'Buscar sesión o ponente…', searchSpkPh:'Buscar participante…', allHubs:'TODOS LOS HUBS', allRooms:'TODAS LAS SALAS',
        talks:'sesiones', rooms:'salas', speakers:'Ponentes', filters:'Filtros', clearF:'Limpiar',
        roomsPhys:'Salas', hubsThemes:'Hubs / Temas', descLabel:'Descripción', noResults:'No se encontraron sesiones.', noSearchResults:'Sin resultados para "%s"', newSpeaker:'Nuevo Participante', nowTitle:'En vivo', nowLive:'EN VIVO', nowNext:'A seguir', nowEnded:'Terminado por hoy', nowSoon:'Empieza pronto', nowFree:'Intervalo',
-       tabHighlights:'Destacados', navHome:'Inicio', navBack:'Volver', hlRegister:'Inscríbete ya', hlAboutLink:'Sobre el evento', hlVideo:'Video del evento', hlAboutLbl:'Sobre el evento', hlVideoLbl:'Video (YouTube)', hlRegUrlLbl:'Enlace de inscripción', hlShowVideo:'Video del evento', hlAboutTitleLbl:'Título', hlAboutTextLbl:'Texto', hlVideoUrlLbl:'URL de YouTube', spkSpeakers:'Ponentes', spkCurators:'Curadores', catLabel:'Categoría', catSpeaker:'Ponente', catCurator:'Curador', manageCats:'Gestionar categorías', daysTab:'Días', daysSaveBtn:'Guardar días', fmtsTab:'Formatos', fmtsSaveBtn:'Guardar formatos', fmtsHint:'Define el nombre de cada formato en los 3 idiomas.', slotAddTitle:'Agregar nuevo horario', slotAddHint:'Escribe HH:MM — ej: 09:30, 14:00', slotAddBtn:'Agregar', showAllHubsBtnLabel:'Mostrar botón "Todos los Hubs" en la Agenda', daysDate:'Fecha', daysWeekday:'Día de la semana (auto)', daysAdd:'Agregar día', daysEmpty:'Ningún día. Agrega al menos uno.', daysDelConfirm:'¿Eliminar este día? Sus sesiones se eliminarán.', daysMin:'Mantén al menos un día.', catMgrTitle:'Categorías de participantes', addCat:'Agregar categoría', catNamePh:'Nombre de la categoría', catColorLbl:'Color', catSave:'Guardar categorías', catEmpty:'Define al menos una categoría.', navManage:'Gestionar', navEditHl:'Editar Destacados', navTheme:'Tema', navLogin:'Entrar', navAccount:'Mi cuenta', hlCountdown:'Cuenta regresiva', hlDays:'días', hlHours:'horas', hlToGo:'para el evento', hlLive:'Sucediendo ahora', hlNumbers:'El evento en números', hlSpeakers:'Voces del escenario', hlSeeAll:'Ver todos', hlOpening:'Apertura', hlNext:'Destacado', hlEditTitle:'Editar Destacados', hlHero:'Portada', hlCoverImg:'Imagen de portada', hlChooseImg:'Elegir imagen', hlRemoveImg:'Quitar', hlImgHint:'JPG/PNG · convertida a WebP < 100 KB', hlTitleLbl:'Título', hlSubtitleLbl:'Subtítulo', hlAutoLbl:'Bloques automáticos', hlManualLbl:'Bloques personalizados', hlAddCard:'Agregar bloque', hlLinkTalk:'Vincular a una sesión (opcional)', hlNoLink:'— Ninguna —', hlAccent:'Color de acento', hlSave:'Guardar', hlCancel:'Cancelar', hlShowCountdown:'Cuenta regresiva', hlShowStats:'Números del evento', hlShowOpening:'Apertura del evento', hlShowSpeakers:'Participantes destacados', hlEmptyManual:'Aún no hay bloques.', hlEditions:'Ediciones anteriores', hlShowNumbers:'Números del evento', hlShowEditions:'Ediciones anteriores', hlNumbersLbl:'Números generales del evento', hlEditionsLbl:'Ediciones anteriores (gráfico)', hlAddNumber:'Agregar número', hlAddEdition:'Agregar edición', hlValueLbl:'Valor', hlYearLbl:'Año', hlEditionsTitleLbl:'Título del gráfico', btnAddTalk:'+ Agregar Sesión', toolsBtn:'Herramientas', toolHours:'Horarios', toolTags:'Gestionar', toolExport:'Exportar CSV', toolBackup:'Backup', toolClear:'Borrar todo', evLibras:'Lengua de señas', evTrad:'Traducción', evLocation:'Ubicación de la sala', evSpeaker:'Ponente', evSpeakers:'Ponentes', evSeeMore:'Ver más', evSeeLess:'Ver menos', btnClose:'Cerrar', btnGcal:'Google Calendar', evTitle:'Detalles de la sesión', btnEdit:'Editar', btnDelete:'Eliminar' }
+       tabHighlights:'Destacados', navHome:'Inicio', navBack:'Volver', hlRegister:'Inscríbete ya', hlAboutLink:'Sobre el evento', hlVideo:'Video del evento', hlAboutLbl:'Sobre el evento', hlVideoLbl:'Video (YouTube)', hlRegUrlLbl:'Enlace de inscripción', hlShowVideo:'Video del evento', hlAboutTitleLbl:'Título', hlAboutTextLbl:'Texto', hlVideoUrlLbl:'URL de YouTube', spkSpeakers:'Ponentes', spkCurators:'Curadores', catLabel:'Categoría', catSpeaker:'Ponente', catCurator:'Curador', manageCats:'Gestionar categorías', daysTab:'Días', daysSaveBtn:'Guardar días', fmtsTab:'Formatos', fmtsSaveBtn:'Guardar formatos', fmtsHint:'Define el nombre de cada formato en los 3 idiomas.', discTab:'Aviso', discHint:'Define un mensaje para quien esté viendo la plataforma (en los 3 idiomas). Deja en blanco el idioma que quieras traducir automáticamente.', discEnableLabel:'Mostrar aviso a los visitantes', discSaveBtn:'Guardar aviso', slotAddTitle:'Agregar nuevo horario', slotAddHint:'Escribe HH:MM — ej: 09:30, 14:00', slotAddBtn:'Agregar', showAllHubsBtnLabel:'Mostrar botón "Todos los Hubs" en la Agenda', daysDate:'Fecha', daysWeekday:'Día de la semana (auto)', daysAdd:'Agregar día', daysEmpty:'Ningún día. Agrega al menos uno.', daysDelConfirm:'¿Eliminar este día? Sus sesiones se eliminarán.', daysMin:'Mantén al menos un día.', catMgrTitle:'Categorías de participantes', addCat:'Agregar categoría', catNamePh:'Nombre de la categoría', catColorLbl:'Color', catSave:'Guardar categorías', catEmpty:'Define al menos una categoría.', navManage:'Gestionar', navEditHl:'Editar Destacados', navTheme:'Tema', navLogin:'Entrar', navAccount:'Mi cuenta', hlCountdown:'Cuenta regresiva', hlDays:'días', hlHours:'horas', hlToGo:'para el evento', hlLive:'Sucediendo ahora', hlNumbers:'El evento en números', hlSpeakers:'Voces del escenario', hlSeeAll:'Ver todos', hlOpening:'Apertura', hlNext:'Destacado', hlEditTitle:'Editar Destacados', hlHero:'Portada', hlCoverImg:'Imagen de portada', hlChooseImg:'Elegir imagen', hlRemoveImg:'Quitar', hlImgHint:'JPG/PNG · convertida a WebP < 100 KB', hlTitleLbl:'Título', hlSubtitleLbl:'Subtítulo', hlAutoLbl:'Bloques automáticos', hlManualLbl:'Bloques personalizados', hlAddCard:'Agregar bloque', hlLinkTalk:'Vincular a una sesión (opcional)', hlNoLink:'— Ninguna —', hlAccent:'Color de acento', hlSave:'Guardar', hlCancel:'Cancelar', hlShowCountdown:'Cuenta regresiva', hlShowStats:'Números del evento', hlShowOpening:'Apertura del evento', hlShowSpeakers:'Participantes destacados', hlEmptyManual:'Aún no hay bloques.', hlEditions:'Ediciones anteriores', hlShowNumbers:'Números del evento', hlShowEditions:'Ediciones anteriores', hlNumbersLbl:'Números generales del evento', hlEditionsLbl:'Ediciones anteriores (gráfico)', hlAddNumber:'Agregar número', hlAddEdition:'Agregar edición', hlValueLbl:'Valor', hlYearLbl:'Año', hlEditionsTitleLbl:'Título del gráfico', btnAddTalk:'+ Agregar Sesión', toolsBtn:'Herramientas', toolHours:'Horarios', toolTags:'Gestionar', toolExport:'Exportar CSV', toolBackup:'Backup', toolClear:'Borrar todo', evLibras:'Lengua de señas', evTrad:'Traducción', evLocation:'Ubicación de la sala', evSpeaker:'Ponente', evSpeakers:'Ponentes', evSeeMore:'Ver más', evSeeLess:'Ver menos', btnClose:'Cerrar', btnGcal:'Google Calendar', evTitle:'Detalles de la sesión', btnEdit:'Editar', btnDelete:'Eliminar' }
 };
 function t18(k){ return (I18N[LANG]&&I18N[LANG][k])||I18N.pt[k]||k; }
 var LANG_FLAGS={
@@ -2164,6 +2170,9 @@ var PROFILES_KEY = 'latimpacto_profiles_v1';
 var LOGS_KEY = 'latimpacto_logs_v1';
 var SESSION_KEY = 'latimpacto_session_v1';
 var HIGHLIGHTS = null; // preenchido no load (default ou salvo)
+// Aviso/disclaimer editável (3 idiomas) — mostrado ao lado das abas do
+// visitante ("Agenda Acadêmica" / "Palestrantes"). Desligado por padrão.
+var DISCLAIMER = {enabled:false, pt:'', en:'', es:''};
 // Link FIXO do botão "Inscreva-se". Forçado aqui para sempre apontar para a
 // inscrição oficial, independentemente do que estiver salvo no banco/Destaques.
 var REGISTER_URL = 'https://fd.eventos.tmp.br/latimpacto2026/visitantes/inicio.php?lang=pt';
@@ -2375,6 +2384,16 @@ function _syncGuestTabs(){
     var lbl=(LANG==='en')?(n===1?'speaker':'speakers'):(LANG==='es')?(n===1?'ponente':'ponentes'):(n===1?'palestrante':'palestrantes');
     ssub.textContent=n+' '+lbl;
   }
+  _renderDisclaimerBanner();
+}
+// Aviso/disclaimer editável (3 idiomas) — aparece ao lado das abas do
+// visitante quando ligado E com texto preenchido (em qualquer idioma).
+function _renderDisclaimerBanner(){
+  var el=document.getElementById('guestDisclaimer'); if(!el) return;
+  var txt=(DISCLAIMER&&DISCLAIMER.enabled) ? L(DISCLAIMER) : '';
+  if(!txt){ el.style.display='none'; el.innerHTML=''; return; }
+  el.style.display='flex';
+  el.innerHTML='<span>'+esc(txt)+'</span>';
 }
 // Subtítulo fixo abaixo do título da Agenda (texto definido por idioma)
 function _agendaSubtitle(){
@@ -3383,10 +3402,11 @@ function openHubRoomManager(){
 }
 
 function _renderHubRoomModal(tab){
-  var isHubs=tab==='hubs', isRooms=tab==='rooms', isCats=tab==='cats', isDays=tab==='days', isFmts=tab==='fmts', isSlots=tab==='slots';
+  var isHubs=tab==='hubs', isRooms=tab==='rooms', isCats=tab==='cats', isDays=tab==='days', isFmts=tab==='fmts', isSlots=tab==='slots', isDisc=tab==='disc';
   if(isCats && !_catDraft) _catDraft=JSON.parse(JSON.stringify(getCategories()));
   if(isDays && !_daysDraft) _daysDraft=DAYS.map(function(d,ix){ var c=JSON.parse(JSON.stringify(d)); c._oi=ix; return c; });
   if(isFmts && !_fmtsDraft) _fmtsDraft=JSON.parse(JSON.stringify(FORMATS));
+  if(isDisc && !_discDraft) _discDraft=JSON.parse(JSON.stringify(DISCLAIMER));
   function _ttab(t,lbl,act){ return '<button onclick="_renderHubRoomModal(\''+t+'\')" style="flex:1;padding:8px 6px;background:'+(act?'var(--blue)':'transparent')+';color:'+(act?'#fff':'var(--text)')+';border:none;border-radius:6px 6px 0 0;cursor:pointer;font-weight:600;font-size:13px;white-space:nowrap;">'+lbl+'</button>'; }
   var tabBar =
     '<div style="display:flex;gap:0;margin-bottom:14px;border-bottom:2px solid var(--border);overflow-x:auto;">'+
@@ -3395,6 +3415,7 @@ function _renderHubRoomModal(tab){
       _ttab('hubs','🏷️ Hubs ('+HUBS.length+')',isHubs)+
       _ttab('fmts','🎤 '+t18('fmtsTab')+' ('+FORMATS.length+')',isFmts)+
       _ttab('rooms','🚪 '+t18('roomsPhys')+' ('+ROOMS.length+')',isRooms)+
+      _ttab('disc','📢 '+t18('discTab'),isDisc)+
     '</div>';
 
   var listHTML = '';
@@ -3440,13 +3461,15 @@ function _renderHubRoomModal(tab){
           '<button class="btn btn-p" onclick="addRoom()">+ Adicionar</button>'+
         '</div></div>';
 
-  var bodyInner = isDays ? _daysEditorHTML() : isCats ? _catEditorHTML() : isFmts ? _fmtsEditorHTML() : isSlots ? _slotsEditorHTML() : ('<div style="max-height:300px;overflow-y:auto;">'+listHTML+'</div>'+addForm);
+  var bodyInner = isDays ? _daysEditorHTML() : isCats ? _catEditorHTML() : isFmts ? _fmtsEditorHTML() : isSlots ? _slotsEditorHTML() : isDisc ? _discEditorHTML() : ('<div style="max-height:300px;overflow-y:auto;">'+listHTML+'</div>'+addForm);
   var ftr = isDays
     ? '<button class="btn" onclick="closeModal()">'+t18('hlCancel')+'</button><button class="btn btn-p" onclick="daysSave()">'+t18('daysSaveBtn')+'</button>'
     : isCats
     ? '<button class="btn" onclick="closeModal()">Fechar</button><button class="btn btn-p" onclick="catMgrSave()">Salvar categorias</button>'
     : isFmts
     ? '<button class="btn" onclick="closeModal()">'+t18('hlCancel')+'</button><button class="btn btn-p" onclick="fmtsSave()">'+t18('fmtsSaveBtn')+'</button>'
+    : isDisc
+    ? '<button class="btn" onclick="closeModal()">'+t18('hlCancel')+'</button><button class="btn btn-p" onclick="discSave()">'+t18('discSaveBtn')+'</button>'
     : '<button class="btn" onclick="closeModal()">Fechar</button>';
   openModal('🛠 '+t18('toolTags'), tabBar + bodyInner, ftr, false);
 }
@@ -3454,7 +3477,7 @@ function _renderHubRoomModal(tab){
 // ── HUB CRUD ────────────────────────────
 function toggleShowAllHubsBtn(v){
   SHOW_ALL_HUBS_BTN = !!v;
-  if(window.SB&&SB.enabled){ try{ SB.saveConfig({rooms:ROOMS,hubs:HUBS,hubColors:HUB_COLORS,slots:SLOTS,days:DAYS,highlights:HIGHLIGHTS,categories:getCategories(),formats:FORMATS,showAllHubsBtn:SHOW_ALL_HUBS_BTN}); }catch(e){} } else { saveData(); }
+  if(window.SB&&SB.enabled){ try{ SB.saveConfig({rooms:ROOMS,hubs:HUBS,hubColors:HUB_COLORS,slots:SLOTS,days:DAYS,highlights:HIGHLIGHTS,categories:getCategories(),formats:FORMATS,showAllHubsBtn:SHOW_ALL_HUBS_BTN,disclaimer:DISCLAIMER}); }catch(e){} } else { saveData(); }
   renderLegend(); renderDrawer(); renderMain();
 }
 function addHub(){
@@ -5294,6 +5317,34 @@ function _catSelectField(s){
 var _catDraft=null;
 var _daysDraft=null;
 var _fmtsDraft=null;
+var _discDraft=null;
+// ── EDITOR DE AVISO/DISCLAIMER (3 idiomas + liga/desliga) ──
+function _discEditorHTML(){
+  if(!_discDraft) _discDraft=JSON.parse(JSON.stringify(DISCLAIMER));
+  var d=_discDraft;
+  return '<div style="display:flex;flex-direction:column;gap:14px;">'+
+    '<div style="font-size:12px;color:var(--text2);">'+t18('discHint')+'</div>'+
+    '<label style="display:flex;align-items:center;gap:8px;padding:9px 11px;background:var(--bg);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:13px;">'+
+      '<input type="checkbox" id="discEnabled" '+(d.enabled?'checked':'')+'>'+
+      '<span>'+t18('discEnableLabel')+'</span>'+
+    '</label>'+
+    '<div class="fg"><label class="fl">🇧🇷 PT</label><textarea id="discPt" class="fi" rows="2" placeholder="Ex: Estamos em construção.">'+esc(d.pt||'')+'</textarea></div>'+
+    '<div class="fg"><label class="fl">🇬🇧 EN</label><textarea id="discEn" class="fi" rows="2" placeholder="Ex: We are under construction.">'+esc(d.en||'')+'</textarea></div>'+
+    '<div class="fg"><label class="fl">🇪🇸 ES</label><textarea id="discEs" class="fi" rows="2" placeholder="Ex: Estamos en construcción.">'+esc(d.es||'')+'</textarea></div>'+
+  '</div>';
+}
+function discSave(){
+  var pt=(document.getElementById('discPt').value||'').trim();
+  var en=(document.getElementById('discEn').value||'').trim();
+  var es=(document.getElementById('discEs').value||'').trim();
+  var enabled=!!(document.getElementById('discEnabled')&&document.getElementById('discEnabled').checked);
+  DISCLAIMER = {enabled:enabled, pt:pt, en:en, es:es};
+  _discDraft=null;
+  if(window.SB&&SB.enabled){ try{ SB.saveConfig({rooms:ROOMS,hubs:HUBS,hubColors:HUB_COLORS,slots:SLOTS,days:DAYS,highlights:HIGHLIGHTS,categories:getCategories(),formats:FORMATS,showAllHubsBtn:SHOW_ALL_HUBS_BTN,disclaimer:DISCLAIMER}); }catch(e){} } else { saveData(); }
+  logAction('Editou o aviso aos visitantes','');
+  if(typeof _renderDisclaimerBanner==='function') _renderDisclaimerBanner();
+  _renderHubRoomModal('disc');
+}
 // ── EDITOR DE FORMATOS (nomes nos 3 idiomas) ──
 function _fmtsEditorHTML(){
   if(!_fmtsDraft) _fmtsDraft=JSON.parse(JSON.stringify(FORMATS));
@@ -5344,7 +5395,7 @@ function fmtsSave(){
     FORMATS[i].color=_fmtsDraft[i].color;
     delete FORMATS[i].label;
   }
-  if(window.SB&&SB.enabled){ try{ SB.saveConfig({rooms:ROOMS,hubs:HUBS,hubColors:HUB_COLORS,slots:SLOTS,days:DAYS,highlights:HIGHLIGHTS,categories:getCategories(),formats:FORMATS,showAllHubsBtn:SHOW_ALL_HUBS_BTN}); }catch(e){} } else { saveData(); }
+  if(window.SB&&SB.enabled){ try{ SB.saveConfig({rooms:ROOMS,hubs:HUBS,hubColors:HUB_COLORS,slots:SLOTS,days:DAYS,highlights:HIGHLIGHTS,categories:getCategories(),formats:FORMATS,showAllHubsBtn:SHOW_ALL_HUBS_BTN,disclaimer:DISCLAIMER}); }catch(e){} } else { saveData(); }
   logAction('Editou os formatos','');
   renderMain(); if(curPage==='home') renderBento();
   _fmtsDraft=null;
@@ -5413,7 +5464,7 @@ function daysSave(){
     Object.keys(day2).forEach(function(sl){ Object.keys(day2[sl]||{}).forEach(function(rid){ var t=day2[sl][rid]; if(t && t.day!==ni){ t.day=ni; changedTalks.push(t); } }); });
   }
   if(window.SB && SB.enabled){
-    try{ SB.saveConfig({rooms:ROOMS,hubs:HUBS,hubColors:HUB_COLORS,slots:SLOTS,days:DAYS,highlights:HIGHLIGHTS,categories:getCategories(),formats:FORMATS,showAllHubsBtn:SHOW_ALL_HUBS_BTN}); }catch(e){}
+    try{ SB.saveConfig({rooms:ROOMS,hubs:HUBS,hubColors:HUB_COLORS,slots:SLOTS,days:DAYS,highlights:HIGHLIGHTS,categories:getCategories(),formats:FORMATS,showAllHubsBtn:SHOW_ALL_HUBS_BTN,disclaimer:DISCLAIMER}); }catch(e){}
     removedTalkIds.forEach(function(id){ try{ SB.deleteTalk(id); }catch(e){} });
     changedTalks.forEach(function(t){ try{ SB.upsertTalk(t); }catch(e){} });
   } else { saveData(); }
@@ -5456,7 +5507,7 @@ function catMgrSave(){
   if(!clean.length){ alert(t18('catEmpty')); return; }
   clean.forEach(function(c){ if(!c.id) c.id='cat-'+Date.now().toString(36)+Math.random().toString(36).slice(2,5); c.name=c.name.trim(); });
   SPK_CATEGORIES=clean; _catDraft=JSON.parse(JSON.stringify(clean));
-  if(window.SB&&SB.enabled){ SB.saveConfig({rooms:ROOMS,hubs:HUBS,hubColors:HUB_COLORS,slots:SLOTS,days:DAYS,highlights:HIGHLIGHTS,categories:SPK_CATEGORIES,formats:FORMATS,showAllHubsBtn:SHOW_ALL_HUBS_BTN}); } else { saveData(); }
+  if(window.SB&&SB.enabled){ SB.saveConfig({rooms:ROOMS,hubs:HUBS,hubColors:HUB_COLORS,slots:SLOTS,days:DAYS,highlights:HIGHLIGHTS,categories:SPK_CATEGORIES,formats:FORMATS,showAllHubsBtn:SHOW_ALL_HUBS_BTN,disclaimer:DISCLAIMER}); } else { saveData(); }
   logAction('Editou as categorias de participantes','');
   renderSpkGrid(); renderPubSpkGrid(_pubSpkQ||'');
   _renderHubRoomModal('cats');
@@ -5877,6 +5928,7 @@ function _applyServerData(d){
   if(Array.isArray(d.formats) && d.formats.length) FORMATS = d.formats;
   if(typeof _ensureFormatColors==='function') _ensureFormatColors();
   if(typeof d.showAllHubsBtn==='boolean') SHOW_ALL_HUBS_BTN = d.showAllHubsBtn;
+  if(d.disclaimer && typeof d.disclaimer==='object') DISCLAIMER = d.disclaimer;
 }
 
 function SEED_DATA(){
@@ -5995,6 +6047,7 @@ function _applySBData(d){
   if(Array.isArray(c.formats) && c.formats.length) FORMATS=c.formats;
   if(typeof _ensureFormatColors==='function') _ensureFormatColors();
   if(typeof c.showAllHubsBtn==='boolean') SHOW_ALL_HUBS_BTN=c.showAllHubsBtn;
+  if(c.disclaimer && typeof c.disclaimer==='object') DISCLAIMER=c.disclaimer;
 }
 var _sbCh=null, _sbReloadT=null, _sbApplying=false;
 function _sbSubscribe(){
@@ -6038,11 +6091,11 @@ var _saveQueue = Promise.resolve();
 function saveData(){
   if(!WP_ENABLED) return;
   if(window.SB && SB.enabled){
-    try{ SB.saveConfig({rooms:ROOMS,hubs:HUBS,hubColors:HUB_COLORS,slots:SLOTS,days:DAYS,highlights:HIGHLIGHTS,categories:getCategories(),formats:FORMATS,showAllHubsBtn:SHOW_ALL_HUBS_BTN}); }catch(e){}
+    try{ SB.saveConfig({rooms:ROOMS,hubs:HUBS,hubColors:HUB_COLORS,slots:SLOTS,days:DAYS,highlights:HIGHLIGHTS,categories:getCategories(),formats:FORMATS,showAllHubsBtn:SHOW_ALL_HUBS_BTN,disclaimer:DISCLAIMER}); }catch(e){}
     return;
   }
   try{
-    var snap = {speakers:SPEAKERS,schedules:SCHEDULES,slots:SLOTS,hubs:HUBS,hubColors:HUB_COLORS,rooms:ROOMS,highlights:HIGHLIGHTS,categories:getCategories(),formats:FORMATS,showAllHubsBtn:SHOW_ALL_HUBS_BTN,_savedBy:(AUTH?profileName(AUTH):''),_ts:Date.now()};
+    var snap = {speakers:SPEAKERS,schedules:SCHEDULES,slots:SLOTS,hubs:HUBS,hubColors:HUB_COLORS,rooms:ROOMS,highlights:HIGHLIGHTS,categories:getCategories(),formats:FORMATS,showAllHubsBtn:SHOW_ALL_HUBS_BTN,disclaimer:DISCLAIMER,_savedBy:(AUTH?profileName(AUTH):''),_ts:Date.now()};
     _writeJSON(DATA_KEY, snap);
   }catch(e){ console.error('[Agenda] save erro', e); }
 }
