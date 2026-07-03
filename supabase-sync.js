@@ -74,7 +74,8 @@
             rooms: cfgRow.rooms||[], hubs: cfgRow.hubs||[], hubColors: cfgRow.hub_colors||[],
             slots: cfgRow.slots||[], days: cfgRow.days||[], highlights: cfgRow.highlights||null,
             categories: cfgRow.categories||[], formats: cfgRow.formats||[],
-            showAllHubsBtn: (cfgRow.show_all_hubs_btn!==false)
+            showAllHubsBtn: (cfgRow.show_all_hubs_btn!==false),
+            disclaimer: cfgRow.disclaimer||null
           }
         };
       });
