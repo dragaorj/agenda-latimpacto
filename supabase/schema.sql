@@ -72,6 +72,7 @@ create table if not exists public.config (
   categories jsonb default '[]'::jsonb,
   formats    jsonb default '[]'::jsonb,
   show_all_hubs_btn boolean default true,
+  disclaimer jsonb default '{"enabled":false,"pt":"","en":"","es":""}'::jsonb,
   updated_at timestamptz default now(),
   constraint config_singleton check (id = 1)
 );
@@ -187,6 +188,7 @@ begin
     categories = coalesce(p_config->'categories', categories),
     formats    = coalesce(p_config->'formats', formats),
     show_all_hubs_btn = coalesce((p_config->>'showAllHubsBtn')::boolean, show_all_hubs_btn),
+    disclaimer = coalesce(p_config->'disclaimer', disclaimer),
     updated_at = now()
   where id = 1;
 end; $$;
