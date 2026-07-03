@@ -798,6 +798,11 @@ body[data-mode="edit"] .btile:hover .btile-edit{display:flex;}
   max-height:min(92dvh, calc(100dvh - 28px));
 }
 .mdl.wide{max-width:660px;}
+/* Modal "Gerenciar" (abas Dias/Horários/Hubs/Formatos/Salas/Categorias/Aviso):
+   mais largo em telas grandes, para caber todas as abas sem precisar rolar,
+   e encolhe normalmente em telas menores. */
+.mdl.mdl-manage{max-width:min(94vw, 1040px);}
+@media(max-width:760px){ .mdl.mdl-manage{max-width:100%;} }
 /* Alças de redimensionamento estilo Windows (arrastar borda/canto) */
 .mdl-resize{position:absolute;z-index:30;-webkit-tap-highlight-color:transparent;touch-action:none;}
 .mdl-resize.rz-n{top:-5px;left:14px;right:14px;height:9px;cursor:ns-resize;}
@@ -3486,7 +3491,7 @@ function _renderHubRoomModal(tab){
     : isDisc
     ? '<button class="btn" onclick="closeModal()">'+t18('hlCancel')+'</button><button class="btn btn-p" onclick="discSave()">'+t18('discSaveBtn')+'</button>'
     : '<button class="btn" onclick="closeModal()">Fechar</button>';
-  openModal('🛠 '+t18('toolTags'), tabBar + bodyInner, ftr, false);
+  openModal('🛠 '+t18('toolTags'), tabBar + bodyInner, ftr, 'manage');
 }
 
 // ── HUB CRUD ────────────────────────────
@@ -5751,7 +5756,7 @@ function saveSpk(){
 function openModal(title,body,ftr,wide){
   var _m=document.getElementById('mdl');
   if(_m){ _m.style.position=''; _m.style.left=''; _m.style.top=''; _m.style.width=''; _m.style.height=''; _m.style.maxWidth=''; _m.style.maxHeight=''; _m.style.margin=''; _m.style.animation=''; _m.classList.remove('mdl-resizing'); }
-  document.getElementById('mTitle').textContent=title; document.getElementById('mBody').innerHTML=body; document.getElementById('mFtr').innerHTML=ftr; document.getElementById('mdl').className='mdl'+(wide?' wide':''); document.getElementById('ov').className='ov on'; }
+  document.getElementById('mTitle').textContent=title; document.getElementById('mBody').innerHTML=body; document.getElementById('mFtr').innerHTML=ftr; document.getElementById('mdl').className='mdl'+(wide==='manage'?' mdl-manage':(wide?' wide':'')); document.getElementById('ov').className='ov on'; }
 function ovClick(e){ /* clicar fora NÃO fecha — só o X ou concluir a tarefa */ }
 // ESC fecha o popup ativo (prioriza lightbox de foto/mapa se estiver por cima)
 document.addEventListener('keydown', function(e){
