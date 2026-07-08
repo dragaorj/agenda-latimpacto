@@ -34,9 +34,17 @@
       speakerIds:r.speaker_ids||[], speakerName:r.speaker_name||'',
       title:r.title||{}, desc:r.descr||{}, locImg:r.loc_img||'' };
   }
+  // Campos multilíngues ({pt,en,es}) são gravados em colunas TEXT — chegam
+  // como string JSON. Converte de volta para objeto; texto simples passa reto.
+  function _mlParse(v){
+    if(typeof v==='string' && v.charAt(0)==='{' && v.indexOf('"')>-1){
+      try{ var o=JSON.parse(v); if(o && typeof o==='object' && !Array.isArray(o)) return o; }catch(e){}
+    }
+    return v;
+  }
   function rowToSpeaker(r){
-    return { id:r.id, name:r.name, role:r.role, company:r.company,
-      bio:r.bio, photo:r.photo, linkedin:r.linkedin, sort:r.sort, category:r.category||'speaker' };
+    return { id:r.id, name:r.name, role:_mlParse(r.role), company:_mlParse(r.company),
+      bio:_mlParse(r.bio), photo:r.photo, linkedin:r.linkedin, sort:r.sort, category:r.category||'speaker' };
   }
 
   var SB = {
