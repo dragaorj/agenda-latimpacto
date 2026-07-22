@@ -44,7 +44,7 @@
   }
   function rowToSpeaker(r){
     return { id:r.id, name:r.name, role:_mlParse(r.role), company:_mlParse(r.company),
-      bio:_mlParse(r.bio), photo:r.photo, linkedin:r.linkedin, sort:r.sort, category:r.category||'speaker' };
+      bio:_mlParse(r.bio), photo:r.photo, linkedin:r.linkedin, sort:r.sort, category:r.category||'speaker', pending:!!r.pending };
   }
 
   var SB = {
