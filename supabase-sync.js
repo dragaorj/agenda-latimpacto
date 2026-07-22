@@ -31,7 +31,7 @@
   function rowToTalk(r){
     return { id:r.id, day:r.day, time:r.time, room:r.room, hub:r.hub,
       format:r.format, duration:r.duration,
-      speakerIds:r.speaker_ids||[], speakerName:r.speaker_name||'',
+      speakerIds:r.speaker_ids||[], speakerName:r.speaker_name||'', pendingSpkIds:r.pending_spk_ids||[],
       title:r.title||{}, desc:r.descr||{}, locImg:r.loc_img||'' };
   }
   // Campos multilíngues ({pt,en,es}) são gravados em colunas TEXT — chegam

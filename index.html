@@ -2179,6 +2179,7 @@ var SCHEDULES = (function(){ var a=[]; for(var i=0;i<NDAYS;i++) a.push(emptyDay(
 var curDay=0, curView='grid', hiddenR={}, hiddenH={}, searchQ='';
 var editSpkId=null, editTalkId=null, pickedSpks=[], photoData=null, pkQ='';
 var pickedSpk=null;
+var pendingSpkIds=[];   // ids (dentro de pickedSpks) marcados "em confirmação" NESTA sessão
 
 // ════════════════════════════════════════
 // WP / AUTH
@@ -4779,7 +4780,7 @@ function openTalkDetail(id){
       }
       body+='<div class="ev-spkbox">'+av+
         '<div style="flex:1;min-width:0">'+
-        '<div class="ev-spkname">'+esc(spk.name)+(spk.pending?' <span class="pending-tag">'+t18('spkPendingTag')+'</span>':'')+'</div>'+
+        '<div class="ev-spkname">'+esc(spk.name)+((spk.pending||(t.pendingSpkIds&&t.pendingSpkIds.indexOf(spk.id)>-1))?' <span class="pending-tag">'+t18('spkPendingTag')+'</span>':'')+'</div>'+
         (spk.role?'<div class="ev-spkrole">'+esc(spk.role)+'</div>':'')+
         (spk.company?'<div class="ev-spkco">'+esc(spk.company)+'</div>':'')+
         bioHtml+'</div></div>';
@@ -4894,7 +4895,7 @@ function deleteTalk(id){
 }
 function openAddTalk(){
   if(!WP_ENABLED) return;
-  editTalkId=null; pickedSpks=[]; pickedSpk=null; pkQ='';
+  editTalkId=null; pickedSpks=[]; pickedSpk=null; pkQ=''; pendingSpkIds=[];
   _locImgData=null;
   openModal('Nova Sessão',buildTalkForm(null),'<button class="btn" onclick="closeModal()">Cancelar</button><button class="btn btn-p" onclick="saveTalk()">Salvar Sessão</button>',true); renderPicker();
 }
@@ -4902,6 +4903,7 @@ function openEditTalk(id){
   if(!WP_ENABLED) return;
   var found=findTalk(id); if(!found) return; var t=found.talk; editTalkId=id;
   pickedSpks=t.speakerIds&&t.speakerIds.length?t.speakerIds.slice():(t.speakerId?[t.speakerId]:[]);
+  pendingSpkIds=Array.isArray(t.pendingSpkIds)?t.pendingSpkIds.slice():[];
   pickedSpk=pickedSpks[0]||null; pkQ=''; _locImgData=null;
   openModal('Editar Sessão',buildTalkForm(t),'<button class="btn" onclick="closeModal()">Cancelar</button><button class="btn btn-p" onclick="saveTalk()">Salvar Sessão</button>',true); renderPicker();
 }
@@ -5041,8 +5043,13 @@ function renderPicker(){
 function filterPk(v){ pkQ=v; renderPicker(); }
 function pickSpk(id){
   var idx=pickedSpks.indexOf(id);
-  if(idx>-1) pickedSpks.splice(idx,1); else pickedSpks.push(id);
+  if(idx>-1){ pickedSpks.splice(idx,1); var pi=pendingSpkIds.indexOf(id); if(pi>-1) pendingSpkIds.splice(pi,1); } else { pickedSpks.push(id); }
   pickedSpk=pickedSpks[0]||null; renderPicker();
+}
+function toggleSpkPendingForTalk(id){
+  var idx=pendingSpkIds.indexOf(id);
+  if(idx>-1) pendingSpkIds.splice(idx,1); else pendingSpkIds.push(id);
+  updatePkPreview();
 }
 function updatePkPreview(){
   var el=document.getElementById('pkPreview'); if(!el) return;
@@ -5050,9 +5057,14 @@ function updatePkPreview(){
   var tags='';
   for(var i=0;i<pickedSpks.length;i++){
     var s=findSpk(pickedSpks[i]); if(!s) continue;
+    var isPend=pendingSpkIds.indexOf(s.id)>-1;
     var av=s.photo?'<img src="'+s.photo+'" style="width:20px;height:20px;border-radius:50%;object-fit:cover;flex-shrink:0;">':'<div style="width:20px;height:20px;border-radius:50%;background:'+avColor(s.name)+';display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;flex-shrink:0">'+initials(s.name)+'</div>';
     tags+='<div style="display:inline-flex;align-items:center;gap:5px;background:var(--blue-lt);border-radius:16px;padding:3px 8px 3px 5px;font-size:12px;font-weight:500;color:var(--blue)">'+
-      av+esc(s.name)+'<span onclick="pickSpk(\''+s.id+'\')" style="cursor:pointer;opacity:.6;margin-left:2px;font-size:14px;line-height:1">×</span></div>';
+      av+esc(s.name)+
+      '<label style="display:inline-flex;align-items:center;gap:3px;cursor:pointer;margin-left:4px;padding-left:6px;border-left:1px solid color-mix(in srgb,var(--blue) 30%,transparent);font-weight:400;font-size:11px;color:var(--text2);" title="'+t18('spkPendingLabel')+'">'+
+        '<input type="checkbox" '+(isPend?'checked':'')+' onclick="event.stopPropagation();toggleSpkPendingForTalk(\''+s.id+'\')" style="margin:0;">'+t18('spkPendingTag')+
+      '</label>'+
+      '<span onclick="pickSpk(\''+s.id+'\')" style="cursor:pointer;opacity:.6;margin-left:2px;font-size:14px;line-height:1">×</span></div>';
   }
   el.innerHTML='<div style="display:flex;flex-wrap:wrap;gap:5px;padding:6px 0;">'+tags+'</div>';
 }
@@ -5135,6 +5147,7 @@ function _finishSaveTalk(titleObj, title, descObj, day, time, room, hub, format,
     speakerIds: pickedSpks.slice(),
     speakerId:  pickedSpks[0]||null,
     speakerName: spkNames.join(', '),
+    pendingSpkIds: pendingSpkIds.slice(),
     locText: locText, locImg: locImg
   };
 
