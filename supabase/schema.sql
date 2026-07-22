@@ -55,7 +55,7 @@ create table if not exists public.talks (
   duration     int  default 30,
   speaker_ids  jsonb default '[]'::jsonb,
   speaker_name text default '',
-  pending_spk_ids jsonb default '[]'::jsonb,   -- ids "em confirmação" NESTA sessão
+  speakers_pending boolean default false,      -- "Palestrantes em processo de confirmação" (toda a sessão)
   title        jsonb default '{}'::jsonb,      -- {pt,en,es}
   descr        jsonb default '{}'::jsonb,      -- {pt,en,es}
   loc_img      text default '',
@@ -240,7 +240,7 @@ declare pr public.profiles;
 begin
   pr := public._profile_by_token(p_token);
   if pr.id is null then raise exception 'token inválido'; end if;
-  insert into public.talks(id,day,"time",room,hub,format,duration,speaker_ids,speaker_name,pending_spk_ids,title,descr,loc_img,updated_at)
+  insert into public.talks(id,day,"time",room,hub,format,duration,speaker_ids,speaker_name,speakers_pending,title,descr,loc_img,updated_at)
   values (
     coalesce(p_t->>'id', gen_random_uuid()::text),
     coalesce((p_t->>'day')::int,0),
@@ -251,7 +251,7 @@ begin
     coalesce((p_t->>'duration')::int,30),
     coalesce(p_t->'speakerIds','[]'::jsonb),
     coalesce(p_t->>'speakerName',''),
-    coalesce(p_t->'pendingSpkIds','[]'::jsonb),
+    coalesce((p_t->>'speakersPending')::boolean,false),
     coalesce(p_t->'title','{}'::jsonb),
     coalesce(p_t->'desc','{}'::jsonb),
     coalesce(p_t->>'locImg',''),
@@ -259,7 +259,7 @@ begin
   on conflict (id) do update set
     day=excluded.day, "time"=excluded."time", room=excluded.room, hub=excluded.hub,
     format=excluded.format, duration=excluded.duration, speaker_ids=excluded.speaker_ids,
-    speaker_name=excluded.speaker_name, pending_spk_ids=excluded.pending_spk_ids, title=excluded.title, descr=excluded.descr,
+    speaker_name=excluded.speaker_name, speakers_pending=excluded.speakers_pending, title=excluded.title, descr=excluded.descr,
     loc_img=excluded.loc_img, updated_at=now();
 end; $$;
 
