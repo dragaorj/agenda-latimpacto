@@ -4780,7 +4780,7 @@ function openTalkDetail(id){
       }
       body+='<div class="ev-spkbox">'+av+
         '<div style="flex:1;min-width:0">'+
-        '<div class="ev-spkname">'+esc(spk.name)+((spk.pending||(t.pendingSpkIds&&t.pendingSpkIds.indexOf(spk.id)>-1))?' <span class="pending-tag">'+t18('spkPendingTag')+'</span>':'')+'</div>'+
+        '<div class="ev-spkname">'+esc(spk.name)+((t.pendingSpkIds&&t.pendingSpkIds.indexOf(spk.id)>-1)?' <span class="pending-tag">'+t18('spkPendingTag')+'</span>':'')+'</div>'+
         (spk.role?'<div class="ev-spkrole">'+esc(spk.role)+'</div>':'')+
         (spk.company?'<div class="ev-spkco">'+esc(spk.company)+'</div>':'')+
         bioHtml+'</div></div>';
@@ -5271,7 +5271,7 @@ function renderPubSpkGrid(q){
         :'<div class="pub-spk-ini" style="background:'+avColor(s.name)+';width:'+sz+'px;height:'+sz+'px;min-width:'+sz+'px;font-size:'+(sz===52?17:16)+'px;margin-bottom:0;">'+initials(s.name)+'</div>';
       h+='<div class="pub-spk-card" style="--ring:'+_ccol+'" onclick="viewSpk(\''+s.id+'\')">'+_adminActs+avSm+
         '<div class="pub-spk-list-info">'+
-          '<div class="pub-spk-name" style="text-align:left;font-size:'+(sz===52?13:14)+'px;">'+esc(s.name)+(s.pending?' <span class="pending-tag">'+t18('spkPendingTag')+'</span>':'')+'</div>'+
+          '<div class="pub-spk-name" style="text-align:left;font-size:'+(sz===52?13:14)+'px;">'+esc(s.name)+'</div>'+
           (s.role?'<div class="pub-spk-role" style="text-align:left;font-size:'+(sz===52?12:13)+'px;color:'+_ccol+'">'+esc(s.role)+'</div>':'')+
           (s.company?'<div class="pub-spk-co" style="text-align:left;font-size:'+(sz===52?11:13)+'px;">'+esc(s.company)+'</div>':'')+
         '</div>'+
@@ -5282,7 +5282,7 @@ function renderPubSpkGrid(q){
         ?'<img class="pub-spk-ph photo-clickable" src="'+s.photo+'" alt="'+esc(s.name)+'" onclick="event.stopPropagation();openPhotoLb(\''+s.photo+'\',\''+esc(s.name)+'\',\''+esc(s.role||'')+'\',\''+esc(s.company||'')+'\')">'
         :'<div class="pub-spk-ini" style="background:'+avColor(s.name)+'">'+initials(s.name)+'</div>';
       h+='<div class="pub-spk-card" style="--ring:'+_ccol+'" onclick="viewSpk(\''+s.id+'\')">'+_adminActs+avLg+
-        '<div class="pub-spk-name">'+esc(s.name)+(s.pending?' <span class="pending-tag">'+t18('spkPendingTag')+'</span>':'')+'</div>'+
+        '<div class="pub-spk-name">'+esc(s.name)+'</div>'+
         (s.role?'<div class="pub-spk-role" style="color:'+_ccol+'">'+esc(s.role)+'</div>':'')+
         (s.company?'<div class="pub-spk-co">'+esc(s.company)+'</div>':'')+
         (_spkView==='cards'&&s.bio?'<div class="pub-spk-bio">'+esc(s.bio)+'</div>':'')+
@@ -5309,7 +5309,7 @@ function viewSpk(id){
     liHtml='<div style="margin-top:12px;"><a href="'+liUrl+'" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:#0077b5;text-decoration:none;padding:5px 14px;border:1.5px solid #0077b5;border-radius:20px;background:#f0f7ff;"><img src="https://impactamais.com/wp-content/uploads/2026/04/linkedin-svgrepo-com.svg" width="14" height="14" style="flex-shrink:0;">LinkedIn</a></div>';
   }
   openModal(s.name,
-    '<div class="sd-head">'+av+'<div><div class="sd-name">'+esc(s.name)+(s.pending?' <span class="pending-tag">'+t18('spkPendingTag')+'</span>':'')+'</div>'+(s.role?'<div class="sd-role" style="color:'+_ring+'">'+esc(s.role)+'</div>':'')+(s.company?'<div class="sd-co">'+esc(s.company)+'</div>':'')+'</div></div>'+
+    '<div class="sd-head">'+av+'<div><div class="sd-name">'+esc(s.name)+'</div>'+(s.role?'<div class="sd-role" style="color:'+_ring+'">'+esc(s.role)+'</div>':'')+(s.company?'<div class="sd-co">'+esc(s.company)+'</div>':'')+'</div></div>'+
     liHtml+
     (s.bio?'<div class="sd-bio">'+esc(s.bio)+'</div>':'<div style="color:var(--text2);font-size:13px">Sem bio cadastrada.</div>'),
     ftr, false);
@@ -5385,10 +5385,6 @@ function openSpkForm(id){
     '<div class="fg"><label class="fl">Empresa / Organização '+_mlPills('spkCo')+'</label>'+_mlInput('spkCo',(s?s.company:''),'Ex: Empresa XYZ')+'</div>'+
     '<div class="fg"><label class="fl">Cargo / Título '+_mlPills('spkRole')+'</label>'+_mlInput('spkRole',(s?s.role:''),'Ex: CEO, Diretora…')+'</div>'+
     '<div class="fg"><label class="fl">Bio '+_mlPills('spkBio')+'</label>'+_mlArea('spkBio',(s?s.bio:''),'Breve apresentação do palestrante…')+'</div>'+
-    '<label class="fg" style="display:flex;align-items:center;gap:8px;padding:9px 11px;background:var(--bg);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:13px;">'+
-      '<input type="checkbox" id="spkPending" '+(s&&s.pending?'checked':'')+'>'+
-      '<span>'+t18('spkPendingLabel')+'</span>'+
-    '</label>'+
     _catSelectField(s)+
     '<div class="fg"><label class="fl" style="display:flex;align-items:center;gap:6px;"><img src="https://impactamais.com/wp-content/uploads/2026/04/linkedin-svgrepo-com.svg" width="14" height="14" style="flex-shrink:0;">LinkedIn</label><input id="spkLinkedin" class="fi" placeholder="linkedin.com/in/seuperfil" value="'+(s?esc(s.linkedin||''):'')+'"></div>',
     '<button class="btn" onclick="closeModal()">Cancelar</button><button class="btn btn-p" onclick="saveSpk()">Salvar Participante</button>',false);
@@ -5783,10 +5779,6 @@ function openSpkFormWithPhoto(id, photo){
     '<div class="fg"><label class="fl">Empresa / Organização '+_mlPills('spkCo')+'</label>'+_mlInput('spkCo',(s?s.company:''),'Ex: Empresa XYZ')+'</div>'+
     '<div class="fg"><label class="fl">Cargo / Título '+_mlPills('spkRole')+'</label>'+_mlInput('spkRole',(s?s.role:''),'Ex: CEO, Diretora…')+'</div>'+
     '<div class="fg"><label class="fl">Bio '+_mlPills('spkBio')+'</label>'+_mlArea('spkBio',(s?s.bio:''),'Breve apresentação do palestrante…')+'</div>'+
-    '<label class="fg" style="display:flex;align-items:center;gap:8px;padding:9px 11px;background:var(--bg);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:13px;">'+
-      '<input type="checkbox" id="spkPending" '+(s&&s.pending?'checked':'')+'>'+
-      '<span>'+t18('spkPendingLabel')+'</span>'+
-    '</label>'+
     _catSelectField(s)+
     '<div class="fg"><label class="fl" style="display:flex;align-items:center;gap:6px;"><img src="https://impactamais.com/wp-content/uploads/2026/04/linkedin-svgrepo-com.svg" width="14" height="14" style="flex-shrink:0;">LinkedIn</label><input id="spkLinkedin" class="fi" placeholder="linkedin.com/in/seuperfil" value="'+(s?esc(s.linkedin||''):'')+'"></div>',
     '<button class="btn" onclick="closeModal()">Cancelar</button><button class="btn btn-p" onclick="saveSpk()">Salvar Participante</button>',false);
@@ -5804,15 +5796,14 @@ function saveSpk(){
   if(_mlEmpty(role)) role=''; if(_mlEmpty(co)) co=''; if(_mlEmpty(bio)) bio='';
   var linkedin=(document.getElementById('spkLinkedin').value||'').trim();
   var cat=((document.getElementById('spkCat')||{}).value)||'speaker';
-  var pending=!!(document.getElementById('spkPending')&&document.getElementById('spkPending').checked);
   if(editSpkId){
     for(var i=0;i<SPEAKERS.length;i++) if(SPEAKERS[i].id===editSpkId){
-      SPEAKERS[i]={id:editSpkId,name:name,role:role,company:co,bio:bio,photo:photoData,linkedin:linkedin,category:cat,pending:pending};
+      SPEAKERS[i]={id:editSpkId,name:name,role:role,company:co,bio:bio,photo:photoData,linkedin:linkedin,category:cat};
       break;
     }
     updateTalkSpeakerNames(editSpkId, name);
   } else {
-    SPEAKERS.push({id:makeId('spk'),name:name,role:role,company:co,bio:bio,photo:photoData||null,linkedin:linkedin,category:cat,pending:pending});
+    SPEAKERS.push({id:makeId('spk'),name:name,role:role,company:co,bio:bio,photo:photoData||null,linkedin:linkedin,category:cat});
   }
   (function(){var _sb=document.getElementById('spkBadge'); if(_sb) _sb.textContent=SPEAKERS.length;})();
   var _spkObj = editSpkId ? findSpk(editSpkId) : SPEAKERS[SPEAKERS.length-1];
