@@ -4738,7 +4738,15 @@ function openTalkDetail(id){
   body+=_langBadges(t);
   body+='<div class="ev-title" style="margin-top:8px">'+esc(L(t.title))+'</div>'+
     '<div class="ev-time">🕐 '+t.time+' – '+addM(t.time,talkDur(t))+' &nbsp;|&nbsp; '+DAY_LABELS[t.day===undefined?curDay:t.day]+'</div>';
-  if(L(t.desc)) body+='<div class="sec">'+t18('descLabel')+'</div><div class="ev-desc">'+esc(L(t.desc))+'</div>';
+  if(L(t.desc)){
+    var _descTxt=L(t.desc);
+    var descKey='desc-'+esc(t.id||'');
+    _bioStore[descKey]=_descTxt;
+    var DESC_LIMIT=280;
+    var descShort=_descTxt.length>DESC_LIMIT?_descTxt.slice(0,DESC_LIMIT).trim()+'…':_descTxt;
+    body+='<div class="sec">'+t18('descLabel')+'</div><div id="evBioText-'+descKey+'" class="ev-desc">'+esc(descShort)+'</div>'+
+      (_descTxt.length>DESC_LIMIT?'<button id="evBioBtn-'+descKey+'" class="lnk" style="margin-top:4px;font-size:12px;padding:2px 0;" onclick="toggleBio(\''+descKey+'\')">'+t18('evSeeMore')+' ▾</button>':'');
+  }
   // Localização da sala
   if(t.locText||t.locImg){
     body+='<div class="sec">📍 '+t18('evLocation')+'</div>';
@@ -4800,8 +4808,9 @@ function openTalkDetail(id){
 function toggleBio(bioKey){
   var el=document.getElementById('evBioText-'+bioKey),btn=document.getElementById('evBioBtn-'+bioKey),fullText=_bioStore[bioKey];
   if(!el||!btn||!fullText) return;
+  var lim=bioKey.indexOf('desc-')===0?280:BIO_LIMIT;
   var expanded=btn.textContent.indexOf(t18('evSeeLess'))>-1;
-  if(expanded){ el.textContent=fullText.slice(0,BIO_LIMIT).trim()+'…'; btn.textContent=t18('evSeeMore')+' ▾'; }
+  if(expanded){ el.textContent=fullText.slice(0,lim).trim()+'…'; btn.textContent=t18('evSeeMore')+' ▾'; }
   else { el.textContent=fullText; btn.textContent=t18('evSeeLess')+' ▴'; }
 }
 
