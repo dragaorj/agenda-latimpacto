@@ -1050,7 +1050,7 @@ body[data-guest="1"] #pgSpk .pub-spk-toolbar{display:none;}
 /* FORMAT BADGES */
 .fmt-badge{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.3px;padding:2px 7px;border-radius:10px;white-space:nowrap;}
 /* LANGUAGE TAGS (idioma da sessão) */
-.lang-tag{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;letter-spacing:.02em;padding:2px 7px;border-radius:8px;white-space:nowrap;background:var(--blue-lt,#f3e8fd);color:var(--brand);border:1px solid color-mix(in srgb,var(--brand) 22%,transparent);}
+.lang-tag{display:inline-flex;align-items:center;gap:4px;margin-left:6px;font-size:11px;font-weight:700;letter-spacing:.02em;padding:2px 7px;border-radius:8px;white-space:nowrap;background:var(--blue-lt,#f3e8fd);color:var(--brand);border:1px solid color-mix(in srgb,var(--brand) 22%,transparent);}
 .lang-tag svg{width:16px;height:11px;border-radius:2px;display:inline-block;flex-shrink:0;box-shadow:0 0 0 .5px rgba(0,0,0,.08);}
 [data-theme="dark"] .lang-tag{background:rgba(140,90,200,.16);color:#d7aefb;border-color:rgba(140,90,200,.3);}
 .lang-flag{font-size:14px;line-height:1;}
@@ -1917,7 +1917,7 @@ function _langBadges(t,extraStyle){
   var ls=_talkLangs(t); if(!ls.length) return '';
   var out='';
   for(var i=0;i<LANG_ORDER.length;i++){ var c=LANG_ORDER[i]; if(ls.indexOf(c)<0) continue;
-    out+='<span class="lang-tag"'+(extraStyle?' style="'+extraStyle+'"':'')+'>'+LANG_FLAGS[c]+' '+c.toUpperCase()+'</span>';
+    out+='<span class="lang-tag"'+(extraStyle?' style="'+extraStyle+'"':'')+'>'+c.toUpperCase()+'</span>';
   }
   return out;
 }
@@ -4995,11 +4995,11 @@ function buildTalkForm(t){
     '<div class="fg"><label class="fl">Idioma da sessão <span style="font-weight:400;color:var(--text2)">(marque um ou mais)</span></label>'+
       '<div class="acc-checks">'+
         '<label class="acc-check"><input type="checkbox" id="evLangPt"'+(t&&_talkHasLang(t,'pt')?' checked':'')+'>'+
-          '<span class="lang-flag">🇧🇷</span><span>PT</span></label>'+
+          '<span>PT</span></label>'+
         '<label class="acc-check"><input type="checkbox" id="evLangEn"'+(t&&_talkHasLang(t,'en')?' checked':'')+'>'+
-          '<span class="lang-flag">🇬🇧</span><span>EN</span></label>'+
+          '<span>EN</span></label>'+
         '<label class="acc-check"><input type="checkbox" id="evLangEs"'+(t&&_talkHasLang(t,'es')?' checked':'')+'>'+
-          '<span class="lang-flag">🇪🇸</span><span>ES</span></label>'+
+          '<span>ES</span></label>'+
       '</div>'+
     '</div>'+
     locSection+
