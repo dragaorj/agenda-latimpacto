@@ -40,6 +40,7 @@ create table if not exists public.speakers (
   photo      text default '',                 -- URL no Storage
   linkedin   text default '',
   category   text default 'speaker',           -- 'speaker' | 'curator'
+  moderator  boolean default false,            -- destaque: moderador desta edição
   sort       int default 0,
   updated_at timestamptz default now()
 );
@@ -213,16 +214,17 @@ declare pr public.profiles;
 begin
   pr := public._profile_by_token(p_token);
   if pr.id is null then raise exception 'token inválido'; end if;
-  insert into public.speakers(id,name,"role",company,bio,photo,linkedin,category,sort,updated_at)
+  insert into public.speakers(id,name,"role",company,bio,photo,linkedin,category,moderator,sort,updated_at)
   values (
     coalesce(p_s->>'id', gen_random_uuid()::text),
     coalesce(p_s->>'name',''), coalesce(p_s->>'role',''), coalesce(p_s->>'company',''),
     coalesce(p_s->>'bio',''),  coalesce(p_s->>'photo',''), coalesce(p_s->>'linkedin',''),
     coalesce(p_s->>'category','speaker'),
+    coalesce((p_s->>'moderator')::boolean,false),
     coalesce((p_s->>'sort')::int,0), now())
   on conflict (id) do update set
     name=excluded.name, "role"=excluded."role", company=excluded.company, bio=excluded.bio,
-    photo=excluded.photo, linkedin=excluded.linkedin, category=excluded.category, sort=excluded.sort, updated_at=now();
+    photo=excluded.photo, linkedin=excluded.linkedin, category=excluded.category, moderator=excluded.moderator, sort=excluded.sort, updated_at=now();
 end; $$;
 
 create or replace function public.sb_delete_speaker(p_token text, p_id text)
