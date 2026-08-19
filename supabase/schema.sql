@@ -40,7 +40,6 @@ create table if not exists public.speakers (
   photo      text default '',                 -- URL no Storage
   linkedin   text default '',
   category   text default 'speaker',           -- 'speaker' | 'curator'
-  moderator  boolean default false,            -- destaque: moderador desta edição
   sort       int default 0,
   updated_at timestamptz default now()
 );
@@ -57,6 +56,7 @@ create table if not exists public.talks (
   speaker_ids  jsonb default '[]'::jsonb,
   speaker_name text default '',
   speakers_pending boolean default false,      -- "Palestrantes em processo de confirmação" (toda a sessão)
+  moderator_id text default null,              -- id do palestrante moderador DESTA sessão
   langs        jsonb default '[]'::jsonb,      -- idiomas da sessão: ["pt","en","es"]
   title        jsonb default '{}'::jsonb,      -- {pt,en,es}
   descr        jsonb default '{}'::jsonb,      -- {pt,en,es}
@@ -214,17 +214,16 @@ declare pr public.profiles;
 begin
   pr := public._profile_by_token(p_token);
   if pr.id is null then raise exception 'token inválido'; end if;
-  insert into public.speakers(id,name,"role",company,bio,photo,linkedin,category,moderator,sort,updated_at)
+  insert into public.speakers(id,name,"role",company,bio,photo,linkedin,category,sort,updated_at)
   values (
     coalesce(p_s->>'id', gen_random_uuid()::text),
     coalesce(p_s->>'name',''), coalesce(p_s->>'role',''), coalesce(p_s->>'company',''),
     coalesce(p_s->>'bio',''),  coalesce(p_s->>'photo',''), coalesce(p_s->>'linkedin',''),
     coalesce(p_s->>'category','speaker'),
-    coalesce((p_s->>'moderator')::boolean,false),
     coalesce((p_s->>'sort')::int,0), now())
   on conflict (id) do update set
     name=excluded.name, "role"=excluded."role", company=excluded.company, bio=excluded.bio,
-    photo=excluded.photo, linkedin=excluded.linkedin, category=excluded.category, moderator=excluded.moderator, sort=excluded.sort, updated_at=now();
+    photo=excluded.photo, linkedin=excluded.linkedin, category=excluded.category, sort=excluded.sort, updated_at=now();
 end; $$;
 
 create or replace function public.sb_delete_speaker(p_token text, p_id text)
@@ -243,7 +242,7 @@ declare pr public.profiles;
 begin
   pr := public._profile_by_token(p_token);
   if pr.id is null then raise exception 'token inválido'; end if;
-  insert into public.talks(id,day,"time",room,hub,format,duration,speaker_ids,speaker_name,speakers_pending,langs,title,descr,loc_img,updated_at)
+  insert into public.talks(id,day,"time",room,hub,format,duration,speaker_ids,speaker_name,speakers_pending,moderator_id,langs,title,descr,loc_img,updated_at)
   values (
     coalesce(p_t->>'id', gen_random_uuid()::text),
     coalesce((p_t->>'day')::int,0),
@@ -255,6 +254,7 @@ begin
     coalesce(p_t->'speakerIds','[]'::jsonb),
     coalesce(p_t->>'speakerName',''),
     coalesce((p_t->>'speakersPending')::boolean,false),
+    nullif(p_t->>'moderatorId',''),
     coalesce(p_t->'langs','[]'::jsonb),
     coalesce(p_t->'title','{}'::jsonb),
     coalesce(p_t->'desc','{}'::jsonb),
@@ -263,7 +263,7 @@ begin
   on conflict (id) do update set
     day=excluded.day, "time"=excluded."time", room=excluded.room, hub=excluded.hub,
     format=excluded.format, duration=excluded.duration, speaker_ids=excluded.speaker_ids,
-    speaker_name=excluded.speaker_name, speakers_pending=excluded.speakers_pending, langs=excluded.langs, title=excluded.title, descr=excluded.descr,
+    speaker_name=excluded.speaker_name, speakers_pending=excluded.speakers_pending, moderator_id=excluded.moderator_id, langs=excluded.langs, title=excluded.title, descr=excluded.descr,
     loc_img=excluded.loc_img, updated_at=now();
 end; $$;
 
