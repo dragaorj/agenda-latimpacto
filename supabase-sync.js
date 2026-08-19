@@ -31,7 +31,7 @@
   function rowToTalk(r){
     return { id:r.id, day:r.day, time:r.time, room:r.room, hub:r.hub,
       format:r.format, duration:r.duration,
-      speakerIds:r.speaker_ids||[], speakerName:r.speaker_name||'', speakersPending:!!r.speakers_pending,
+      speakerIds:r.speaker_ids||[], speakerName:r.speaker_name||'', speakersPending:!!r.speakers_pending, moderatorId:r.moderator_id||null,
       langs:r.langs||[],
       title:r.title||{}, desc:r.descr||{}, locImg:r.loc_img||'' };
   }
@@ -45,7 +45,7 @@
   }
   function rowToSpeaker(r){
     return { id:r.id, name:r.name, role:_mlParse(r.role), company:_mlParse(r.company),
-      bio:_mlParse(r.bio), photo:r.photo, linkedin:r.linkedin, sort:r.sort, category:r.category||'speaker', moderator:!!r.moderator };
+      bio:_mlParse(r.bio), photo:r.photo, linkedin:r.linkedin, sort:r.sort, category:r.category||'speaker' };
   }
 
   var SB = {
