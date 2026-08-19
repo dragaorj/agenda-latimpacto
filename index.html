@@ -2249,7 +2249,7 @@ var _UNIFIED_CAT = {id:'speaker', name:'Palestrante', color:'#611780'};
 function _defaultCategories(){ return [ {id:'speaker', name:'Palestrante', color:'#611780'} ]; }
 function getCategories(){ return [_UNIFIED_CAT]; }
 function catById(id){ return _UNIFIED_CAT; }
-function catColor(s){ return _UNIFIED_CAT.color; }
+function catColor(s){ return (document.documentElement.getAttribute('data-theme')==='dark'||document.body.getAttribute('data-theme')==='dark')?'#c79bf0':_UNIFIED_CAT.color; }
 // Estilo de anel do avatar: degradê laranja→roxo para moderadores, cor padrão para os demais
 function _ringCss(sp,w){
   w=w||3;
@@ -6794,6 +6794,10 @@ function toggleDark(){
   if(btn) btn.innerHTML = _darkMode ? _sunIcon : _moonIcon;
   try{ localStorage.setItem('agenda_darkmode', _darkMode ? '1' : '0'); }catch(e){}
   try{ if(typeof applyTweaks==='function') applyTweaks(); }catch(e){}
+  // Re-renderiza para atualizar cores dependentes do tema (anéis, cargos, bullets)
+  try{ if(typeof renderMain==='function') renderMain(); }catch(e){}
+  try{ if(typeof renderPubSpkGrid==='function') renderPubSpkGrid(_pubSpkQ||''); }catch(e){}
+  try{ if(curPage==='home' && typeof renderBento==='function') renderBento(); }catch(e){}
 }
 
 function initDarkMode(){
