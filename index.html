@@ -1885,6 +1885,30 @@ var DAYS = [
   {date:'2026-09-11', gcal:'20260911', wd:{pt:'Sexta',en:'Friday',es:'Viernes'}}
 ];
 var NDAYS = DAYS.length;
+// Fuso HORÁRIO DO EVENTO (onde as sessões realmente acontecem).
+// Os horários da agenda (t.time) são hora local DESTE fuso. Ao exportar para o
+// Google Agenda convertemos para UTC, e aí o Google mostra o evento no fuso de
+// cada pessoa automaticamente (Manaus, Espanha, etc.).
+var EVENT_TZ = 'America/Sao_Paulo';
+// Deslocamento (ms) do fuso `tz` no instante `date` — respeita horário de verão.
+function _tzOffsetMs(date, tz){
+  try{
+    var dtf=new Intl.DateTimeFormat('en-US',{timeZone:tz,hour12:false,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    var o={}; dtf.formatToParts(date).forEach(function(p){ o[p.type]=p.value; });
+    var asUTC=Date.UTC(+o.year, +o.month-1, +o.day, (+o.hour)%24, +o.minute, +o.second);
+    return asUTC - date.getTime();
+  }catch(e){ return 0; }
+}
+// Converte hora "de parede" no fuso do evento para um Date absoluto (UTC real).
+function _eventWallToDate(y,mo,d,h,mi){
+  var base=Date.UTC(y,mo-1,d,h,mi,0), guess=base;
+  for(var i=0;i<2;i++){ guess=base - _tzOffsetMs(new Date(guess), EVENT_TZ); }
+  return new Date(guess);
+}
+function _gcalUTC(dt){
+  function z(n){ return (n<10?'0':'')+n; }
+  return dt.getUTCFullYear()+z(dt.getUTCMonth()+1)+z(dt.getUTCDate())+'T'+z(dt.getUTCHours())+z(dt.getUTCMinutes())+'00Z';
+}
 var DAY_LABELS = [], DAY_SHORT = [], DAY_DATE = [], GCAL_DATES = [];
 var MONTHS = {
   pt:['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
@@ -4847,8 +4871,13 @@ function toggleBio(bioKey){
 function addToGoogleCalendar(id){
   var found=findTalk(id); if(!found) return;
   var t=found.talk, room=found.room, day=t.day!==undefined?t.day:curDay, date=GCAL_DATES[day];
-  function gct(lbl,dt){ var p=lbl.split(':'); return dt+'T'+p2(parseInt(p[0]))+p2(parseInt(p[1]))+'00'; }
-  var start=gct(t.time,date), end=gct(addM(t.time,talkDur(t)),date);
+  // Converte o horário da sessão (hora local do EVENTO) para UTC, para que o
+  // Google Agenda exiba no fuso de quem está adicionando (Manaus, Espanha, …).
+  var _y=+String(date).slice(0,4), _mo=+String(date).slice(4,6), _d=+String(date).slice(6,8);
+  var _hp=String(t.time).split(':');
+  var startDt=_eventWallToDate(_y,_mo,_d,parseInt(_hp[0],10)||0,parseInt(_hp[1],10)||0);
+  var endDt=new Date(startDt.getTime() + talkDur(t)*60000);
+  var start=_gcalUTC(startDt), end=_gcalUTC(endDt);
   var locStr = (L(t.locText)||'')||(RN(room.name)+' — Latimpacto');
   var pLabel = (LANG==='en'?'Speaker: ':(LANG==='es'?'Ponente: ':'Palestrante: '));
   var lLabel = (LANG==='en'?'Location: ':(LANG==='es'?'Lugar: ':'Local: '));
