@@ -4875,10 +4875,14 @@ function addToGoogleCalendar(id){
   // Google Agenda exiba no fuso de quem está adicionando (Manaus, Espanha, …).
   var _y=+String(date).slice(0,4), _mo=+String(date).slice(4,6), _d=+String(date).slice(6,8);
   var _hp=String(t.time).split(':');
-  // Envia a hora LOCAL DE MANAUS + o fuso do evento (ctz). O Google interpreta
-  // esses horários no fuso informado e exibe/salva no fuso de cada pessoa.
-  function _gcalWall(lbl){ var p=String(lbl).split(':'); return date+'T'+p2(parseInt(p[0],10)||0)+p2(parseInt(p[1],10)||0)+'00'; }
-  var start=_gcalWall(t.time), end=_gcalWall(addM(t.time, talkDur(t)));
+  // 1) Descobre o instante absoluto da sessão (hora de parede em Manaus → UTC).
+  // 2) Formata esse instante no fuso DO NAVEGADOR e envia como hora local, sem
+  //    ctz — assim a tela do Google já abre com o horário certo de quem acessa.
+  var _hp0=String(t.time).split(':');
+  var startDt=_eventWallToDate(_y,_mo,_d,parseInt(_hp0[0],10)||0,parseInt(_hp0[1],10)||0);
+  var endDt=new Date(startDt.getTime() + talkDur(t)*60000);
+  function _gcalLocal(dt){ return dt.getFullYear()+p2(dt.getMonth()+1)+p2(dt.getDate())+'T'+p2(dt.getHours())+p2(dt.getMinutes())+'00'; }
+  var start=_gcalLocal(startDt), end=_gcalLocal(endDt);
   var locStr = (L(t.locText)||'')||(RN(room.name)+' — Latimpacto');
   var pLabel = (LANG==='en'?'Speaker: ':(LANG==='es'?'Ponente: ':'Palestrante: '));
   var lLabel = (LANG==='en'?'Location: ':(LANG==='es'?'Lugar: ':'Local: '));
@@ -4891,7 +4895,6 @@ function addToGoogleCalendar(id){
     +'&dates='+start+'/'+end
     +'&details='+encodeURIComponent(desc)
     +'&location='+encodeURIComponent(locStr)
-    +'&ctz='+encodeURIComponent(EVENT_TZ)
     +'&sf=true&output=xml';
   var webUrl='https://calendar.google.com/calendar/render?'+params;
 
