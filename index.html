@@ -1889,7 +1889,7 @@ var NDAYS = DAYS.length;
 // Os horários da agenda (t.time) são hora local DESTE fuso. Ao exportar para o
 // Google Agenda convertemos para UTC, e aí o Google mostra o evento no fuso de
 // cada pessoa automaticamente (Manaus, Espanha, etc.).
-var EVENT_TZ = 'America/Sao_Paulo';
+var EVENT_TZ = 'America/Manaus';
 // Deslocamento (ms) do fuso `tz` no instante `date` — respeita horário de verão.
 function _tzOffsetMs(date, tz){
   try{
@@ -4875,9 +4875,10 @@ function addToGoogleCalendar(id){
   // Google Agenda exiba no fuso de quem está adicionando (Manaus, Espanha, …).
   var _y=+String(date).slice(0,4), _mo=+String(date).slice(4,6), _d=+String(date).slice(6,8);
   var _hp=String(t.time).split(':');
-  var startDt=_eventWallToDate(_y,_mo,_d,parseInt(_hp[0],10)||0,parseInt(_hp[1],10)||0);
-  var endDt=new Date(startDt.getTime() + talkDur(t)*60000);
-  var start=_gcalUTC(startDt), end=_gcalUTC(endDt);
+  // Envia a hora LOCAL DE MANAUS + o fuso do evento (ctz). O Google interpreta
+  // esses horários no fuso informado e exibe/salva no fuso de cada pessoa.
+  function _gcalWall(lbl){ var p=String(lbl).split(':'); return date+'T'+p2(parseInt(p[0],10)||0)+p2(parseInt(p[1],10)||0)+'00'; }
+  var start=_gcalWall(t.time), end=_gcalWall(addM(t.time, talkDur(t)));
   var locStr = (L(t.locText)||'')||(RN(room.name)+' — Latimpacto');
   var pLabel = (LANG==='en'?'Speaker: ':(LANG==='es'?'Ponente: ':'Palestrante: '));
   var lLabel = (LANG==='en'?'Location: ':(LANG==='es'?'Lugar: ':'Local: '));
@@ -4890,6 +4891,7 @@ function addToGoogleCalendar(id){
     +'&dates='+start+'/'+end
     +'&details='+encodeURIComponent(desc)
     +'&location='+encodeURIComponent(locStr)
+    +'&ctz='+encodeURIComponent(EVENT_TZ)
     +'&sf=true&output=xml';
   var webUrl='https://calendar.google.com/calendar/render?'+params;
 
