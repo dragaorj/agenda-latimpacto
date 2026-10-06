@@ -190,6 +190,7 @@
         .subscribe();
       return ch;
     },
+    viewPing: function(vid){ return enabled ? _rpc('sb_view_ping',{p_id:String(vid||'')}).then(function(n){ return typeof n==='number'?n:parseInt(n,10)||0; }) : Promise.resolve(0); },
     heartbeat: function(){ return enabled ? _rpc('sb_heartbeat',{p_token:token}).catch(function(){}) : Promise.resolve(); },
     onlineProfiles: function(){ return enabled ? _rpc('sb_online_profiles',{p_token:token}) : Promise.resolve([]); }
   };

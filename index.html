@@ -793,6 +793,13 @@ body[data-mode="edit"] .btile:hover .btile-edit{display:flex;}
 /* Título da página de Agenda (acima das abas de dias) */
 .agenda-head{padding:16px 20px 6px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
 .agenda-head-txt{min-width:0;}
+/* Pessoas vendo a agenda agora (visível para todos) — acima do zoom */
+.online-row{display:flex;justify-content:flex-end;background:var(--nav-bg);padding:6px 18px 0;}
+.online-now{display:inline-flex;align-items:center;gap:7px;font-size:11.5px;font-weight:500;color:var(--text2);font-variant-numeric:tabular-nums;white-space:nowrap;}
+.online-dot{width:8px;height:8px;border-radius:50%;background:#22a55a;box-shadow:0 0 0 0 rgba(34,165,90,.45);animation:onlinePulse 3.2s ease-in-out infinite;flex-shrink:0;}
+@keyframes onlinePulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(34,165,90,.4);}50%{opacity:.45;box-shadow:0 0 0 5px rgba(34,165,90,0);}}
+@media(prefers-reduced-motion:reduce){.online-dot{animation:none;}}
+@media(max-width:680px){.online-row{padding:6px 12px 0;}}
 .agenda-head-fav{display:none;flex-shrink:0;}
 @media(max-width:680px){ .agenda-head-fav{display:block;} .dtab-fav{display:none!important;} }
 .fav-mob-btn{position:relative;display:flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:12px;background:var(--surface);border:1.5px solid var(--border);color:var(--brand);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:border-color .16s ease,background .16s ease;}
@@ -1738,6 +1745,7 @@ body[data-cardstyle="tint"] .lcard{
     </div>
     <div class="agenda-head-fav" id="favSlotMobile"></div>
   </div>
+  <div class="online-row" id="onlineRow" style="display:none;"><span class="online-now"><span class="online-dot"></span><span id="onlineNowTxt"></span></span></div>
   <div class="dtabs-row">
     <div class="dtabs" id="dtabs"></div>
     <div class="tbar">
@@ -6490,6 +6498,10 @@ function loadData(callback){
       });
     }
     attempt();
+    // Mostra na hora a última cópia boa (cache) e, se o servidor demorar,
+    // não fica esperando: renderiza mesmo assim e atualiza quando chegar.
+    var _c0=_sbCacheGet(); if(_c0) finish(_c0);
+    setTimeout(function(){ if(!done) finish(_sbCacheGet()||{config:{}}); }, 3500);
     return;
   }
   _loadSavedOrSeed(); if(callback) callback();
@@ -7159,7 +7171,7 @@ initWP();
     if(s.view) curView=s.view;
     if(curView==='gantt') curView='grid';
     // Home é sempre a página inicial (não restaura a última aba)
-    curPage='home';
+    curPage='agenda';
   }catch(e){}
   // 1ª visita: desktop abre em Grade (padrão) e mobile em Lista.
   // Se já houver preferência salva, ela é respeitada.
@@ -7182,7 +7194,26 @@ loadData(function(){
   // Revela TUDO junto logo após a 1ª renderização pintar. Usa setTimeout (não
   // rAF) porque timers disparam mesmo com o relógio de animação throttled.
   setTimeout(function(){ _revealApp(); _animFreshItems(); }, 30);
+  _viewersStart();
 });
+
+// ── Pessoas vendo a agenda agora (todos, inclusive visitantes) ──
+var _viewerId=(function(){ try{ var k='latimpacto_viewer_id', v=localStorage.getItem(k); if(!v){ v='v'+Date.now().toString(36)+Math.random().toString(36).slice(2,8); localStorage.setItem(k,v); } return v; }catch(e){ return 'v'+Math.random().toString(36).slice(2); } })();
+var _viewersT=null, _viewersN=0;
+function _viewersTick(){
+  if(!(window.SB&&SB.enabled&&SB.viewPing)) return;
+  if(document.hidden) return;
+  SB.viewPing(_viewerId).then(function(n){ if(typeof n==='number'&&n>0){ _viewersN=n; _renderViewers(); } }).catch(function(){});
+}
+function _renderViewers(){
+  var row=document.getElementById('onlineRow'), tx=document.getElementById('onlineNowTxt');
+  if(!row||!tx) return;
+  if(!_viewersN){ row.style.display='none'; return; }
+  var n=_viewersN, lbl=(LANG==='en')?(n===1?'person online now':'people online now'):(LANG==='es')?(n===1?'persona en línea ahora':'personas en línea ahora'):(n===1?'pessoa online agora':'pessoas online agora');
+  tx.textContent=n+' '+lbl;
+  row.style.display='flex';
+}
+function _viewersStart(){ if(_viewersT) return; _viewersTick(); _viewersT=setInterval(_viewersTick, 20000); document.addEventListener('visibilitychange', function(){ if(!document.hidden) _viewersTick(); }); }
 
 // Revela o app (fade suave de tudo junto). Robusto: se a transição não rodar
 // (aba em 2º plano / relógio de animação pausado), faz um snap para visível —
