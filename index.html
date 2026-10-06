@@ -1832,7 +1832,7 @@ body[data-cardstyle="tint"] .lcard{
   </div>
 
   <!-- Crédito (discreto, sempre visível ao final do conteúdo) -->
-  <footer class="site-credit"><a href="https://fyw.com.br/" target="_blank" rel="noopener"><span id="creditTxt">Plataforma desenvolvida por </span><b>Fyw</b></a></footer>
+  <footer class="site-credit"><a href="https://www.linkedin.com/in/marlonwebdesigner/" target="_blank" rel="noopener"><span id="creditTxt">Plataforma desenvolvida por </span><b>Marlon Dias</b></a></footer>
 </div>
 </div><!-- /appShell -->
 
@@ -6450,6 +6450,7 @@ function _sbSubscribe(){
 function _sbReload(){
   if(!(window.SB&&SB.enabled)) return;
   SB.loadAll().then(function(d){
+    _sbCacheSave(d);
     _sbApplying=true;
     _applySBData(d);
     _persistAutoFormatColors();
@@ -6461,22 +6462,41 @@ function _sbReload(){
     _sbApplying=false;
   }).catch(function(){ _sbApplying=false; });
 }
+var _SB_CACHE_KEY='latimpacto_sb_cache_v1';
+function _sbCacheSave(d){ try{ localStorage.setItem(_SB_CACHE_KEY, JSON.stringify(d)); }catch(e){} }
+function _sbCacheGet(){ try{ var s=localStorage.getItem(_SB_CACHE_KEY); return s?JSON.parse(s):null; }catch(e){ return null; } }
 function loadData(callback){
   if(window.SB && SB.enabled){
-    SB.loadAll().then(function(d){
-      // Supabase é a única fonte: banco vazio = app vazio (NUNCA recarrega exemplos).
+    var done=false, tries=0;
+    function finish(d){
       _applySBData(d||{config:{}});
       if(!HIGHLIGHTS) HIGHLIGHTS=_defaultHighlights();
       if(typeof _preloadHeroImg==='function') _preloadHeroImg();
       getCategories();
-      _sbSubscribe();
-      _persistAutoFormatColors();
-      if(callback) callback();
-    }).catch(function(e){ try{console.warn('[SB] load falhou',e);}catch(_){} SPEAKERS=[]; SCHEDULES=(function(){var a=[];for(var i=0;i<NDAYS;i++)a.push(emptyDay());return a;})(); if(!HIGHLIGHTS) HIGHLIGHTS=_defaultHighlights(); getCategories(); _sbSubscribe(); if(callback) callback(); });
+      if(!done){ done=true; _sbSubscribe(); _persistAutoFormatColors(); if(callback) callback(); }
+    }
+    function attempt(){
+      tries++;
+      SB.loadAll().then(function(d){
+        _sbCacheSave(d);
+        if(done){ _sbReload(); return; }   // já mostrou cache → atualiza com dados frescos
+        finish(d);
+      }).catch(function(e){
+        try{console.warn('[SB] load falhou (tentativa '+tries+')',e);}catch(_){}
+        // Nunca mostra agenda vazia por falha de rede: usa a última cópia boa
+        if(!done){ var c=_sbCacheGet(); if(c) finish(c); }
+        if(tries<6) setTimeout(attempt, Math.min(1000*Math.pow(2,tries-1), 15000));
+        else if(!done){ finish({config:{}}); }
+      });
+    }
+    attempt();
     return;
   }
   _loadSavedOrSeed(); if(callback) callback();
 }
+// Ao voltar a conexão ou reabrir a aba, sincroniza de novo com o banco
+window.addEventListener('online', function(){ try{ _sbReload(); }catch(e){} });
+document.addEventListener('visibilitychange', function(){ if(!document.hidden){ try{ _sbReload(); }catch(e){} } });
 
 // Fila de saves — garante que cada save espera o anterior terminar
 var _saveQueue = Promise.resolve();
