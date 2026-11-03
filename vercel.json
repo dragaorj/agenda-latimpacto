@@ -1,3 +1,9 @@
 {
-  "cleanUrls": true
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/palestrantes", "destination": "/index.html" },
+    { "source": "/speakers", "destination": "/index.html" },
+    { "source": "/ponentes", "destination": "/index.html" },
+    { "source": "/agenda", "destination": "/index.html" }
+  ]
 }

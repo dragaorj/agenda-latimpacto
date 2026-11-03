@@ -2693,13 +2693,30 @@ function showPage(p, fromHistory){
   // (incluindo os botões laterais do mouse) naveguem entre as páginas.
   if(!fromHistory){
     try{
+      var _url=_pageUrl(p);
       if(!history.state || history.state._pg===undefined){
-        history.replaceState({_pg:p}, '');      // primeira entrada (base)
+        history.replaceState({_pg:p}, '', _url);      // primeira entrada (base)
       } else if(history.state._pg !== p){
-        history.pushState({_pg:p}, '');          // só empilha ao mudar de página
+        history.pushState({_pg:p}, '', _url);          // só empilha ao mudar de página
       }
     }catch(e){}
   }
+}
+// Links diretos: /palestrantes (ou /speakers, /ponentes, #palestrantes) abre
+// a aba Palestrantes; /agenda abre a Agenda. Só reescreve a URL em http(s).
+function _pageFromUrl(){
+  try{
+    var s=(location.pathname+' '+location.hash).toLowerCase();
+    if(/palestrantes|speakers|ponentes/.test(s)) return 'spk';
+  }catch(e){}
+  return null;
+}
+function _pageUrl(p){
+  try{
+    if(!/^https?:$/.test(location.protocol)) return undefined;
+    if(/\.html$/i.test(location.pathname)) return undefined; // preview/arquivo local
+    return p==='spk' ? '/palestrantes' : '/';
+  }catch(e){ return undefined; }
 }
 window.addEventListener('popstate', function(e){
   var p=(e.state && e.state._pg) ? e.state._pg : 'home';
@@ -7190,7 +7207,7 @@ loadData(function(){
   setView(curView);
   _updateZoomControls();
   window._freshBoot = true;
-  showPage('agenda');   // a plataforma sempre abre na Agenda (renderiza síncrono)
+  showPage(_pageFromUrl()||'agenda');   // abre na Agenda, ou em Palestrantes via /palestrantes
   // Revela TUDO junto logo após a 1ª renderização pintar. Usa setTimeout (não
   // rAF) porque timers disparam mesmo com o relógio de animação throttled.
   setTimeout(function(){ _revealApp(); _animFreshItems(); }, 30);
